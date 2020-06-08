@@ -2,6 +2,7 @@ import React, { useState, Component } from 'react';
 import { StyleSheet, Text, View, TextInput, Button, FlatList } from 'react-native';
 import { CONTENT, SUBCATEGORIES } from '../data/categoriesData';
 import SearchGridtile from '../components/SearchGridTile';
+import { useSelector} from 'react-redux';
 
 const SearchScreen = props => {// to be call Search
 
@@ -18,7 +19,10 @@ const SearchScreen = props => {// to be call Search
     setResult(enteredSearch)
   };
 
-  const displaySub = SUBCATEGORIES.filter(cat => ((cat.title).toLowerCase().indexOf(result.toLowerCase()) >= 0) && cat.title != 'Chatroom' && cat.title != 'CME');
+  const selectedSubCategories = useSelector(state =>
+    state.categoriesContent.categoriesContent
+  ); 
+  const displaySub = selectedSubCategories.filter(cat => ((cat.title).toLowerCase().indexOf(result.toLowerCase()) >= 0) && cat.title != 'Chatroom' && cat.title != 'CME');
 
   const renederGridItem = (itemData) => {
     return (

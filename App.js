@@ -10,6 +10,14 @@ import { createStackNavigator } from 'react-navigation-stack';
 //import MealsNavigator from './navigation/MealsNavigation';
 import PemNavigation from './navigation/PemNavigation';
 import { enableScreens } from 'react-native-screens';
+
+// react-redux
+import { createStore, combineReducers } from 'redux';
+import { Provider } from 'react-redux';
+import categoriesReducer from './store/reducers/categories';
+import catContentReducer from './store/reducers/catContent';
+
+
 /*
 I've been getting an error ever since I ran npm `install react-native-dialog-input`.
 First, it was saying it couldn't reslove firebase. Then it was saying it couldn't 
@@ -106,6 +114,13 @@ const fetchFonts = () => {
   });
 };
 
+const rootReducer = combineReducers({
+  categories: categoriesReducer,
+  categoriesContent: catContentReducer,
+});
+
+const store = createStore(rootReducer);
+
 export default function App() {
   const [fontLoaded, setFontLoaded] = useState(false);
 
@@ -118,5 +133,9 @@ export default function App() {
     );
   }
 
-  return <PemNavigation />;
-}
+  return (
+    <Provider store={store}>
+      <PemNavigation />
+    </Provider>
+  );
+};

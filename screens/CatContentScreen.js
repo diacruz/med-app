@@ -1,68 +1,32 @@
-import React, { Component } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet,ScrollView } from 'react-native';
 import * as firebase from 'firebase'
 import 'firebase/firestore';
 import CategoriesScreen from './CategoriesScreen';
-import { CATEGORIES, SUBCATEGORIES } from '../data/categoriesData';
+import { useSelector, useDispatch } from 'react-redux';
 
-export default class FilterScreen extends Component {
-  constructor(props) {
-    super(props)
-  }
+const CatContentScreen = props => {
+  const categoryId = props.navigation.getParam('CatContentId');
+  const selectedSubCategories = useSelector(state =>
+    state.categoriesContent.categoriesContent.find(prod => prod.id === categoryId)
+  );
+  return (
+    <ScrollView style = {styles.screen}>
+      
+      <Text style={styles.header}>EVALUATION</Text>
+      <Text style={styles.content}> {selectedSubCategories.evaluation} </Text>
+      <Text style={styles.header}>MANAGEMENT</Text>
+      <Text style={styles.content}>{selectedSubCategories.management}</Text>
+      <Text style={styles.header}>MEDICATION</Text>
+      <Text style={styles.content}>{selectedSubCategories.medication}</Text>
+      <Text style={styles.header}>SYMPTOMS</Text>
+      <Text style={styles.content}>{selectedSubCategories.symptoms}</Text>
+      <Text style={styles.header}>REFERENCES</Text>
+      <Text style={styles.content}>{selectedSubCategories.references}</Text>
+    </ScrollView>
+  );
 
-  state = {
-    evaluation: '',
-    management: '',
-    medications: '',
-    symptoms: '',
-    references: '',
-    set: false
-  }
-
-  dataPromise = firebase.firestore().collection('data').doc(this.props.navigation.getParam('subcategoryId')).get()
-    .then((doc) => {
-      if (doc.exists) {
-        this.setState({
-          evaluation: doc.data().evaluation,
-          management: doc.data().management,
-          medications: doc.data().medications,
-          symptoms: doc.data().symptoms,
-          references: doc.data().references,
-          set: true
-        })
-      }
-    })
-    .catch(function (err) {
-      console.error(err)
-    })
-
-  render() {
-    if (this.state.set === true) {
-      return (
-        <ScrollView style={styles.screen}>
-          <View>
-            <Text style={styles.header}>EVALUATION</Text>
-            <Text style={styles.content}>{this.state.evaluation}</Text>
-          </View>
-          <Text style={styles.header}>MANAGEMENT</Text>
-          <Text style={styles.content}>{this.state.management}</Text>
-          <Text style={styles.header}>MEDICATION</Text>
-          <Text style={styles.content}>{this.state.medications}</Text>
-          <Text style={styles.header}>SYMPTOMS</Text>
-          <Text style={styles.content}>{this.state.symptoms}</Text>
-          <Text style={styles.header}>REFERENCES</Text>
-          <Text style={styles.content}>{this.state.references}</Text>
-        </ScrollView>
-      )
-    }
-    return (
-      <View style={styles.screen}>
-        <Text style={styles.header}>Loading...</Text>
-      </View>
-    )
-  }
-}
-
+};
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
@@ -84,14 +48,16 @@ const styles = StyleSheet.create({
   }
 });
 
-FilterScreen.navigationOptions = navigationdata => {
-  const subcatid = navigationdata.navigation.getParam('subcategoryId');
-  const subCat = SUBCATEGORIES.find(cat => cat.id === subcatid)
+
+CatContentScreen.navigationOptions = navigationdata => {
+  const subcategoryTitle = navigationdata.navigation.getParam('subcategoryTitle');
   return {
-    headerTitle: subCat.title,
+    headerTitle: subcategoryTitle,
     headerTintColor: '#CD5C5C',
     headerStyle: {
       backgroundColor: 'white',
     }
   }
 }
+
+export default CatContentScreen;
