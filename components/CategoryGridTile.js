@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     margin: 15,
     height: 110,
     borderRadius: 10,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   container: {
     flex: 1,
@@ -47,12 +47,12 @@ const styles = StyleSheet.create({
     elevation: 3,
     padding: 15,
     justifyContent: 'flex-end',
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
   },
   title: {
     fontFamily: 'open-sans-bold',
     fontSize: 20,
-    textAlign: 'right'
+    textAlign: 'center'
   }
 });
 

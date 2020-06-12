@@ -1,7 +1,9 @@
+import React from 'react';
 import { Platform } from 'react-native';
-
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
+import { createDrawerNavigator } from 'react-navigation-drawer';
+import {Ionicons} from '@expo/vector-icons';
 import CategoriesScreen from '../screens/CategoriesScreen';
 import SubCategoriesScreen from '../screens/SubCategoriesScreen';
 import CatContentScreen from '../screens/CatContentScreen';
@@ -10,34 +12,35 @@ import LoginScreen from '../screens/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import CMEScreen from '../screens/CMEScreen';
 import SearchScreen from '../screens/SearchScreen';
+import AdminPanelScreen from '../screens/UI/AdminPanelScreen';
+import EditCatContentScreen from '../screens/UI/EditCatContentScreen';
 import Colors from '../constants/Colors';
 
-const PemNavigator = createStackNavigator({
-  Categories: {
-    screen: CategoriesScreen
+const CatNavigator = createStackNavigator(
+  {
+    Categories: CategoriesScreen,
+    SubCategories: {
+      screen: SubCategoriesScreen
+    },
+    CatContent: {
+      screen: CatContentScreen
+    },
+    Chatroom: {
+      screen: ChatroomScreen
+    },
+    CME: {
+      screen: CMEScreen
+    },
+    Login: {
+      screen: LoginScreen
+    },
+    SignUp: {
+      screen: SignUpScreen
+    },
+    Search: {
+      screen: SearchScreen
+    }
   },
-  SubCategories: {
-    screen: SubCategoriesScreen
-  },
-  CatContent: {
-    screen: CatContentScreen
-  },
-  Chatroom: {
-    screen: ChatroomScreen
-  },
-  CME: {
-    screen: CMEScreen
-  },
-  Login: {
-    screen: LoginScreen
-  },
-  SignUp: {
-    screen: SignUpScreen
-  },
-  Search: {
-    screen: SearchScreen
-  }
-},
   {
     // initialRouteName: 'Categories',
     defaultNavigationOptions: {
@@ -47,6 +50,43 @@ const PemNavigator = createStackNavigator({
       headerTintColor:
         Platform.OS === 'android' ? 'white' : Colors.primaryColor
     }
+  }
+);
+
+const AdminNavigator = createStackNavigator({
+
+  AdminPanel: AdminPanelScreen,
+  EditCatContent: EditCatContentScreen
+},
+  {
+      navigationOptions: {
+          drawerIcon: drawerConfig =>(
+              <Ionicons
+              name={Platform.OS === 'android' ? 'md-create' : 'ios-create'}
+              size={23}
+              color={drawerConfig.tintColor}
+          />
+          )
+             
+      },
+      defaultNavigationOptions: {
+        headerStyle: {
+          backgroundColor: Platform.OS === 'android' ? Colors.primaryColor : ''
+        },
+        headerTintColor:
+          Platform.OS === 'android' ? 'white' : Colors.primaryColor
+      }
+  }
+);
+
+const PemNavigator = createDrawerNavigator({
+  Categories: CatNavigator,
+  Admin: AdminNavigator
+},
+  {
+      contentOptions: {
+          activeTinColor: Colors.primary
+      }
   }
 );
 

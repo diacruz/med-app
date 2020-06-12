@@ -1,149 +1,129 @@
-import React, { Component } from 'react';
-import { View, Text, StyleSheet, Button, FlatList, TouchableOpacity, Alert } from 'react-native';
-import { CATEGORIES, SUBCATEGORIES } from '../data/categoriesData';
+import React, { useCallback, useEffect } from 'react';
+import { View, Text, StyleSheet, Button, FlatList, TouchableOpacity, Alert, Platform } from 'react-native';
 import * as firebase from 'firebase'
 import 'firebase/firestore';
 import Firebase from '../backend/firebase'
 import CategoryGridTile from '../components/CategoryGridTile';
+//react-redux
+import { useSelector, useDispatch } from 'react-redux';
 
-let categoryId
-let categoryTitle
-let globalProps;
 
-function displayOKAlert(title, message) {
-  Alert.alert(
-    title,
-    message
+
+
+const SubCategoriesScreen = props => {
+
+  const categoryId = props.navigation.getParam('categoryId');
+  const selectedSubCategories = useSelector(state =>
+    state.categoriesContent.categoriesContent.filter(prod => prod.subId === categoryId)
   );
-}
 
-/**
- * Deletes all messages from the database. 
- */
-function deleteAllMessages() {
-  firebase.database().ref('userCount').on('value', function (snapshot) {
-    if (snapshot.val().count == 0) {
-      firebase.database().ref('messages').remove();
+  const selectSubCategoryHandler = (id, title) => {
+    //onSelect func name triggers on component
+    let isChatroom = id === 'c8-1'
+    let isCME = id === 'c8-2'
+  
+    if (isChatroom) {
+      props.navigation.navigate('Chatroom', { name: firebase.auth().currentUser.email });
     }
-  });
-}
+    else if (isCME) {
+      props.navigation.navigate('CME', { name: firebase.auth().currentUser.email });
+    }
+    else {
+      props.navigation.navigate({
+        routeName: 'CatContent',
+        params: {
+          CatContentId: id,
+          subcategoryTitle : title
+        }
+      });
+    }
+  };
 
-/**
- * Signs a user out. This also takes care of the decrementing of userCount, 
- * the removal of the username from the onlineUsers list, and of the message
- * deletion if the user signing out is the last user that's signed in.
- */
-function signOut(props) {
-  let signOutUser = Firebase.shared.userEmail
-  firebase.auth().signOut().then(function () {
-    Firebase.shared.setUserCount = -1;
-    Firebase.shared.removeOnlineUser(signOutUser)
+  const displayOKAlert =(title, message) => {
+    Alert.alert(
+      title,
+      message
+    );
+  }
+  
+  /**
+   * Deletes all messages from the database. 
+   */
+  const deleteAllMessages = () =>{
     firebase.database().ref('userCount').on('value', function (snapshot) {
-      if (snapshot.val().count <= 0) {
-        deleteAllMessages()
+      if (snapshot.val().count == 0) {
+        firebase.database().ref('messages').remove();
       }
-    })
-    props.navigation.navigate('Categories')
-  }).catch(function (err) {
-    displayOKAlert('Oh no!', 'Sign out failed: ' + err)
-    console.log(err)
-  });
-}
-
-export default class SubCategoriesScreen extends Component {
-  constructor(props) {
-    super(props)
-    //this.signOut = this.signOut.bind(this)
+    });
   }
-
+  
   /**
-   * Renders an item for the FlatList. This gets returned for every
-   * subcategory in a category. 
+   * Signs a user out. This also takes care of the decrementing of userCount, 
+   * the removal of the username from the onlineUsers list, and of the message
+   * deletion if the user signing out is the last user that's signed in.
    */
-  renederGridItem = (itemData) => {
-    categoryId = itemData.item.subId
-    categoryTitle = this.props.navigation.getParam('categoryTitle')
-    return (
-      <CategoryGridTile
-        title={itemData.item.title}
-        color={itemData.item.color}
-        onSelect={() => { //onSelect func name triggers on component
-          let isChatroom = itemData.item.id === 'c8-1'
-          let isCME = itemData.item.id === 'c8-2'
-          if (isChatroom) {
-            this.props.navigation.navigate('Chatroom', { name: firebase.auth().currentUser.email });
-          } else if (isCME) {
-            this.props.navigation.navigate('CME', { name: firebase.auth().currentUser.email });
-          } else {
-            this.props.navigation.navigate({
-              routeName: 'CatContent',
-              params: {
-                subcategoryId: itemData.item.id
-              }
-            });
+  const signOut = useCallback(() =>{
+    let signOutUser = Firebase.shared.userEmail
+    firebase.auth().signOut().then(function () {
+      Firebase.shared.setUserCount = -1;
+      Firebase.shared.removeOnlineUser(signOutUser)
+      firebase.database().ref('userCount').on('value', function (snapshot) {
+        if (snapshot.val().count <= 0) {
+          () =>{
+            deleteAllMessages
           }
-        }}
-      />
-    );
-  };
-
-  catId = this.props.navigation.getParam('categoryId');
-  //how to get specific subcategory
-  displaySub = SUBCATEGORIES.filter(cat => cat.subId.indexOf(this.catId) >= 0);
-  displaySubSort = this.displaySub.sort((a, b) => (a.title > b.title) ? 1 : -1);
-
-  /**
-   * This sets the sign out button to only appear if the user is in
-   * the Chatroom & CME category screen.
-   */
-  componentDidMount() {
-    globalProps = this.props
-    if (categoryId === 'c8') {
-      this.props.navigation.setParams({
-        headerRight: (<Button title='Sign out' onPress={() => {
-          signOut(this.props)
-        }} />)
+        }
       })
-    }
-  }
+      props.navigation.navigate('Categories')
+    }).catch(function (err) {
+      displayOKAlert('Oh no!', 'Sign out failed: ' + err)
+      console.log(err)
+    });
+  },[]);
 
-  static navigationOptions = ({
-    navigation
-  }) => {
-    return {
-      headerRight: navigation.state.params && navigation.state.params.headerRight,
-      title: categoryTitle
-    };
-  };
+  useEffect(() =>{
+    props.navigation.setParams({ Out: signOut });
+  }, [signOut]);
 
-  render() {
-    return (
-      <FlatList data={this.displaySubSort} renderItem={this.renederGridItem} numColumns={2} />
-    );
-  }
-}
+  return (
+    <FlatList
+      data={selectedSubCategories}
+      keyExtractor={item => item.id}
+      numColumns={2}
+      renderItem={itemData =>
+        <CategoryGridTile
+          title={itemData.item.title}
+          color={itemData.item.color}
+          onSelect={() => {
+            selectSubCategoryHandler(itemData.item.id,itemData.item.title)
+          }}
+        />
+      }
+    />
+  );
+};
 
 SubCategoriesScreen.navigationOptions = navigationdata => {
-  const catid = navigationdata.navigation.getParam('categoryId');
-  const Cattitle = CATEGORIES.find(cat => cat.id === catid)
-  console.log(Cattitle.title)
-  if (Cattitle.title === 'Chatroom & CME') {
+  const catTitle = navigationdata.navigation.getParam('categoryTitle');
+  const outFn = navigationdata.navigation.getParam('Out');
+  console.log(catTitle)
+  if (catTitle === 'Chatroom & CME') {
     return {
-      headerTitle: Cattitle.title,
+      headerTitle: catTitle,
       headerStyle: {
         backgroundColor: 'white',
       },
       headerTintColor: '#CD5C5C',
-      headerRight: (<Button title='Sign out' onPress={() => {
-        signOut(globalProps)
-      }} />)
+      headerRight:(<Button title='Sign out' onPress={outFn} 
+      />)
     }
   }
   return {
-    headerTitle: Cattitle.title,
+    headerTitle: catTitle,
     headerStyle: {
       backgroundColor: 'white',
     },
-    headerTintColor: '#CD5C5C'
+    headerTintColor: '#CD5C5C',
   }
 }
+export default SubCategoriesScreen;
