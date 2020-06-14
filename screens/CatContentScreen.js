@@ -18,9 +18,9 @@ const CatContentScreen = props => {
       <Text style={styles.header}>MANAGEMENT</Text>
       <Text style={styles.content}>{selectedSubCategories.management}</Text>
       <Text style={styles.header}>MEDICATION</Text>
-      <Text style={styles.content}>{selectedSubCategories.medication}</Text>
+      <Text style={styles.content}>{selectedSubCategories.medications}</Text>
       <Text style={styles.header}>SYMPTOMS</Text>
-      <Text style={styles.content}>{selectedSubCategories.symptoms}</Text>
+      <Text style={styles.content}>{selectedSubCategories.signs}</Text>
       <Text style={styles.header}>REFERENCES</Text>
       <Text style={styles.content}>{selectedSubCategories.references}</Text>
     </ScrollView>

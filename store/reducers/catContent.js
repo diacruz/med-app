@@ -9,6 +9,7 @@ const initialState = {
 
 export default (state = initialState, action) => {
     switch(action.type){
+    
         case CREATE_CATCONTENT:
             const newCatContent = new CatContent(
                 new Date().toString(),  
@@ -25,6 +26,7 @@ export default (state = initialState, action) => {
                     ...state,
                     categoriesContent: state.categoriesContent.concat(newCatContent),
                 };
+        
         case UPDATE_CATCONTENT:
             const catContentIndex = state.categoriesContent.findIndex(
                 cat => cat.id === action.catContentId
@@ -32,7 +34,7 @@ export default (state = initialState, action) => {
             const updatedCatContent  = new CatContent(
                 action.catContentId, 
                 action.catContentData.title,
-                action.catContentData.color,
+                state.categoriesContent[catContentIndex].color,
                 state.categoriesContent[catContentIndex].subId,
                 action.catContentData.evaluation,
                 action.catContentData.signs,

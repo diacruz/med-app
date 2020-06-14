@@ -2,7 +2,7 @@ export const DELETE_CATCONTENT = 'DELETE_CATCONTENT';
 export const CREATE_CATCONTENT = 'CREATE_CATCONTENT';
 export const UPDATE_CATCONTENT = 'UPDATE_CATCONTENT';
 
-export const deleteCatContent = catContentId => {
+export const deleteCatContent = (catContentId) => {
     return { type: DELETE_CATCONTENT, catContentId: catContentId };
 }
 
@@ -22,13 +22,12 @@ export const createCatContent = (title, color, subId, evaluation, signs, managem
     };
 };
 
-export const updateProduct = (id, title, color, evaluation, signs, management, medications,references) => {
+export const updateCatContent = (id, title, evaluation, signs, management, medications, references) => {
     return {
         type: UPDATE_CATCONTENT,
         catContentId: id,
         catContentData: {
             title: title,
-            color: color,
             evaluation: evaluation,
             signs: signs,
             management: management,

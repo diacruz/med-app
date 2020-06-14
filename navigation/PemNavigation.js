@@ -12,8 +12,9 @@ import LoginScreen from '../screens/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import CMEScreen from '../screens/CMEScreen';
 import SearchScreen from '../screens/SearchScreen';
-import AdminPanelScreen from '../screens/UI/AdminPanelScreen';
-import EditCatContentScreen from '../screens/UI/EditCatContentScreen';
+import AdminCategoriesScreen from '../screens/AdminScreens/AdminCategoriesScreen';
+import EditCatContentScreen from '../screens/AdminScreens/EditCatContentScreen';
+import AdminSubCategoriesScreen from '../screens/AdminScreens/AdminSubCategoriesScreen';
 import Colors from '../constants/Colors';
 
 const CatNavigator = createStackNavigator(
@@ -55,8 +56,10 @@ const CatNavigator = createStackNavigator(
 
 const AdminNavigator = createStackNavigator({
 
-  AdminPanel: AdminPanelScreen,
-  EditCatContent: EditCatContentScreen
+  AdminCategories: AdminCategoriesScreen,
+  EditCatContent: EditCatContentScreen,
+  AdminSubCategories: AdminSubCategoriesScreen,
+  CatContent: CatContentScreen
 },
   {
       navigationOptions: {
@@ -81,7 +84,7 @@ const AdminNavigator = createStackNavigator({
 
 const PemNavigator = createDrawerNavigator({
   Categories: CatNavigator,
-  Admin: AdminNavigator
+  Admin: AdminNavigator,
 },
   {
       contentOptions: {
