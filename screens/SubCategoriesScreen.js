@@ -5,7 +5,7 @@ import 'firebase/firestore';
 import Firebase from '../backend/firebase'
 import CategoryGridTile from '../components/CategoryGridTile';
 //react-redux
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 
 
@@ -21,7 +21,7 @@ const SubCategoriesScreen = props => {
     //onSelect func name triggers on component
     let isChatroom = id === 'c8-1'
     let isCME = id === 'c8-2'
-  
+
     if (isChatroom) {
       props.navigation.navigate('Chatroom', { name: firebase.auth().currentUser.email });
     }
@@ -33,43 +33,43 @@ const SubCategoriesScreen = props => {
         routeName: 'CatContent',
         params: {
           CatContentId: id,
-          subcategoryTitle : title
+          subcategoryTitle: title
         }
       });
     }
   };
 
-  const displayOKAlert =(title, message) => {
+  const displayOKAlert = (title, message) => {
     Alert.alert(
       title,
       message
     );
   }
-  
+
   /**
    * Deletes all messages from the database. 
    */
-  const deleteAllMessages = () =>{
+  const deleteAllMessages = () => {
     firebase.database().ref('userCount').on('value', function (snapshot) {
       if (snapshot.val().count == 0) {
         firebase.database().ref('messages').remove();
       }
     });
   }
-  
+
   /**
    * Signs a user out. This also takes care of the decrementing of userCount, 
    * the removal of the username from the onlineUsers list, and of the message
    * deletion if the user signing out is the last user that's signed in.
    */
-  const signOut = useCallback(() =>{
+  const signOut = useCallback(() => {
     let signOutUser = Firebase.shared.userEmail
     firebase.auth().signOut().then(function () {
       Firebase.shared.setUserCount = -1;
       Firebase.shared.removeOnlineUser(signOutUser)
       firebase.database().ref('userCount').on('value', function (snapshot) {
         if (snapshot.val().count <= 0) {
-          () =>{
+          () => {
             deleteAllMessages
           }
         }
@@ -79,9 +79,9 @@ const SubCategoriesScreen = props => {
       displayOKAlert('Oh no!', 'Sign out failed: ' + err)
       console.log(err)
     });
-  },[]);
+  }, []);
 
-  useEffect(() =>{
+  useEffect(() => {
     props.navigation.setParams({ Out: signOut });
   }, [signOut]);
 
@@ -95,7 +95,7 @@ const SubCategoriesScreen = props => {
           title={itemData.item.title}
           color={itemData.item.color}
           onSelect={() => {
-            selectSubCategoryHandler(itemData.item.id,itemData.item.title)
+            selectSubCategoryHandler(itemData.item.id, itemData.item.title)
           }}
         />
       }
@@ -114,7 +114,7 @@ SubCategoriesScreen.navigationOptions = navigationdata => {
         backgroundColor: 'white',
       },
       headerTintColor: '#CD5C5C',
-      headerRight:(<Button title='Sign out' onPress={outFn} 
+      headerRight: (<Button title='Sign out' onPress={outFn}
       />)
     }
   }
