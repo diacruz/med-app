@@ -5,7 +5,7 @@ import CategoryGridTile from '../components/CategoryGridTile';
 import CustomHeaderButton from '../components/CustomHeaderButton';
 import {HeaderButtons, Item} from 'react-navigation-header-buttons';
 
-// using react redux to acces data 
+// using react redux to access data 
 import { useSelector, useDispatch } from 'react-redux';
 
 const CategoriesScreen = props =>{
@@ -21,7 +21,7 @@ const CategoriesScreen = props =>{
         props.navigation.navigate({ routeName: 'SubCategories', params: { categoryId: id, categoryTitle: title } });
       } 
       else {
-        props.navigation.navigate({ routeName: 'Login' })
+        props.navigation.replace({ routeName: 'Login' })
       }
     } 
     else if (title === 'Search') {
@@ -49,6 +49,7 @@ const CategoriesScreen = props =>{
   );
 };
 
+/*
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
@@ -64,7 +65,7 @@ const styles = StyleSheet.create({
   }
 });
 
-
+*/
 
 CategoriesScreen.navigationOptions = navigationdata => {
     return {

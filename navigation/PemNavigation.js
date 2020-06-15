@@ -1,56 +1,88 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { createAppContainer } from 'react-navigation';
+import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createDrawerNavigator } from 'react-navigation-drawer';
-import {Ionicons} from '@expo/vector-icons';
+import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { Ionicons } from '@expo/vector-icons';
 import CategoriesScreen from '../screens/CategoriesScreen';
+import ChatTabScreen from '../screens/ChatTabScreen';
 import SubCategoriesScreen from '../screens/SubCategoriesScreen';
 import CatContentScreen from '../screens/CatContentScreen';
 import ChatroomScreen from '../screens/ChatroomScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen';
+import FavoritesScreen from '../screens/FavoritesScreen';
 import CMEScreen from '../screens/CMEScreen';
 import SearchScreen from '../screens/SearchScreen';
 import AdminCategoriesScreen from '../screens/AdminScreens/AdminCategoriesScreen';
 import EditCatContentScreen from '../screens/AdminScreens/EditCatContentScreen';
 import AdminSubCategoriesScreen from '../screens/AdminScreens/AdminSubCategoriesScreen';
 import Colors from '../constants/Colors';
+import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import EditProfileScreen from '../screens/EditProfileScreen';
 
-const CatNavigator = createStackNavigator(
-  {
-    Categories: CategoriesScreen,
-    SubCategories: {
-      screen: SubCategoriesScreen
-    },
-    CatContent: {
-      screen: CatContentScreen
-    },
-    Chatroom: {
-      screen: ChatroomScreen
-    },
-    CME: {
-      screen: CMEScreen
-    },
-    Login: {
-      screen: LoginScreen
-    },
-    SignUp: {
-      screen: SignUpScreen
-    },
-    Search: {
-      screen: SearchScreen
-    }
+const defaultStackNavOptions = {
+  headerStyle: {
+    backgroundColor: Platform.OS === 'android' ? Colors.primaryColor : ''
   },
+  headerTintColor:
+    Platform.OS === 'android' ? 'white' : Colors.primaryColor
+
+}
+
+const LoginNavigator = createStackNavigator({
+  Login: {
+    screen: LoginScreen
+  },
+  SignUp: {
+    screen: SignUpScreen
+  },
+},
+);
+
+const CatNavigator = createStackNavigator({
+  Categories: CategoriesScreen,
+  SubCategories: {
+    screen: SubCategoriesScreen,
+  },
+  CatContent: {
+    screen: CatContentScreen
+  },
+  Chatroom: {
+    screen: ChatroomScreen,
+  },
+  CME: {
+    screen: CMEScreen
+  },
+  Search: {
+    screen: SearchScreen
+  },
+},
   {
-    // initialRouteName: 'Categories',
-    defaultNavigationOptions: {
-      headerStyle: {
-        backgroundColor: Platform.OS === 'android' ? Colors.primaryColor : ''
-      },
-      headerTintColor:
-        Platform.OS === 'android' ? 'white' : Colors.primaryColor
-    }
+
+    defaultNavigationOptions: defaultStackNavOptions,
+
+  },
+);
+
+const ChatNavigator = createStackNavigator({
+  Chat: ChatTabScreen,
+  Chatroom: ChatroomScreen
+});
+
+const FavNavigator = createStackNavigator({
+  Favorites: {
+    screen: FavoritesScreen,
+  },
+});
+
+const ProfileNavigator = createStackNavigator({
+  Profile: ProfileScreen,
+  Edit: EditProfileScreen,
+    //defaultNavigationOptions: defaultStackNavOptions
   }
 );
 
@@ -62,36 +94,112 @@ const AdminNavigator = createStackNavigator({
   CatContent: CatContentScreen
 },
   {
-      navigationOptions: {
-          drawerIcon: drawerConfig =>(
-              <Ionicons
-              name={Platform.OS === 'android' ? 'md-create' : 'ios-create'}
-              size={23}
-              color={drawerConfig.tintColor}
-          />
-          )
-             
-      },
-      defaultNavigationOptions: {
-        headerStyle: {
-          backgroundColor: Platform.OS === 'android' ? Colors.primaryColor : ''
-        },
-        headerTintColor:
-          Platform.OS === 'android' ? 'white' : Colors.primaryColor
-      }
+    navigationOptions: {
+      drawerIcon: drawerConfig => (
+        <Ionicons
+          name={Platform.OS === 'android' ? 'md-create' : 'ios-create'}
+          size={23}
+          color={drawerConfig.tintColor}
+        />
+      )
+
+    },
+    //defaultNavigationOptions: defaultStackNavOptions
   }
 );
 
+const tabScreenConfig = ({
+  Home: {
+    screen: CatNavigator,
+    navigationOptions: {
+      tabBarIcon: ({ tintColor }) => <Ionicons name={Platform.OS === 'android' ? 'md-home' : 'ios-home'} color={tintColor} size={24} />
+    },
+    tabBarColor: Colors.primaryColor
+  },
+  Chat: {
+    screen: ChatNavigator,
+    navigationOptions: {
+      tabBarIcon: ({ tintColor }) => <Ionicons name={Platform.OS === 'android' ? 'md-chatboxes' : 'ios-chatboxes'} color={tintColor} size={24} />
+    },
+    tabBarColor: Colors.accentColor
+  }
+});
+
+const MenuTabNavigator = Platform.OS === 'android'
+  ? createMaterialBottomTabNavigator(tabScreenConfig, {
+    activeTinColor: 'white',
+    shifting: true,
+    barStyle: {
+      backgroundColor: Colors.primaryColor
+    }
+  })
+  : createBottomTabNavigator(tabScreenConfig, {
+    tabOptions: {
+      activeTinColor: Colors.accentColor
+    }
+  }
+  );
+
 const PemNavigator = createDrawerNavigator({
-  Categories: CatNavigator,
+  Categories: {
+    screen: MenuTabNavigator,
+    navigationOptions: {
+      drawerIcon: drawerConfig => (
+        <Ionicons
+          name={Platform.OS === 'android' ? 'md-star' : 'ios-star'}
+          size={24}
+          color={drawerConfig.tintColor}
+        />
+      )
+    }
+  },
+  Profile: {
+    screen: ProfileNavigator,
+    navigationOptions: {
+      drawerIcon: drawerConfig => (
+        <Icon name="user-circle" size={24} />
+      )
+    }
+  },
+  Favorites: {
+    screen: FavNavigator,
+    navigationOptions: {
+      drawerIcon: drawerConfig => (
+        <Ionicons
+          name={Platform.OS === 'android' ? 'md-heart' : 'ios-heart'}
+          size={24}
+          color={drawerConfig.tintColor}
+        />
+      )
+    },
+  },
   Admin: AdminNavigator,
 },
   {
-      contentOptions: {
-          activeTinColor: Colors.primary
-      }
+    contentOptions: {
+      activeTinColor: Colors.primary
+    }
   }
 );
 
+//const AuthNavigator = createStackNavigator({
+// Auth: AuthScreen
+//});
+/*
+const LoginNavigator = createSwitchNavigator({
+  Login: LoginScreen
+});
+*/
 
-export default createAppContainer(PemNavigator);
+
+const SwitchNavigator = createSwitchNavigator({
+  Login: LoginNavigator,
+  Main: PemNavigator,
+  TabMain: MenuTabNavigator
+},
+  {
+    initialRouteName: "Login"
+  }
+);
+
+export default createAppContainer(SwitchNavigator);

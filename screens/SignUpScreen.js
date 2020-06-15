@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { StyleSheet, View, TextInput, TouchableOpacity, Text, Alert, Image } from 'react-native';
+import UserPermission from '../utilities/UserPermission'
 import * as firebase from 'firebase';
 import 'firebase/firestore';
+import * as ImagePicker from 'expo-image-picker';
 
 /**
  * Displays an alert box with the specified title
@@ -22,30 +25,50 @@ export default class CreateAccount extends Component {
     title: 'Sign Up',
   };
 
-  constructor(props){
+  constructor(props) {
     super(props)
     this.state = {
+      fullName: "",
       username: "",
-      password: ""
+      password: "",
+      avatar: "",
     }
+    this.handlePickAvatar = this.handlePickAvatar.bind(this)
+    this.handleFullName = this.handleFullName.bind(this)
     this.handleEmail = this.handleEmail.bind(this)
     this.handlePassword = this.handlePassword.bind(this)
   }
+  handleFullName(text) {
+    this.setState({ fullName: text })
+  }
 
-  handleEmail(text){
-    this.setState({username: text})
+  handleEmail(text) {
+    this.setState({ username: text })
   }
-  
-  handlePassword(text){
-    this.setState({password: text})
+
+  handlePassword(text) {
+    this.setState({ password: text })
   }
+
+  handlePickAvatar = async () => {
+    UserPermission.getCameraPermission()
+
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4,3]
+    })
+    if(!result.cancelled){
+      this.setState({avatar: result.uri})
+    }
+  };
 
   /**
    * Clears the text inputs. This is so that if there's an error, 
    * the user doesn't have to backspace everything they put. 
    */
-  clearTextInputs(){
-    this.setState({username: "", password: ""})
+  clearTextInputs() {
+    this.setState({fullName: "", username: "", password: "" })
   }
 
   /**
@@ -57,31 +80,55 @@ export default class CreateAccount extends Component {
    * @param {string} password 
    * @param {Object} props 
    */
-  createUserAccount(username, password, props) {
-    firebase.auth().createUserWithEmailAndPassword(username, password).then(function () {
-      displayOKAlert('Success!', 'Your account has been created')
-      props.navigation.navigate('Login')
-      firebase.auth().signOut().then(function() {
-        console.log('User has been signed out')
-      }).catch(function (err) {
-        console.log('An error has occured in createUserAccount signOut: ',
-          err,
-          '\nU:', username,
-          '| P:', password);
-      })
-    }).catch(function (err) {
-      displayOKAlert('Oh no!', (err + "").substring(7))
-      console.log('An error has occured in createUserAccount createUserWithEmailAndPassword: ',
-        err,
-        '\nU:', username,
-        '| P:', password);
-    })
+  createUserAccount(fullname, username, password, props) {
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(username, password)
+      .then(
+        (userCredentials)=>{
+        if(userCredentials.user){
+          userCredentials.user.updateProfile({
+            displayName: this.state.user.displayName
+          })
+        }},
+        function () {
+          displayOKAlert('Success!', 'Your account has been created'),
+            props.navigation.replace('Login')
+          firebase.auth().signOut().then(function () {
+            console.log('User has been signed out')
+          }).catch(function (err) {
+            console.log('An error has occured in createUserAccount signOut: ',
+              err,
+              '\nF:', fullname,
+              '\nU:', username,
+              '| P:', password);
+          })
+        }).catch(function (err) {
+          displayOKAlert('Oh no!', (err + "").substring(7))
+          console.log('An error has occured in createUserAccount createUserWithEmailAndPassword: ',
+            err,
+            '\nF:', fullname,
+            '\nU:', username,
+            '| P:', password);
+        })
     this.clearTextInputs()
   }
-
+//uri: this.state.user.avatar
   render() {
     return (
       <View style={styles.container}>
+        <TouchableOpacity style={styles.avatarPlaceholder} onPress={this.handlePickAvatar}> 
+          <Image source={{uri: this.state.avatar}} style={styles.avatar} />
+          <Ionicons name="ios-add" size={40} color="aFFF"
+            style={{ marginTop: 6, marginLeft: 2 }}>
+          </Ionicons>
+        </TouchableOpacity>
+        <TextInput
+          style={[styles.textField, styles.fullName]}
+          placeholder='Full Name'
+          onChangeText={this.handleFullName}
+          value={this.state.fullName}
+        />
         <TextInput
           style={[styles.textField, styles.email]}
           placeholder='Email'
@@ -96,7 +143,7 @@ export default class CreateAccount extends Component {
           value={this.state.password}
         />
         <TouchableOpacity style={styles.button} onPress={() => {
-          this.createUserAccount(this.state.username, this.state.password, this.props)
+          this.createUserAccount(this.state.fullName, this.state.username, this.state.password, this.props)
         }}>
           <Text style={styles.text}>Confirm</Text>
         </TouchableOpacity>
@@ -110,6 +157,30 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  avatar: {
+    position: "absolute",
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginTop: 48,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#E1E2E6"
+    
+  },
+  avatarPlaceholder: {
+    borderRadius: 60,
+    width: 120,
+    height: 120,
+    backgroundColor: "#E1E2E6",
+    marginTop: 10,
+    marginBottom: 20,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  fullName: {
+    marginBottom: 30
   },
   textField: {
     fontFamily: 'open-sans-bold',

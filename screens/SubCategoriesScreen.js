@@ -49,7 +49,8 @@ const SubCategoriesScreen = props => {
   /**
    * Deletes all messages from the database. 
    */
-  const deleteAllMessages = () => {
+  
+  const deleteAllMessages = () =>{
     firebase.database().ref('userCount').on('value', function (snapshot) {
       if (snapshot.val().count == 0) {
         firebase.database().ref('messages').remove();
@@ -62,7 +63,8 @@ const SubCategoriesScreen = props => {
    * the removal of the username from the onlineUsers list, and of the message
    * deletion if the user signing out is the last user that's signed in.
    */
-  const signOut = useCallback(() => {
+  
+  const signOut = useCallback(() =>{
     let signOutUser = Firebase.shared.userEmail
     firebase.auth().signOut().then(function () {
       Firebase.shared.setUserCount = -1;
@@ -74,7 +76,8 @@ const SubCategoriesScreen = props => {
           }
         }
       })
-      props.navigation.navigate('Categories')
+    props.navigation.navigate('Login')
+
     }).catch(function (err) {
       displayOKAlert('Oh no!', 'Sign out failed: ' + err)
       console.log(err)
