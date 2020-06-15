@@ -16,8 +16,9 @@ import SignUpScreen from '../screens/SignUpScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
 import CMEScreen from '../screens/CMEScreen';
 import SearchScreen from '../screens/SearchScreen';
-import AdminPanelScreen from '../screens/UI/AdminPanelScreen';
-import EditCatContentScreen from '../screens/UI/EditCatContentScreen';
+import AdminCategoriesScreen from '../screens/AdminScreens/AdminCategoriesScreen';
+import EditCatContentScreen from '../screens/AdminScreens/EditCatContentScreen';
+import AdminSubCategoriesScreen from '../screens/AdminScreens/AdminSubCategoriesScreen';
 import Colors from '../constants/Colors';
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -86,8 +87,11 @@ const ProfileNavigator = createStackNavigator({
 );
 
 const AdminNavigator = createStackNavigator({
-  AdminPanel: AdminPanelScreen,
-  EditCatContent: EditCatContentScreen
+
+  AdminCategories: AdminCategoriesScreen,
+  EditCatContent: EditCatContentScreen,
+  AdminSubCategories: AdminSubCategoriesScreen,
+  CatContent: CatContentScreen
 },
   {
     navigationOptions: {

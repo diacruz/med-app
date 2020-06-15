@@ -33,21 +33,20 @@ const styles = StyleSheet.create({
   gridItem: {
     flex: 1,
     margin: 15,
-    height: 110,
     borderRadius: 10,
-    overflow: 'hidden',
+    overflow: 'hidden'
   },
   container: {
-    flex: 1,
+    //flex: 1,
+    height: 110,
     borderRadius: 10,
     shadowColor: 'black',
     shadowOpacity: 0.26,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 10,
-    elevation: 3,
+    elevation: 6,
     padding: 15,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
+    alignItems: 'center',
   },
   title: {
     fontFamily: 'open-sans-bold',
