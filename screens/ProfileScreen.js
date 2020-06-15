@@ -1,56 +1,21 @@
 import React, { useState } from 'react';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../components/CustomHeaderButton';
-import CreateUserAccount from '../screens/SignUpScreen';
 import { Ionicons } from '@expo/vector-icons';
 import { View, Button, Text, StyleSheet, Platform, Image, TouchableOpacity, ImageBackground } from 'react-native';
-import { ToggleButton } from 'react-native-paper';
 import * as firebase from 'firebase'
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import * as ImagePicker from 'expo-image-picker';
 import UserPermission from '../utilities/UserPermission';
 import EditProfileScreen from '../screens/EditProfileScreen';
 
-//import Header from '../components/Profile/Header';
-//import Bar from '../components/Profile/Bar';
-//import PhotoGrid from '../components/Profile/PhotoGrid';
-/*
-const ProfileScreen = props => {
-    return (
-      <View style={styles.container}>
-        <Header />
-        <Bar />
-      </View>
-    );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000',
-
-  },
-});*/
-
-
-
-
-/*
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center"
-    },
-})
-*/
 
 
 class ProfileScreen extends React.Component {
     state = {
         email: "",
         displayName: "",
-        avatar: "",
+        avatar: "../components/img/profilepic.jpg",
     };
 
     componentDidMount() {
@@ -77,7 +42,7 @@ class ProfileScreen extends React.Component {
                 <View><ImageBackground style={styles.header} source={require('../components/img/headerbg.jpg')} /></View>
                 <TouchableOpacity style={styles.avatarPlaceholder} onPress={this.handlePickAvatar}>
                     <Image source={{ uri: this.state.avatar }} style={styles.avatar} />
-                    <Ionicons name="ios-add" size={30} color="aFFF"
+                    <Ionicons name={Platform.OS === 'android' ? 'md-add' : 'ios-add'} size={30} color="aFFF"
                         style={{ marginTop: 6, marginLeft: 2 }}>
                     </Ionicons>
                 </TouchableOpacity>

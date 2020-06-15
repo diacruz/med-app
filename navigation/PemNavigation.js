@@ -104,7 +104,7 @@ const AdminNavigator = createStackNavigator({
       )
 
     },
-    //defaultNavigationOptions: defaultStackNavOptions
+    defaultNavigationOptions: defaultStackNavOptions
   }
 );
 
@@ -199,7 +199,7 @@ const SwitchNavigator = createSwitchNavigator({
 },
   {
     initialRouteName: "Login"
-  }
+  },
 );
 
 export default createAppContainer(SwitchNavigator);
