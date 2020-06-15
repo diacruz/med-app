@@ -15,7 +15,7 @@ class ProfileScreen extends React.Component {
     state = {
         email: "",
         displayName: "",
-        avatar: "../components/img/profilepic.jpg",
+        avatar: "",
     };
 
     componentDidMount() {
