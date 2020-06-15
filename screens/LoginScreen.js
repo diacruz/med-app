@@ -8,7 +8,7 @@ import {
   Alert,
   KeyboardAvoidingView,
   Dimensions,
-  Image
+  Image,
 } from 'react-native';
 import * as firebase from 'firebase';
 import 'firebase/firestore';
@@ -33,7 +33,7 @@ function logUserIn(username, password, props) {
   firebase.auth().signInWithEmailAndPassword(username, password).then(function () {
     Firebase.shared.setUserCount = 1;
     Firebase.shared.addOnlineUser(username)
-    props.navigation.replace({ routeName: 'SubCategories', params: { categoryId: 'c8' } });
+    props.navigation.navigate({ routeName: 'Categories' });
   }).catch(function (err) {
     displayOKAlert('No account with that email was found', 'Feel free to create an account first!')
     console.log(err)
@@ -58,7 +58,6 @@ export default class Login extends Component {
   static navigationOptions = {
     title: 'Login',
   };
-
   render() {
     return (
       <KeyboardAvoidingView styles={styles.container} behavior="position" enabled keyboardVerticalOffset="100">
@@ -156,3 +155,4 @@ const styles = StyleSheet.create({
     marginLeft:30
   }
 })
+

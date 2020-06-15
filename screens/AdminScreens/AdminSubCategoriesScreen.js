@@ -18,7 +18,7 @@ const AdminSubCategoriesScreen = props => {
   const dispatch = useDispatch();
 
   const selectSubCategoryHandler = (id, title) => {
-    props.navigation.navigate('CatContent', { CatContentId: id, subcategoryTitle: title })
+    props.navigation.navigate('CatContent', { subcategoryId: id, subcategoryTitle: title })
   };
 
   const editSubCategoryHandler = (id, categoryId) => {
