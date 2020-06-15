@@ -32,7 +32,7 @@ const SubCategoriesScreen = props => {
       props.navigation.navigate({
         routeName: 'CatContent',
         params: {
-          CatContentId: id,
+          subcategoryId: id,
           subcategoryTitle: title
         }
       });

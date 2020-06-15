@@ -42,7 +42,7 @@ class ProfileScreen extends React.Component {
                 <View><ImageBackground style={styles.header} source={require('../components/img/headerbg.jpg')} /></View>
                 <TouchableOpacity style={styles.avatarPlaceholder} onPress={this.handlePickAvatar}>
                     <Image source={{ uri: this.state.avatar }} style={styles.avatar} />
-                    <Ionicons name={Platform.OS === 'android' ? 'md-add' : 'ios-add'} size={30} color="aFFF"
+                    <Ionicons name="ios-add" size={30} color="#aFFF"
                         style={{ marginTop: 6, marginLeft: 2 }}>
                     </Ionicons>
                 </TouchableOpacity>

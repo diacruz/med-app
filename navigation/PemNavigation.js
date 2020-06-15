@@ -74,23 +74,47 @@ const ChatNavigator = createStackNavigator({
 });
 
 const FavNavigator = createStackNavigator({
-  Favorites: {
-    screen: FavoritesScreen,
+  Favorites: FavoritesScreen,
   },
-});
+  {
+    navigationOptions: {
+      drawerIcon: drawerConfig => (
+        <Ionicons
+      name={Platform.OS === 'android' ? 'md-heart' : 'ios-heart'}
+      size={24}
+      color={drawerConfig.tintColor}
+    />
+      )
+
+    },
+    defaultNavigationOptions: defaultStackNavOptions
+  }
+);
 
 const ProfileNavigator = createStackNavigator({
   Profile: ProfileScreen,
   Edit: EditProfileScreen,
-    //defaultNavigationOptions: defaultStackNavOptions
+},
+  {
+    navigationOptions: {
+      drawerIcon: drawerConfig => (
+        <Icon name="user-circle"
+         size={24} 
+        color={drawerConfig.tintColor}
+        />
+      )
+
+    },
+    defaultNavigationOptions: defaultStackNavOptions
   }
 );
+
 
 const AdminNavigator = createStackNavigator({
 
   AdminCategories: AdminCategoriesScreen,
-  EditCatContent: EditCatContentScreen,
   AdminSubCategories: AdminSubCategoriesScreen,
+  EditCatContent: EditCatContentScreen,
   CatContent: CatContentScreen
 },
   {
@@ -153,27 +177,13 @@ const PemNavigator = createDrawerNavigator({
       )
     }
   },
+  Admin: AdminNavigator,
   Profile: {
-    screen: ProfileNavigator,
-    navigationOptions: {
-      drawerIcon: drawerConfig => (
-        <Icon name="user-circle" size={24} />
-      )
-    }
+    screen: ProfileNavigator
   },
   Favorites: {
     screen: FavNavigator,
-    navigationOptions: {
-      drawerIcon: drawerConfig => (
-        <Ionicons
-          name={Platform.OS === 'android' ? 'md-heart' : 'ios-heart'}
-          size={24}
-          color={drawerConfig.tintColor}
-        />
-      )
-    },
-  },
-  Admin: AdminNavigator,
+  }
 },
   {
     contentOptions: {

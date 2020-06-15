@@ -6,7 +6,7 @@ import CategoriesScreen from './CategoriesScreen';
 import { useSelector, useDispatch } from 'react-redux';
 
 const CatContentScreen = props => {
-  const categoryId = props.navigation.getParam('CatContentId');
+  const categoryId = props.navigation.getParam('subcategoryId');
   const selectedSubCategories = useSelector(state =>
     state.categoriesContent.categoriesContent.find(prod => prod.id === categoryId)
   );
