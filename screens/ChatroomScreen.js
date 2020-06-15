@@ -8,6 +8,7 @@ import Firebase from '../backend/firebase'
 /**
  * Deletes all messages from chatroom once all users are signed out.
  */
+
 function deleteAllMessages() {
   firebase.database().ref('userCount').on('value', function (snapshot) {
     if (snapshot.val().count == 0) {
@@ -152,7 +153,7 @@ class Chatroom extends Component {
           deleteAllMessages()
         }
       })
-      props.navigation.navigate('Categories')
+      //props.navigation.replace('Login')
     }).catch(function (err) {
       this.displayOKAlert('Oh no!', 'Sign out failed: ' + err, false)
       console.log(err)
