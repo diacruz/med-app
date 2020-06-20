@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, TextInput, StyleSheet, ScrollView, Platform } from 'react-native';
+import { View, Text, TextInput, StyleSheet, ScrollView, Platform, } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../../components/CustomHeaderButton';
 import { useSelector, useDispatch } from 'react-redux';
@@ -24,6 +24,9 @@ const EditCatContentScreen = props => {
     const [management, setManagement] = useState(editedSelectedSubCategories ? editedSelectedSubCategories.management : '');
     const [medications, setMedications] = useState(editedSelectedSubCategories ? editedSelectedSubCategories.medications : '');
     const [references, setReferences] = useState(editedSelectedSubCategories ? editedSelectedSubCategories.references : '');
+    const [textBoxWidth, SetTextBoxWidth] = useState('99%');
+
+
 
 
     const submitHandler = useCallback(() => {
@@ -41,90 +44,95 @@ const EditCatContentScreen = props => {
     }, [submitHandler]);
 
 
+    // The purpose of useEffect here is to be able 
+    //to solve the issue of clipboard functionality within TextInput.
+    useEffect(() => {
+        setTimeout(() => {
+            SetTextBoxWidth(prev => '100%');
+          }, 100);
+    }, [textBoxWidth]);
+
     return (
         <ScrollView>
             <View syle={styles.form}>
                 <View style={styles.formControl}>
                     <Text style={styles.font}>Title</Text>
                     <TextInput
-                        style={styles.input}
+                         style={{ ...styles.input, ...{ width: textBoxWidth } }}
                         value={title}
                         onChangeText={text => setTitle(text)}
-                        keyboardType="default"
+                        //keyboardType="default"
                         autoCapitalize="sentences"
-                        autoCorrect
                         returnKeyType="next"
+                        selectTextOnFocus={true}
                     />
                 </View>
                 <View style={styles.formControl}>
                     <Text style={styles.font}>Evaluation</Text>
                     <TextInput
-                        style={styles.input}
+                        style={{ ...styles.input, ...{ width: textBoxWidth } }}
                         multiline={true}
                         value={evaluation}
                         onChangeText={text => setEvaluation(text)}
-                        keyboardType="default"
+                        //keyboardType="default"
                         autoCapitalize="sentences"
-                        autoCorrect
                         returnKeyType="next"
+                        selectTextOnFocus={true}
                     />
-
                 </View>
                 <View style={styles.formControl}>
                     <Text style={styles.font}>Signs</Text>
                     <TextInput
-                        style={styles.input}
-                        multiline={true} value={signs}
+                        style={{ ...styles.input, ...{ width: textBoxWidth } }}
+                        multiline={true}
+                        value={signs}
                         onChangeText={text => setSigns(text)}
-                        keyboardType="default"
+                        //keyboardType="default"
                         autoCapitalize="sentences"
-                        autoCorrect
                         returnKeyType="next"
+                        selectTextOnFocus={true}
                     />
                 </View>
                 <View style={styles.formControl}>
                     <Text style={styles.font}> Management</Text>
                     <TextInput
-                        style={styles.input}
+                         style={{ ...styles.input, ...{ width: textBoxWidth } }}
                         multiline={true}
                         value={management}
                         onChangeText={text => setManagement(text)}
-                        keyboardType="default"
+                        //keyboardType="default"
                         autoCapitalize="sentences"
-                        autoCorrect
                         returnKeyType="next"
+                        selectTextOnFocus={true}
                     />
                 </View>
                 <View style={styles.formControl}>
                     <Text style={styles.font}> Medications</Text>
                     <TextInput
-                        style={styles.input}
+                        style={{ ...styles.input, ...{ width: textBoxWidth } }}
                         multiline={true} value={medications}
                         onChangeText={text => setMedications(text)}
-                        keyboardType="default"
+                        //keyboardType="default"
                         autoCapitalize="sentences"
-                        autoCorrect
                         returnKeyType="next"
-                        onEndEditing={() => console.log('onEndEditing')}
-                        onSubmitEditing={() => console.log('onSubmitEditing')}
+                        selectTextOnFocus={true}
                     />
                 </View>
                 <View style={styles.formControl}>
                     <Text style={styles.font}> References</Text>
                     <TextInput
-                        style={styles.input}
+                        style={{ ...styles.input, ...{ width: textBoxWidth } }}
                         multiline={true}
                         value={references}
                         onChangeText={text => setReferences(text)}
-                        keyboardType="default"
+                        //keyboardType="default"
                         autoCapitalize="sentences"
-                        autoCorrect
                         returnKeyType="next"
-                        onEndEditing={() => console.log('onEndEditing')}
-                        onSubmitEditing={() => console.log('onSubmitEditing')}
+                        selectTextOnFocus={true}
                     />
                 </View>
             </View>
+
         </ScrollView>
     );
 };
