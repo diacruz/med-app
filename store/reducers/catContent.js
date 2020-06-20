@@ -20,7 +20,8 @@ export default (state = initialState, action) => {
                 action.catContentData.signs,
                 action.catContentData.management,
                 action.catContentData.medications,
-                action.catContentData.references
+                action.catContentData.references,
+                action.catContentData.image
                 );
                 return {
                     ...state,
@@ -40,7 +41,8 @@ export default (state = initialState, action) => {
                 action.catContentData.signs,
                 action.catContentData.management,
                 action.catContentData.medications,
-                action.catContentData.references
+                action.catContentData.references,
+                action.catContentData.image
                 );
                 const updatedAvailableCatContent = [...state.categoriesContent];
                 updatedAvailableCatContent[catContentIndex] = updatedCatContent;

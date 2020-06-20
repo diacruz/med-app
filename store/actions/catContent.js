@@ -6,7 +6,7 @@ export const deleteCatContent = (catContentId) => {
     return { type: DELETE_CATCONTENT, catContentId: catContentId };
 }
 
-export const createCatContent = (title, color, subId, evaluation, signs, management, medications,references) => {
+export const createCatContent = (title, color, subId, evaluation, signs, management, medications,references,image) => {
     return {
         type: CREATE_CATCONTENT, 
         catContentData:{
@@ -18,11 +18,12 @@ export const createCatContent = (title, color, subId, evaluation, signs, managem
             management: management,
             medications: medications,
             references: references,
+            image: image
         }
     };
 };
 
-export const updateCatContent = (id, title, evaluation, signs, management, medications, references) => {
+export const updateCatContent = (id, title, evaluation, signs, management, medications, references, image) => {
     return {
         type: UPDATE_CATCONTENT,
         catContentId: id,
@@ -33,6 +34,7 @@ export const updateCatContent = (id, title, evaluation, signs, management, medic
             management: management,
             medications: medications,
             references: references,
+            image: image
         }
     };
 };

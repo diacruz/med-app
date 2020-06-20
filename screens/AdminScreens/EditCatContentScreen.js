@@ -30,13 +30,13 @@ const EditCatContentScreen = props => {
     const [textBoxWidth, SetTextBoxWidth] = useState('99%');
     const submitHandler = useCallback(() => {
         if (editedSelectedSubCategories) {
-            dispatch(CatContentActions.updateCatContent(subCategoryId, title, evaluation, signs, management, medications, references));
+            dispatch(CatContentActions.updateCatContent(subCategoryId, title, evaluation, signs, management, medications, references, image));
         }
         else {
-            dispatch(CatContentActions.createCatContent(title, selectedCategory.color, selectedCategory.id, evaluation, signs, management, medications, references));
+            dispatch(CatContentActions.createCatContent(title, selectedCategory.color, selectedCategory.id, evaluation, signs, management, medications, references, image));
         }
         props.navigation.goBack();
-    }, [dispatch, subCategoryId, selectedCategory.color, selectedCategory.id, title, evaluation, signs, management, medications, references, editedSelectedSubCategories]);
+    }, [dispatch, subCategoryId, selectedCategory.color, selectedCategory.id, title, evaluation, signs, management, medications, references, editedSelectedSubCategories, image]);
 
     useEffect(() => {
         props.navigation.setParams({ submit: submitHandler });
@@ -56,23 +56,21 @@ const EditCatContentScreen = props => {
             if (Platform.ios) {
                 const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
                 if (status !== 'granted') {
-                    alert('Sorry, we need camera roll permissions to make this work!');
+                    alert('Sorry, camera roll permission is required!');
                 }
             }
         })();
     }, []);
 
     const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
+        let selectedImage = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
             allowsEditing: true,
             quality: 1,
         });
 
-        console.log(result);
-
-        if (!result.cancelled) {
-            setImage(result.uri);
+        if (!selectedImage.cancelled) {
+            setImage(selectedImage.uri);
         }
     };
 
@@ -163,9 +161,9 @@ const EditCatContentScreen = props => {
                             onPress ={pickImage}
                         />
                     </View>
-                       
                         <View style = {styles.imageContainer}>
-                            {image && <Image style={styles.ImageSize} source={{ uri: image }} />}   
+                            {image && <Image style={styles.ImageSize} source={{ uri: image }} />}  
+                            {console.log(image)}
                         </View>
                     
                     

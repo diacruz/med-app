@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet,ScrollView } from 'react-native';
+import { View, Text, StyleSheet,ScrollView, Image } from 'react-native';
 import * as firebase from 'firebase'
 import 'firebase/firestore';
 import CategoriesScreen from './CategoriesScreen';
@@ -23,6 +23,7 @@ const CatContentScreen = props => {
       <Text style={styles.content}>{selectedSubCategories.signs}</Text>
       <Text style={styles.header}>REFERENCES</Text>
       <Text style={styles.content}>{selectedSubCategories.references}</Text>
+      <Image style={styles.image} source={{ uri: selectedSubCategories.image}} /> 
     </ScrollView>
   );
 
@@ -45,6 +46,10 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingBottom: 15
+  },
+  image:{
+    width: 200,
+    height: 200
   }
 });
 
