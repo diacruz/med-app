@@ -5,27 +5,16 @@ import * as firebase from 'firebase';
 import 'firebase/firestore';
 import Firebase from '../backend/firebase'
 
-/**
- * Deletes all messages from chatroom once all users are signed out.
- */
-
-function deleteAllMessages() {
-  firebase.database().ref('userCount').on('value', function (snapshot) {
-    if (snapshot.val().count == 0) {
-      firebase.database().ref('messages').remove();
-    }
-  });
-}
-
 class Chatroom extends Component {
   static navigationOptions = {
     title: 'Chatroom',
   };
 
+
   constructor(props) {
     super(props)
 
-    this.signOut = this.signOut.bind(this)
+    //this.signOut = this.signOut.bind(this)
     this.setOnlineUsersStr = this.setOnlineUsersStr.bind(this)
     this.displayOKAlert = this.displayOKAlert.bind(this)
   }
@@ -72,15 +61,8 @@ class Chatroom extends Component {
   componentDidMount() {
     this.setOnlineUsersStr();
     this.props.navigation.setParams({
-      headerRight:(
-        <View /*style={{ flexDirection: "row" }}*/>
-          <Button
-            style={styles.signOutButton}
-            title='Sign out'
-            onPress={() => {
-              this.signOut(this.props)
-            }}
-          />
+      headerRight: () => (
+        <View>
           <Button
             style={styles.whosOnlineButton}
             title={"Who\'s online"}
@@ -137,32 +119,10 @@ class Chatroom extends Component {
     console.log('STATE IN SETONLINEUSERS', this.state.onlineUsers)
   }
 
-  /**
-   * Signs the user out. This also takes care of the decrementing for userCount,
-   * the removal of the username from the onlineUsers list, and (if this user is
-   * the last one signed in) the deletion of all the messages. Once they're 
-   * signed out, they are sent back to the home page (CategoriesScreen).
-   */
-  signOut = (props) => {
-    let signOutUser = Firebase.shared.userEmail;
-    firebase.auth().signOut().then(function () {
-      Firebase.shared.setUserCount = -1;
-      Firebase.shared.removeOnlineUser(signOutUser)
-      firebase.database().ref('userCount').on('value', function (snapshot) {
-        if (snapshot.val().count <= 0) {
-          deleteAllMessages()
-        }
-      })
-      props.navigation.replace('Login')
-    }).catch(function (err) {
-      this.displayOKAlert('Oh no!', 'Sign out failed: ' + err, false)
-      console.log(err)
-    });
-  }
-
   componentWillUnmount() {
     Firebase.shared.off();
   }
+
 
   get user() {
     // Return our name and our UID for GiftedChat to parse
@@ -186,10 +146,6 @@ class Chatroom extends Component {
 export default Chatroom;
 
 const styles = StyleSheet.create({
-  signOutButton: {
-    flex: 1,
-    marginRight: 3
-  },
   whosOnlineButton: {
     flex: 1,
     marginTop: 6

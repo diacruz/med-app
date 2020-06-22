@@ -23,6 +23,9 @@ import Colors from '../constants/Colors';
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import EditProfileScreen from '../screens/EditProfileScreen';
+import DrawerComponent from "../components/DrawerComponent";
+//import AppContainer from '../screens/ChatTabScreen'
+//import SignOut from '../screens/SignOut'
 
 const defaultStackNavOptions = {
   headerStyle: {
@@ -35,57 +38,78 @@ const defaultStackNavOptions = {
 
 const LoginNavigator = createStackNavigator({
   Login: {
-    screen: LoginScreen
+    screen: LoginScreen,
   },
   SignUp: {
     screen: SignUpScreen
   },
+
 },
+{
+  initialRouteName: "Login"
+}
 );
 
 const CatNavigator = createStackNavigator({
   Categories: CategoriesScreen,
+  Search: {
+    screen: SearchScreen,
+    navigationOptions: {
+      header: null
+    }
+  },
   SubCategories: {
     screen: SubCategoriesScreen,
   },
   CatContent: {
     screen: CatContentScreen
   },
-  Chatroom: {
-    screen: ChatroomScreen,
-  },
-  CME: {
-    screen: CMEScreen
-  },
-  Search: {
-    screen: SearchScreen
-  },
 },
   {
-
     defaultNavigationOptions: defaultStackNavOptions,
-
   },
 );
 
 const ChatNavigator = createStackNavigator({
   Chat: ChatTabScreen,
-  Chatroom: ChatroomScreen
-});
+  Chatroom: {
+    screen: ChatroomScreen,
+  },
+},
+{
+  navigationOptions: ({ navigation }) => {
+    let tabBarVisible;
+    if (navigation.state.routes.length > 1) {
+      navigation.state.routes.map(route => {
+        if (route.routeName === "Chatroom") {
+          tabBarVisible = false;
+        } else {
+          tabBarVisible = true;
+        }
+      });
+    }
+    return {
+      tabBarVisible
+    }
+  }
+},
+{
+  initialRouteName: 'Chat',
+},
+);
 
 const FavNavigator = createStackNavigator({
   Favorites: FavoritesScreen,
-  },
+},
   {
     navigationOptions: {
       drawerIcon: drawerConfig => (
         <Ionicons
-      name={Platform.OS === 'android' ? 'md-heart' : 'ios-heart'}
-      size={24}
-      color={drawerConfig.tintColor}
-    />
+          name={Platform.OS === 'android' ? 'md-heart' : 'ios-heart'}
+          size={24}
+          color={drawerConfig.tintColor}
+        />
       )
-
     },
     defaultNavigationOptions: defaultStackNavOptions
   }
@@ -94,13 +118,14 @@ const FavNavigator = createStackNavigator({
 const ProfileNavigator = createStackNavigator({
   Profile: ProfileScreen,
   Edit: EditProfileScreen,
+  CME: CMEScreen,
 },
   {
     navigationOptions: {
       drawerIcon: drawerConfig => (
         <Icon name="user-circle"
-         size={24} 
-        color={drawerConfig.tintColor}
+          size={24}
+          color={drawerConfig.tintColor}
         />
       )
 
@@ -138,21 +163,20 @@ const tabScreenConfig = ({
     navigationOptions: {
       tabBarIcon: ({ tintColor }) => <Ionicons name={Platform.OS === 'android' ? 'md-home' : 'ios-home'} color={tintColor} size={24} />
     },
-    tabBarColor: Colors.primaryColor
+
   },
   Chat: {
     screen: ChatNavigator,
     navigationOptions: {
       tabBarIcon: ({ tintColor }) => <Ionicons name={Platform.OS === 'android' ? 'md-chatboxes' : 'ios-chatboxes'} color={tintColor} size={24} />
     },
-    tabBarColor: Colors.accentColor
   }
 });
 
 const MenuTabNavigator = Platform.OS === 'android'
   ? createMaterialBottomTabNavigator(tabScreenConfig, {
     activeTinColor: 'white',
-    shifting: true,
+    //shifting: true,
     barStyle: {
       backgroundColor: Colors.primaryColor
     }
@@ -161,6 +185,9 @@ const MenuTabNavigator = Platform.OS === 'android'
     tabOptions: {
       activeTinColor: Colors.accentColor
     }
+  },
+  {
+    initialRouteName: "Home"
   }
   );
 
@@ -186,30 +213,26 @@ const PemNavigator = createDrawerNavigator({
   }
 },
   {
+    contentComponent: DrawerComponent,
     contentOptions: {
       activeTinColor: Colors.primary
     }
+  },
+  {
+    
   }
 );
-
-//const AuthNavigator = createStackNavigator({
-// Auth: AuthScreen
-//});
-/*
-const LoginNavigator = createSwitchNavigator({
-  Login: LoginScreen
-});
-*/
 
 
 const SwitchNavigator = createSwitchNavigator({
   Login: LoginNavigator,
   Main: PemNavigator,
-  TabMain: MenuTabNavigator
+  TabMain: MenuTabNavigator,
+  //Chat: ChatNavigator
 },
   {
     initialRouteName: "Login"
-  }
+  },
 );
 
 export default createAppContainer(SwitchNavigator);

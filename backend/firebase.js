@@ -24,6 +24,12 @@ class Firebase {
 
       };
 
+      /**apiKey: "",
+        authDomain: "",
+        databaseURL: "",
+        projectId: "",
+        storageBucket: "", */
+        
       firebase.initializeApp(firebaseConfig);
       this.counter()
       this.whosOnline()

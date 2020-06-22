@@ -12,18 +12,19 @@ const FavoritesScreen = props => {
     );
 };
 
-FavoritesScreen.navigationOptions = favData => {
+FavoritesScreen.navigationOptions = navigationdata => {
     return {
-        headerTitle: 'Favorites',
+        headerTitle: 'Favorite',
         headerLeft: () => (
             <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
                 <Item title='Menu' iconName={Platform.OS === 'android' ? 'md-menu' : 'ios-menu'}
                     onPress={() => {
-                        favData.navigation.toggleDrawer();
+                        navigationdata.navigation.toggleDrawer();
                     }}
                 />
             </HeaderButtons>
         ),
+
     }
 };
 
