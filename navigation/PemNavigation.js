@@ -216,6 +216,7 @@ const PemNavigator = createDrawerNavigator({
     contentComponent: DrawerComponent,
     contentOptions: {
       activeTinColor: Colors.primary
+      
     }
   },
   {

@@ -6,37 +6,39 @@ import Colors from '../constants/Colors';
 import SignOut from '../screens/SignOut'
 
 const DrawerComponent = (props) => {
-return(
-    <View style={styles.container} >
-        <SafeAreaView>
-            <ScrollView>
-                <DrawerItems {...props} />
-            </ScrollView>
-        </SafeAreaView>
-        <TouchableOpacity style={styles.touchable}
-            onPress={() =>
-                Alert.alert(
-                    'Log out',
-                    'Do you want to logout?',
-                    [
-                        { text: 'Cancel', onPress: () => { return null } },
-                        {
-                            text: 'Confirm', onPress: () => {
-                                new SignOut().signOut(props)
-                            }
-                        },
-                    ],
-                    { cancelable: false }
-                )
-            }>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between'}}>
-                <MaterialCommunityIcons name="exit-to-app" size={23} style={{color: Colors.primary}}></MaterialCommunityIcons>
-                <Text style={[styles.signText, {color: Colors.primary}]} > Logout</Text>
-            </View>
-        </TouchableOpacity>
+    return (
+        <View style={styles.container} >
+            <SafeAreaView>
+                <ScrollView>
+                    <View style={{ marginTop: '10%' }}>
+                        <DrawerItems {...props} />
+                    </View>
+                </ScrollView>
+            </SafeAreaView>
+            <TouchableOpacity style={styles.touchable}
+                onPress={() =>
+                    Alert.alert(
+                        'Log out',
+                        'Do you want to logout?',
+                        [
+                            { text: 'Cancel', onPress: () => { return null } },
+                            {
+                                text: 'Confirm', onPress: () => {
+                                    new SignOut().signOut(props)
+                                }
+                            },
+                        ],
+                        { cancelable: false }
+                    )
+                }>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <MaterialCommunityIcons name="exit-to-app" size={23} style={{ color: Colors.primary }}></MaterialCommunityIcons>
+                    <Text style={[styles.signText, { color: Colors.primary }]} > Logout</Text>
+                </View>
+            </TouchableOpacity>
 
-    </View>
-)
+        </View>
+    )
 };
 
 const styles = StyleSheet.create({

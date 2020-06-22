@@ -4,7 +4,17 @@ import CustomHeaderButton from '../components/CustomHeaderButton';
 import { Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Dropdown } from 'react-native-material-dropdown';
 import {
-    View, SafeAreaView, ScrollView, Button, Text, StyleSheet, Platform, Image, TouchableOpacity, Dimensions
+    View,
+    SafeAreaView,
+    ScrollView,
+    Button,
+    Text,
+    StyleSheet,
+    Platform,
+    Image,
+    TouchableOpacity,
+    Dimensions,
+    TouchableNativeFeedback
 } from 'react-native';
 import * as firebase from 'firebase'
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -49,8 +59,10 @@ class ProfileScreen extends Component {
 
     onButtonPress = () => {
 
-        if (this.state.buttonColor === 'red')
+        if (this.state.buttonColor === 'red') {
             this.setState({ buttonColor: "#34FFB9" });
+        }
+
         else {
             this.setState({ buttonColor: "red" });
         }
@@ -62,6 +74,11 @@ class ProfileScreen extends Component {
 
 
     render() {
+        let TouchableCmp = TouchableOpacity;
+
+        if (Platform.OS === 'android' && Platform.Version >= 21) {
+            TouchableCmp = TouchableNativeFeedback;
+        }
         var image = this.state.showDefault ? require('../components/img/default-profile-pic.jpg') : { uri: this.state.avatar };
         return (
             <SafeAreaView style={styles.container}>
@@ -71,9 +88,9 @@ class ProfileScreen extends Component {
                             <View style={styles.profileImage}>
                                 <Image source={image} style={styles.avatar} resizeMode="cover"></Image>
                             </View>
-                            <TouchableOpacity onPress={this.onButtonPress}>
+                            <TouchableCmp onPress={this.onButtonPress}>
                                 <View style={styles.active} backgroundColor={this.state.buttonColor}></View>
-                            </TouchableOpacity>
+                            </TouchableCmp>
                             <View style={styles.add}>
                                 <Ionicons name={Platform.OS === 'android' ? 'md-add' : 'ios-add'} size={30} color="#DFD8C8" style={{ marginTop: 0, marginLeft: 2 }} onPress={this.handlePickAvatar}></Ionicons>
                             </View>
@@ -130,8 +147,8 @@ class ProfileScreen extends Component {
                             </View>
                             <View style={styles.detailBox}>
                                 <Text style={[styles.text, { fontSize: 16 }]}>Certifications:</Text>
-                                <Text style={[styles.text, styles.subText]}  
-                                onPress={() => this.props.navigation.navigate('CME')}>Show All ></Text>
+                                <Text style={[styles.text, styles.subText]}
+                                    onPress={() => this.props.navigation.navigate('CME')}> Show All {'>'} </Text>
                             </View>
                         </View>
                         <View style={styles.buttonStyle}>
@@ -157,7 +174,7 @@ const styles = StyleSheet.create({
         flexDirection: "column"
     },
     text: {
-        fontFamily: "HelveticaNeue",
+        fontFamily: "open-sans",
         color: "#52575D",
     },
     avatar: {
