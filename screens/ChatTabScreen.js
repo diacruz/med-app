@@ -2,6 +2,10 @@ import React from 'react';
 import { View, Button, Text, StyleSheet, Platform } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../components/CustomHeaderButton';
+import Chatroom from '../screens/ChatroomScreen';
+import * as firebase from 'firebase'
+import 'firebase/firestore';
+import Firebase from '../backend/firebase'
 //import {HeaderButtons, Item } from 'react-navigation-header-buttons';
 //import CustomHeaderButton from '../components/CustomHeaderButton';
 
@@ -9,7 +13,7 @@ const ChatTabScreen = props => {
     return (
         <View style={styles.screen}>
             <Text>Display Chats</Text>
-            <Button title='Go Back' onPress={() => props.navigation.navigate({ routeName: 'Categories' })} />
+            <Button title='Go to Global Chat' onPress={() => props.navigation.navigate('Chatroom', { name: firebase.auth().currentUser.email })}></Button>
         </View>
     );
 };

@@ -28,19 +28,17 @@ export default class CreateAccount extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      fullName: "",
+     // fullName: "",
       username: "",
       password: "",
-      avatar: "",
     }
-    this.handlePickAvatar = this.handlePickAvatar.bind(this)
-    this.handleFullName = this.handleFullName.bind(this)
+    //this.handleFullName = this.handleFullName.bind(this)
     this.handleEmail = this.handleEmail.bind(this)
     this.handlePassword = this.handlePassword.bind(this)
   }
-  handleFullName(text) {
-    this.setState({ fullName: text })
-  }
+  //handleFullName(text) {
+   // this.setState({ fullName: text })
+  //}
 
   handleEmail(text) {
     this.setState({ username: text })
@@ -50,25 +48,12 @@ export default class CreateAccount extends Component {
     this.setState({ password: text })
   }
 
-  handlePickAvatar = async () => {
-    UserPermission.getCameraPermission()
-
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4,3]
-    })
-    if(!result.cancelled){
-      this.setState({avatar: result.uri})
-    }
-  };
-
   /**
    * Clears the text inputs. This is so that if there's an error, 
    * the user doesn't have to backspace everything they put. 
    */
   clearTextInputs() {
-    this.setState({fullName: "", username: "", password: "" })
+    this.setState({username: "", password: "" })
   }
 
   /**
@@ -80,17 +65,11 @@ export default class CreateAccount extends Component {
    * @param {string} password 
    * @param {Object} props 
    */
-  createUserAccount(fullname, username, password, props) {
+  createUserAccount(username, password, props) {
     firebase
       .auth()
       .createUserWithEmailAndPassword(username, password)
       .then(
-        (userCredentials)=>{
-        if(userCredentials.user){
-          userCredentials.user.updateProfile({
-            displayName: this.state.user.displayName
-          })
-        }},
         function () {
           displayOKAlert('Success!', 'Your account has been created'),
             props.navigation.replace('Login')
@@ -99,7 +78,6 @@ export default class CreateAccount extends Component {
           }).catch(function (err) {
             console.log('An error has occured in createUserAccount signOut: ',
               err,
-              '\nF:', fullname,
               '\nU:', username,
               '| P:', password);
           })
@@ -107,7 +85,6 @@ export default class CreateAccount extends Component {
           displayOKAlert('Oh no!', (err + "").substring(7))
           console.log('An error has occured in createUserAccount createUserWithEmailAndPassword: ',
             err,
-            '\nF:', fullname,
             '\nU:', username,
             '| P:', password);
         })
@@ -117,18 +94,6 @@ export default class CreateAccount extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <TouchableOpacity style={styles.avatarPlaceholder} onPress={this.handlePickAvatar}> 
-          <Image source={{uri: this.state.avatar}} style={styles.avatar} />
-          <Ionicons name="ios-add" size={40} color="aFFF"
-            style={{ marginTop: 6, marginLeft: 2 }}>
-          </Ionicons>
-        </TouchableOpacity>
-        <TextInput
-          style={[styles.textField, styles.fullName]}
-          placeholder='Full Name'
-          onChangeText={this.handleFullName}
-          value={this.state.fullName}
-        />
         <TextInput
           style={[styles.textField, styles.email]}
           placeholder='Email'
@@ -143,7 +108,7 @@ export default class CreateAccount extends Component {
           value={this.state.password}
         />
         <TouchableOpacity style={styles.button} onPress={() => {
-          this.createUserAccount(this.state.fullName, this.state.username, this.state.password, this.props)
+          this.createUserAccount(this.state.username, this.state.password, this.props)
         }}>
           <Text style={styles.text}>Confirm</Text>
         </TouchableOpacity>
@@ -158,30 +123,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
-  avatar: {
-    position: "absolute",
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginTop: 48,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#E1E2E6"
-    
-  },
-  avatarPlaceholder: {
-    borderRadius: 60,
-    width: 120,
-    height: 120,
-    backgroundColor: "#E1E2E6",
-    marginTop: 10,
-    marginBottom: 20,
-    justifyContent: "center",
-    alignItems: "center"
-  },
-  fullName: {
-    marginBottom: 30
-  },
+ 
   textField: {
     fontFamily: 'open-sans-bold',
     height: 60,

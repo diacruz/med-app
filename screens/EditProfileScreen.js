@@ -1,24 +1,24 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, ScrollView, Button, Text, StyleSheet, Platform, TextInput, Icon, TouchableOpacity } from 'react-native';
+import { View, ScrollView, Button, Text, StyleSheet, Platform, TextInput, Icon, TouchableOpacity, Switch } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../components/CustomHeaderButton';
 //import { useSelector, useDispatch } from 'react-redux'
 //import {HeaderButtons, Item } from 'react-navigation-header-buttons';
 //import CustomHeaderButton from '../components/CustomHeaderButton';
 
-const updateInfo = (name, title, number) => {
+const updateInfo = (name, title, number, cert, isVisible) => {
     return {
         profileData: {
-            name, title, number
+            name, title, number, cert, isVisible
         }
     }
 }
-
 
 const EditProfileScreen = props => {
     const [name, setName] = useState('');
     const [title, setTitle] = useState('');
     const [number, setNumber] = useState('');
+    const [isVisible, setIsVisible] = useState(false)
 
     //const userId = props.navigation.getParam('userId');
     const saveHandler = useCallback(() => {
@@ -57,6 +57,10 @@ const EditProfileScreen = props => {
                         onChangeText={text => setNumber(text)}>
                     </TextInput>
                 </View>
+                <View style={styles.switchStyle}>
+                    <Text style={styles.label}> Public / Private</Text>
+                    <Switch value={isVisible} onValueChange={newValue => setIsVisible(newValue)}></Switch>
+                </View>
             </View>
         </ScrollView>
     );
@@ -67,8 +71,7 @@ EditProfileScreen.navigationOptions = navData => {
 
     return {
         headerTitle: 'Edit Screen',
-        headerRight:
-            () => (
+        headerRight: () => (
                 <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
                     <Item title='Save' iconName={Platform.OS === 'android' ? 'md-checkmark' : 'ios-checkmark'}
                         onPress={saveFn}
@@ -108,7 +111,13 @@ const styles = StyleSheet.create({
         height: 60,
         backgroundColor: 'blue',
         borderRadius: 50,
+        justifyContent: "center"
     },
+    switchStyle: {
+        flex: 1,
+        marginTop: 20,
+        justifyContent: "center"
+    }
 
 });
 

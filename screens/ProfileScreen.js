@@ -4,7 +4,7 @@ import CustomHeaderButton from '../components/CustomHeaderButton';
 import { Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Dropdown } from 'react-native-material-dropdown';
 import {
-    View, SafeAreaView, ScrollView, Button, Text, StyleSheet, Platform, Image, TouchableOpacity, ImageBackground
+    View, SafeAreaView, ScrollView, Button, Text, StyleSheet, Platform, Image, TouchableOpacity, Dimensions
 } from 'react-native';
 import * as firebase from 'firebase'
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -12,6 +12,10 @@ import * as ImagePicker from 'expo-image-picker';
 import UserPermission from '../utilities/UserPermission';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import Colors from '../constants/Colors';
+import CME from '../screens/CMEScreen'
+import SignOut from '../screens/SignOut'
+import Login from '../screens/LoginScreen'
+
 
 class ProfileScreen extends Component {
     state = {
@@ -20,6 +24,7 @@ class ProfileScreen extends Component {
         avatar: '',
         showDefault: true,
         status: '',
+        buttonColor: 'red',
     };
 
     handlePickAvatar = async () => {
@@ -40,87 +45,102 @@ class ProfileScreen extends Component {
     componentDidMount() {
         const { email, displayName } = firebase.auth().currentUser;
         this.setState({ email, displayName });
-
     };
 
+    onButtonPress = () => {
+
+        if (this.state.buttonColor === 'red')
+            this.setState({ buttonColor: "#34FFB9" });
+        else {
+            this.setState({ buttonColor: "red" });
+        }
+    }
+
+    handleSignOut = () => {
+        new SignOut().signOut(this.props)
+    }
 
 
     render() {
-
         var image = this.state.showDefault ? require('../components/img/default-profile-pic.jpg') : { uri: this.state.avatar };
         return (
             <SafeAreaView style={styles.container}>
-                <ScrollView showsVerticalScrollIndicator={false}>
+                <View style={styles.responsiveBox}>
+                    <ScrollView showsVerticalScrollIndicator={false}>
                         <View style={{ alignSelf: "center" }}>
                             <View style={styles.profileImage}>
                                 <Image source={image} style={styles.avatar} resizeMode="cover"></Image>
                             </View>
-                            <View style={styles.active}></View>
+                            <TouchableOpacity onPress={this.onButtonPress}>
+                                <View style={styles.active} backgroundColor={this.state.buttonColor}></View>
+                            </TouchableOpacity>
                             <View style={styles.add}>
-                                <Ionicons name="ios-add" size={30} color="#DFD8C8" style={{ marginTop: 0, marginLeft: 2 }} onPress={this.handlePickAvatar}></Ionicons>
+                                <Ionicons name={Platform.OS === 'android' ? 'md-add' : 'ios-add'} size={30} color="#DFD8C8" style={{ marginTop: 0, marginLeft: 2 }} onPress={this.handlePickAvatar}></Ionicons>
                             </View>
                         </View>
                         <View style={styles.infoContainer}>
-                            <Text style={[styles.text, { fontWeight: "200", fontSize: 20, fontWeight: "bold" }]}>Juanita Gonzalez</Text>
+                            <Text style={[styles.text, { fontWeight: "200", fontSize: 20, fontWeight: "bold" }]}></Text>
                             <Text style={[styles.text, { color: "#AEB5BC", fontSize: 16 }]}>Title</Text>
                         </View>
 
-                    <View style={styles.statusContainer}>
-                        <View style={styles.status}>
-                            <TouchableOpacity style={{ alignItems: "center" }}>
-                                <MaterialCommunityIcons name="emoticon-happy-outline" size={20}></MaterialCommunityIcons>
-                                <Text>Set Status</Text>
-                            </TouchableOpacity>
+                        <View style={styles.statusContainer}>
+                            <View style={styles.status}>
+                                <TouchableOpacity style={{ alignItems: "center" }}>
+                                    <MaterialCommunityIcons name="emoticon-happy-outline" size={20}></MaterialCommunityIcons>
+                                    <Text>Set Status</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={styles.status}>
+                                <TouchableOpacity style={{ alignItems: "center" }} onPress={() => this.props.navigation.navigate('Edit')}>
+                                    <MaterialIcons name="edit" size={20}></MaterialIcons>
+                                    <Text>Edit Profile</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={styles.status}>
+                                <TouchableOpacity style={{ alignItems: "center" }}>
+                                    <MaterialIcons name="more-horiz" size={20}></MaterialIcons>
+                                    <Text>More</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
-                        <View style={styles.status}>
-                            <TouchableOpacity style={{ alignItems: "center" }} onPress={() => this.props.navigation.navigate('Edit')}>
-                                <MaterialIcons name="edit" size={20}></MaterialIcons>
-                                <Text>Edit Profile</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={styles.status}>
-                            <TouchableOpacity style={{ alignItems: "center" }}>
-                                <MaterialIcons name="more-horiz" size={20}></MaterialIcons>
-                                <Text>More</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
 
 
 
-                    <View style={[styles.detailContainer]}>
-                        <View style={styles.iconBox}>
-                            <MaterialIcons name="email" size={20}></MaterialIcons>
+                        <View style={[styles.detailContainer]}>
+                            <View style={styles.iconBox}>
+                                <MaterialIcons name="email" size={20}></MaterialIcons>
+                            </View>
+                            <View style={styles.detailBox}>
+                                <Text style={[styles.text, { fontSize: 16 }]}>Email Address: </Text>
+                                <Text style={[styles.text, styles.subText]}>{this.state.email}</Text>
+                            </View>
                         </View>
-                        <View style={styles.detailBox}>
-                            <Text style={[styles.text, { fontSize: 16 }]}>Email Address: </Text>
-                            <Text style={[styles.text, styles.subText]}>{this.state.email}</Text>
+                        <View style={[styles.detailContainer]}>
+                            <View style={styles.iconBox}>
+                                <MaterialIcons name="local-phone" size={20}></MaterialIcons>
+                            </View>
+                            <View style={styles.detailBox}>
+                                <Text style={[styles.text, { fontSize: 16 }]}>Phone Number: </Text>
+                                <Text style={[styles.text, styles.subText]}>786-234-4567</Text>
+                            </View>
                         </View>
-                    </View>
-                    <View style={[styles.detailContainer]}>
-                        <View style={styles.iconBox}>
-                            <MaterialIcons name="local-phone" size={20}></MaterialIcons>
+                        <View style={[styles.detailContainer]}>
+                            <View style={styles.iconBox}>
+                                <MaterialCommunityIcons name="certificate" size={20}></MaterialCommunityIcons>
+                            </View>
+                            <View style={styles.detailBox}>
+                                <Text style={[styles.text, { fontSize: 16 }]}>Certifications:</Text>
+                                <Text style={[styles.text, styles.subText]}  
+                                onPress={() => this.props.navigation.navigate('CME')}>Show All ></Text>
+                            </View>
                         </View>
-                        <View style={styles.detailBox}>
-                            <Text style={[styles.text, { fontSize: 16 }]}>Phone Number: </Text>
-                            <Text style={[styles.text, styles.subText]}>786-234-4567</Text>
+                        <View style={styles.buttonStyle}>
+                            <TouchableOpacity onPress={this.handleSignOut}>
+                                <Text style={styles.button}>LOGOUT</Text>
+                            </TouchableOpacity>
                         </View>
-                    </View>
-                    <View style={[styles.detailContainer]}>
-                        <View style={styles.iconBox}>
-                            <MaterialCommunityIcons name="certificate" size={20}></MaterialCommunityIcons>
-                        </View>
-                        <View style={styles.detailBox}>
-                            <Text style={[styles.text, { fontSize: 16 }]}>Certifications:</Text>
-                            <Text style={[styles.text, styles.subText]}>Show All ></Text>
-                        </View>
-                    </View>
-                    <View style={styles.buttonStyle}>
-                        <TouchableOpacity onPress={this.handlPress}>
-                            <Text style={styles.button}>LOGOUT</Text>
-                        </TouchableOpacity>
-                    </View>
-                </ScrollView>
+                    </ScrollView>
+                </View>
             </SafeAreaView>
         );
     }
@@ -130,6 +150,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#fff"
+    },
+    responsiveBox: {
+        height: "100%",
+        width: "100%",
+        flexDirection: "column"
     },
     text: {
         fontFamily: "HelveticaNeue",
@@ -145,10 +170,9 @@ const styles = StyleSheet.create({
         height: 150,
         borderRadius: 80,
         overflow: "hidden",
-        marginTop: 0,
+        marginTop: 5,
     },
     active: {
-        backgroundColor: "#34FFB9",
         position: "absolute",
         bottom: 20,
         left: 5,
@@ -177,7 +201,7 @@ const styles = StyleSheet.create({
     detailContainer: {
         flexDirection: "row",
         alignItems: "center",
-        height: 60,
+        height: 65,
         alignSelf: "center",
         marginTop: 15,
         marginHorizontal: 25,
