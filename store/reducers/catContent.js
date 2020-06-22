@@ -12,7 +12,7 @@ export default (state = initialState, action) => {
     
         case CREATE_CATCONTENT:
             const newCatContent = new CatContent(
-                new Date().toString(),  
+                action.catContentData.id,  
                 action.catContentData.title,
                 action.catContentData.color,
                 action.catContentData.subId,
@@ -20,7 +20,8 @@ export default (state = initialState, action) => {
                 action.catContentData.signs,
                 action.catContentData.management,
                 action.catContentData.medications,
-                action.catContentData.references
+                action.catContentData.references,
+                action.catContentData.image
                 );
                 return {
                     ...state,
@@ -40,7 +41,8 @@ export default (state = initialState, action) => {
                 action.catContentData.signs,
                 action.catContentData.management,
                 action.catContentData.medications,
-                action.catContentData.references
+                action.catContentData.references,
+                action.catContentData.image
                 );
                 const updatedAvailableCatContent = [...state.categoriesContent];
                 updatedAvailableCatContent[catContentIndex] = updatedCatContent;

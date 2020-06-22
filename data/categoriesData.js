@@ -5,8 +5,8 @@ import  CatContent from '../models/catContent';
 //color codes taken from https://www.w3schools.com/cssref/css_colors.asp
 
 export const CATEGORIES = [
-    new Category('c7', 'Search', '#9eecff'),
-    new Category('c8', 'Chatroom & CME', '#00ffb8'),
+   // new Category('c7', 'Search', '#9eecff'),
+   // new Category('c8', 'Chatroom & CME', '#00ffb8'),
     new Category('c1', 'Medical', '#ffc0cb'),
     new Category('c2', 'Surgical', '#f54242'),
     new Category('c3', 'Trauma ', '#ffa500'),

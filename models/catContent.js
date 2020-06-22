@@ -1,5 +1,5 @@
 class CatContent{
-    constructor(id,title,color,subId, evaluation, signs, management, medications, references){
+    constructor(id,title,color,subId, evaluation, signs, management, medications, references, image){
         this.id = id;
         this.title = title;
         this.color =color;
@@ -9,6 +9,7 @@ class CatContent{
         this.management = management;
         this.medications = medications;
         this.references = references;
+        this.image = image
     }
 }
 

@@ -3,6 +3,8 @@ import { StyleSheet, Text, View, TextInput, Button, FlatList } from 'react-nativ
 import { CONTENT, SUBCATEGORIES } from '../data/categoriesData';
 import SearchGridtile from '../components/SearchGridTile';
 import { useSelector} from 'react-redux';
+import { Ionicons } from '@expo/vector-icons';
+
 
 const SearchScreen = props => {// to be call Search
 
@@ -45,7 +47,8 @@ const SearchScreen = props => {// to be call Search
   return (
     <View style={styles.screen}>
       <View style={styles.inputContainer}>
-        <TextInput placeholder="Search"
+        <Ionicons name={Platform.OS === 'android' ? 'ios-search' : 'md-search'} size={20}></Ionicons>
+        <TextInput placeholder="Search "
           style={styles.input} onChangeText={searchInputHandler} Value={enteredSearch} />
         <Button title="Search" style={styles.searchButton} onPress={searchWord} />
       </View>
@@ -56,10 +59,23 @@ const SearchScreen = props => {// to be call Search
 
 const styles = StyleSheet.create({
 
-  screen: { padding: 50 },
-  inputContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  input: { width: '80%', borderBottomColor: 'blue', borderBottomWidth: 1 },
-  searchButton: { borderStyle: 'solid', borderColor: 'blue' }
+  screen: { 
+    padding: 50 
+  },
+  inputContainer: { 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center' 
+  },
+  input: { 
+    width: '80%', 
+    borderBottomColor: 'blue', 
+    borderBottomWidth: 1 
+  },
+  searchButton: { 
+    borderStyle: 'solid', 
+    borderColor: 'blue' 
+  }
 
 });
 
