@@ -12,7 +12,8 @@ import PemNavigation from './navigation/PemNavigation';
 import { enableScreens } from 'react-native-screens';
 
 // react-redux
-import { createStore, combineReducers } from 'redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import ReduxThunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import categoriesReducer from './store/reducers/categories';
 import catContentReducer from './store/reducers/catContent';
@@ -119,7 +120,7 @@ const rootReducer = combineReducers({
   categoriesContent: catContentReducer,
 });
 
-const store = createStore(rootReducer);
+const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
 
 export default function App() {
   const [fontLoaded, setFontLoaded] = useState(false);

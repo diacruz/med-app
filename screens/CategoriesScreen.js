@@ -21,7 +21,7 @@ const CategoriesScreen = props =>{
         props.navigation.navigate({ routeName: 'SubCategories', params: { categoryId: id, categoryTitle: title } });
       } 
       else {
-        props.navigation.replace({ routeName: 'Login' })
+        props.navigation.navigate({ routeName: 'Login' })
       }
     } 
     else if (title === 'Search') {

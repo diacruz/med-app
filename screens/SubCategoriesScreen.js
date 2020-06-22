@@ -7,9 +7,6 @@ import CategoryGridTile from '../components/CategoryGridTile';
 //react-redux
 import { useSelector } from 'react-redux';
 
-
-
-
 const SubCategoriesScreen = props => {
 
   const categoryId = props.navigation.getParam('categoryId');
@@ -117,7 +114,7 @@ SubCategoriesScreen.navigationOptions = navigationdata => {
         backgroundColor: 'white',
       },
       headerTintColor: '#CD5C5C',
-      headerRight: (<Button title='Sign out' onPress={outFn}
+      headerRight: () => (<Button title='Sign out' onPress={outFn}
       />)
     }
   }

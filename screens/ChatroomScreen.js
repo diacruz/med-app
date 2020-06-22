@@ -72,7 +72,7 @@ class Chatroom extends Component {
   componentDidMount() {
     this.setOnlineUsersStr();
     this.props.navigation.setParams({
-      headerRight: (
+      headerRight:(
         <View /*style={{ flexDirection: "row" }}*/>
           <Button
             style={styles.signOutButton}
@@ -153,7 +153,7 @@ class Chatroom extends Component {
           deleteAllMessages()
         }
       })
-      //props.navigation.replace('Login')
+      props.navigation.replace('Login')
     }).catch(function (err) {
       this.displayOKAlert('Oh no!', 'Sign out failed: ' + err, false)
       console.log(err)

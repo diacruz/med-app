@@ -12,7 +12,7 @@ export default (state = initialState, action) => {
     
         case CREATE_CATCONTENT:
             const newCatContent = new CatContent(
-                new Date().toString(),  
+                action.catContentData.id,  
                 action.catContentData.title,
                 action.catContentData.color,
                 action.catContentData.subId,

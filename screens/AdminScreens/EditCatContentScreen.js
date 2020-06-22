@@ -153,22 +153,20 @@ const EditCatContentScreen = props => {
                         selectTextOnFocus={true}
                     />
                 </View>
-                <View style = {styles.imageContainer}>
-                    <View  style ={styles.button}>
+                <View style={styles.imageContainer}>
+                    <View style={styles.button}>
                         <Button
-                            color =  {Colors.primaryColor}
-                            title = 'Attach Image'
-                            onPress ={pickImage}
+                            color={Colors.primaryColor}
+                            title='Attach Image'
+                            onPress={pickImage}
                         />
                     </View>
-                        <View style = {styles.imageContainer}>
-                            {image && <Image style={styles.ImageSize} source={{ uri: image }} />}  
-                            {console.log(image)}
-                        </View>
-                    
-                    
+                    <View style={styles.imageContainer}>
+                        {image && <Image style={styles.ImageSize} source={{ uri: image }} />}
+                    </View>
+
                 </View>
-               
+
             </View>
 
         </ScrollView>
@@ -202,7 +200,7 @@ const styles = StyleSheet.create({
         width: '100%',
         paddingHorizontal: 30,
     },
-    imageContainer:{
+    imageContainer: {
         alignItems: 'center',
         width: '100%',
         paddingVertical: 10,
