@@ -36,7 +36,7 @@ export const fetchCatContent = () =>{
 export const deleteCatContent = (catContentId) => {
     return async dispatch =>{
         const response = await fetch(``,{
-            method: 'DELETE'
+            method: 'DELETE',
         });
         dispatch({ type: DELETE_CATCONTENT, catContentId: catContentId });
     }
