@@ -1,5 +1,5 @@
 import {CATCONTENT} from '../../data/categoriesData';
-import {DELETE_CATCONTENT, CREATE_CATCONTENT, UPDATE_CATCONTENT} from '../actions/catContent';
+import {DELETE_CATCONTENT, CREATE_CATCONTENT, UPDATE_CATCONTENT, SET_CATCONTENT} from '../actions/catContent';
 import CatContent from '../../models/catContent';
 
 
@@ -9,7 +9,10 @@ const initialState = {
 
 export default (state = initialState, action) => {
     switch(action.type){
-    
+        case SET_CATCONTENT:
+            return{
+                categoriesContent: action.catcontent
+            };
         case CREATE_CATCONTENT:
             const newCatContent = new CatContent(
                 action.catContentData.id,  
