@@ -188,7 +188,7 @@ export default class CME extends Component {
             },
           }}
           onDateChange={date => {
-            this.setState({ date: date });
+            this.handleCmeExp
           }}
         />
         </View>
