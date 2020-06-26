@@ -1,4 +1,9 @@
 import React, { Component } from 'react';
+
+//import react in our code.
+import DatePicker from 'react-native-datepicker';
+//import DatePicker from the package we installed to install: npm install react-native-datepicker --save
+
 import {
   View,
   StyleSheet,
@@ -12,6 +17,9 @@ import {
 import * as firebase from 'firebase';
 import 'firebase/firestore';
 import Firebase from '../backend/firebase'
+
+
+
 
 //This will be the list of all CMEs the user has.
 let cmes = []
@@ -29,6 +37,7 @@ function displayOKAlert(title, message) {
     message
   );
 }
+
 
 export default class CME extends Component {
   /**
@@ -127,13 +136,14 @@ export default class CME extends Component {
     }
   }
 
+ 
   render() {
     return (
       <View>
         <View style={{ flexDirection: "row" }}>
           <Text style={styles.header}>CME</Text>
-          <Text style={styles.header}>Renewal Date</Text>
         </View>
+
         <FlatList
           data={this.state.cmes}
           renderItem={(itemData) => (
@@ -141,11 +151,46 @@ export default class CME extends Component {
               <Text style={styles.cmeItem}>{itemData.item.cert}</Text>
               <Text style={styles.cmeItem}>{itemData.item.exp}</Text>
             </View>
-          )}
+          ) }
           numColumns={1} />
-        <View style={{ flexDirection: "row" }}>
+
+            <View style={{ flexDirection: "row" }}>
           <TextInput style={styles.textField} onChangeText={this.handleCmeCert} placeholder='Certification here' />
-          <TextInput style={styles.textField} onChangeText={this.handleCmeExp} placeholder='MM/DD/YYYY' />
+        </View>
+        
+        <View style={{ flexDirection: "row" }}>
+          <Text style={styles.header}>Renewal Date</Text>
+        </View>
+        <View style={{ flexDirection: "row" }}>
+        <DatePicker
+         data={this.state.cmes}
+          style={{   flex: 1,
+            fontSize: 14,
+            fontFamily: 'open-sans-bold',
+            textAlign: 'center',
+            alignSelf: 'center',
+            width: '80%', }}
+          date={this.state.date} //initial date from state
+          mode="date" //The enum of date, datetime and time
+          placeholder="select date"
+          format="MM-DD-YYYY"
+          confirmBtnText="Confirm"
+          cancelBtnText="Cancel"
+          customStyles={{
+            dateIcon: {
+              position: 'absolute',
+              left: 0,
+              top: 4,
+              marginLeft: 0,
+            },
+            dateInput: {
+              marginLeft: 36,
+            },
+          }}
+          onDateChange={date => {
+            this.setState({ date: date });
+          }}
+        />
         </View>
         <TouchableOpacity
           style={styles.addCmeButton}
@@ -200,4 +245,5 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: '80%',
   }
+
 })
