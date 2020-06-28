@@ -29,12 +29,7 @@ import * as UserProfileActions from '../store/actions/userProfile';
 
 const ProfileScreen = props => {
 
-    const [name, setName] = useState('');
-    const [title, setTitle] = useState('');
-    const [number, setNumber] = useState( '');
-    const [status, setStatus] = useState('');
     const [buttonColor, setButtonColor] = useState('');
-    const [isVisible, setIsVisible] = useState(false);
     const [avatar, setAvatar] = useState(null);
     const showDefault = useState(true)
     

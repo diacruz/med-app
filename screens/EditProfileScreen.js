@@ -12,14 +12,14 @@ const EditProfileScreen = props => {
 
     const [name, setName] = useState('');
     const [title, setTitle] = useState('');
-    const [number, setNumber] = useState( '');
+    const [number, setNumber] = useState('');
     const [status, setStatus] = useState('');
     const [isVisible, setIsVisible] = useState(false);
     const [avatar, setAvatar] = useState(null);
 
     //const userId = props.navigation.getParam('userId');
     const saveHandler = useCallback(() => {
-            dispatch(UserProfileActions.updateProfile(userProfileId, name, number, title, avatar, status, isVisible));
+        dispatch(UserProfileActions.updateProfile(userProfileId, name, number, title, avatar, status, isVisible));
         /*
         else {
             dispatch(UserProfileActions.createProfile(name, number, title, avatar, status, isVisible));
@@ -37,7 +37,7 @@ const EditProfileScreen = props => {
             }
         })();
     }, []);
-    
+
     useEffect(() => {
         props.navigation.setParams({ save: saveHandler });
     }, [saveHandler]);
@@ -64,7 +64,8 @@ const EditProfileScreen = props => {
                         style={styles.input}
                         value={name}
                         onChangeText={text => setName(text)}
-                        selectTextOnFocus={true}>
+                        selectTextOnFocus={true}
+                        returnKeyType="next">
                     </TextInput>
                 </View>
                 <View style={styles.formControl}>
@@ -73,7 +74,8 @@ const EditProfileScreen = props => {
                         style={styles.input}
                         value={title}
                         onChangeText={text => setTitle(text)}
-                            selectTextOnFocus={true}>
+                        selectTextOnFocus={true}
+                        returnKeyType="next">
                     </TextInput>
                 </View>
                 <View style={styles.formControl}>
@@ -82,7 +84,8 @@ const EditProfileScreen = props => {
                         style={styles.input}
                         value={number}
                         onChangeText={text => setNumber(text)}
-                        selectTextOnFocus={true}>
+                        selectTextOnFocus={true}
+                        returnKeyType="next">
                     </TextInput>
                 </View>
                 <View style={styles.switchStyle}>
