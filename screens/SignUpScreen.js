@@ -37,6 +37,14 @@ const CreateAccount = props => {
       setPassword({ password: "" })
   }
 
+  const saveInfo = (userCredentials) => {
+    if (userCredentials.user) {
+      console.log('Sign up user:' + userCredentials.user.uid);
+      useCallback(() => {
+      dispatch(UserProfileActions.createProfile(userCredentials.user.uid, displayName, email, '', 'homeless', '', '', '', false));
+      }, [dispatch, userCredentials.user.uid, displayName, email]);}
+    }
+
   /**
    * Creates an account with the specified username and password. If it works,
    * an alert box is displayed, the user is brought to the Login page, and the
@@ -47,16 +55,14 @@ const CreateAccount = props => {
    * @param {string} password
    */
 
+   const dispatch = useDispatch()
+
   const createUserAccount = (email, password, displayName) => {
     firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
-      .then((userCredentials) => {
-        if (userCredentials.user) {
-            userCredentials.user.updateProfile({
-              displayName: displayName
-          })
-        }
+      .then(function() {
+        saveInfo
       }).then(
         function () {
           displayOKAlert('Success!', 'Your account has been created'),
@@ -83,9 +89,6 @@ const CreateAccount = props => {
         })
     clearTextInputs()
   }
-
-
-
 
   /*
   export default class CreateAccount extends Component {
@@ -192,7 +195,6 @@ const CreateAccount = props => {
       />
       <TouchableOpacity style={styles.button} onPress={() => {
         createUserAccount(email, password, displayName);
-        // saveHandler
       }}>
         <Text style={styles.text}>Confirm</Text>
       </TouchableOpacity>

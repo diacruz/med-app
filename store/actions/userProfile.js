@@ -58,7 +58,7 @@ export const createProfile = (subId, name, email, number, title, avatar, status,
         console.log(userData);
        const profileId = firebase.auth().currentUser.uid
 
-       console.log('Store: ' + profileId)
+       console.log(profileId)
 
         dispatch({
             type: CREATE_PROFILE,

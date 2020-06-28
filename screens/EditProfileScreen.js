@@ -4,33 +4,55 @@ import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../components/CustomHeaderButton';
 import * as UserProfileActions from '../store/actions/userProfile';
 import { useSelector, useDispatch } from 'react-redux';
-import * as firebase from 'firebase'
 
 const EditProfileScreen = props => {
+    const userProfileId = props.navigation.getParam('userProfileId');
 
-    const user = firebase.auth().currentUser; 
-   
+    const dispatch = useDispatch();
+
     const [name, setName] = useState('');
     const [title, setTitle] = useState('');
-    const [number, setNumber] = useState('');
+    const [number, setNumber] = useState( '');
     const [status, setStatus] = useState('');
     const [isVisible, setIsVisible] = useState(false);
     const [avatar, setAvatar] = useState(null);
 
-    const saveHandler = () => {
-        user.updateProfile({
-            displayName: "Jane Q. User",
-          }).then(function() {
-            // Update successful.
-          }).catch(function(error) {
-            // An error happened.
-          });
-    props.navigation.goBack();
-    }
+    //const userId = props.navigation.getParam('userId');
+    const saveHandler = useCallback(() => {
+            dispatch(UserProfileActions.updateProfile(userProfileId, name, number, title, avatar, status, isVisible));
+        /*
+        else {
+            dispatch(UserProfileActions.createProfile(name, number, title, avatar, status, isVisible));
+        }*/
+        props.navigation.goBack();
+    }, [dispatch, userProfileId, name, number, title, avatar, status, isVisible]);
 
     useEffect(() => {
-        props.navigation.setParams({save: saveHandler});
+        (async () => {
+            if (Platform.ios) {
+                const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
+                if (status !== 'granted') {
+                    alert('Sorry, camera roll permission is required!');
+                }
+            }
+        })();
     }, []);
+    
+    useEffect(() => {
+        props.navigation.setParams({ save: saveHandler });
+    }, [saveHandler]);
+
+    const pickImage = async () => {
+        let selectedImage = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            quality: 1,
+        });
+
+        if (!selectedImage.cancelled) {
+            setImage(selectedImage.uri);
+        }
+    };
 
 
     return (

@@ -1,12 +1,12 @@
 import { SET_PROFILE, CREATE_PROFILE, UPDATE_PROFILE, DELETE_PROFILE } from '../actions/userProfile';
 import Profile from '../../models/profile';
-import {PROFILES} from '../../data/profiledata';
+import { PROFILES } from '../../data/profiledata';
 
 const initialState = {
   userContent: PROFILES,
 };
 
-export default (state = initialState, action) => {
+const userContentReducer = (state = initialState, action) => {
   
   switch (action.type) {
     case SET_PROFILE:
@@ -61,3 +61,5 @@ export default (state = initialState, action) => {
   }
   return state;
 };
+
+export default userContentReducer;

@@ -24,31 +24,50 @@ import CME from '../screens/CMEScreen'
 import SignOut from '../screens/SignOut';
 import Login from '../screens/LoginScreen';
 import { UPDATE_PROFILE } from '../store/actions/userProfile';
+import * as UserProfileActions from '../store/actions/userProfile';
 
 
 const ProfileScreen = props => {
 
-    const user = firebase.auth().currentUser;
-
-    const displayName = user.displayName
-    const email = user.email;
-
+    const [name, setName] = useState('');
     const [title, setTitle] = useState('');
-    const [number, setNumber] = useState('');
+    const [number, setNumber] = useState( '');
     const [status, setStatus] = useState('');
+    const [buttonColor, setButtonColor] = useState('');
     const [isVisible, setIsVisible] = useState(false);
-    const [avatar, setAvatar] = useState('');
-    const [buttonColor, setButtonColor] = useState('red');
-    const showDefault = useState(false);
+    const [avatar, setAvatar] = useState(null);
+    const showDefault = useState(true)
+    
+    const profileid = firebase.auth().currentUser.uid
+    console.log('Profile Id: ' + profileid)
+    
+    const selectedProfile = useSelector(state => state.userContent.userContent);
 
-if (user != null) {
-        user.providerData.forEach(function (profile) {
-          console.log("  Name: " + profile.displayName);
-          console.log("  Email: " + profile.email);
-          console.log("  Photo URL: " + profile.photoURL);
-        });
-      }
-      
+    const profileaInfo = firebase
+
+    const [loading, setLoading] = useState(false);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        const loadingUserProfile = async () => {
+            setLoading(true);
+            await dispatch(UserProfileActions.fetchUserProfile());
+            setLoading(false);
+        };
+        loadingUserProfile();
+
+    }, [dispatch, setLoading]);
+/*
+    state = {
+        email: "",
+        displayName: "",
+        avatar: '',
+        showDefault: true,
+        status: '',
+        buttonColor: 'red',
+    };
+    */
+
     const handlePickAvatar = async () => {
         UserPermission.getCameraPermission()
 
@@ -59,9 +78,10 @@ if (user != null) {
         })
         if (!result.cancelled) {
             setAvatar(result.uri)
+           // this.setState({ showDefault: false })
         }
-    };
 
+    };
     /*
         componentDidMount() {
             const { email, displayName } = firebase.auth().currentUser;
@@ -104,8 +124,8 @@ if (user != null) {
                         </View>
                     </View>
                     <View style={styles.infoContainer}>
-                        <Text style={[styles.text, { fontWeight: "200", fontSize: 20, fontWeight: "bold" }]}>{displayName}</Text>
-                        <Text style={[styles.text, { color: "#AEB5BC", fontSize: 16 }]}>{title}</Text>
+                        <Text style={[styles.text, { fontWeight: "200", fontSize: 20, fontWeight: "bold" }]}>{selectedProfile.name}</Text>
+                        <Text style={[styles.text, { color: "#AEB5BC", fontSize: 16 }]}>{selectedProfile.title}</Text>
                     </View>
 
                     <View style={styles.statusContainer}>
@@ -116,7 +136,7 @@ if (user != null) {
                             </TouchableOpacity>
                         </View>
                         <View style={styles.status}>
-                            <TouchableOpacity style={{ alignItems: "center" }} onPress={() => props.navigation.navigate({ routeName: 'Edit', params: { userProfileId: user } })}>
+                            <TouchableOpacity style={{ alignItems: "center" }} onPress={() => props.navigation.navigate({ routeName: 'Edit', params: { userProfileId: profileid } })}>
                                 <MaterialIcons name="edit" size={20}></MaterialIcons>
                                 <Text>Edit Profile</Text>
                             </TouchableOpacity>
@@ -130,13 +150,14 @@ if (user != null) {
                     </View>
 
 
+
                     <View style={[styles.detailContainer]}>
                         <View style={styles.iconBox}>
                             <MaterialIcons name="email" size={20}></MaterialIcons>
                         </View>
                         <View style={styles.detailBox}>
                             <Text style={[styles.text, { fontSize: 16 }]}>Email Address: </Text>
-                            <Text style={[styles.text, styles.subText]}>{email}</Text>
+                            <Text style={[styles.text, styles.subText]}>{selectedProfile.email}</Text>
                         </View>
                     </View>
                     <View style={[styles.detailContainer]}>
@@ -145,7 +166,7 @@ if (user != null) {
                         </View>
                         <View style={styles.detailBox}>
                             <Text style={[styles.text, { fontSize: 16 }]}>Phone Number: </Text>
-                            <Text style={[styles.text, styles.subText]}>{number}</Text>
+                            <Text style={[styles.text, styles.subText]}>{selectedProfile.number}</Text>
                         </View>
                     </View>
                     <View style={[styles.detailContainer]}>
@@ -301,4 +322,4 @@ ProfileScreen.navigationOptions = navigationdata => {
             </HeaderButtons>
         ),
     }
-};
+}

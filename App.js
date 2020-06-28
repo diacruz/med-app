@@ -17,7 +17,7 @@ import ReduxThunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import categoriesReducer from './store/reducers/categories';
 import catContentReducer from './store/reducers/catContent';
-import userContent from './store/reducers/userProfile';
+import userContentReducer from './store/reducers/userProfile';
 
 
 /*
@@ -119,7 +119,7 @@ const fetchFonts = () => {
 const rootReducer = combineReducers({
   categories: categoriesReducer,
   categoriesContent: catContentReducer,
-  userContent: userContent,
+  userContent: userContentReducer,
 });
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
