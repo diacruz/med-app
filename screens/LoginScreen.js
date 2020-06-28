@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useCallback } from 'react';
 import {
   StyleSheet,
   View,
@@ -13,6 +13,7 @@ import {
 import * as firebase from 'firebase';
 import 'firebase/firestore';
 import Firebase from '../backend/firebase'
+import { useSelector, useDispatch } from 'react-redux';
 
 function displayOKAlert(title, message) {
   Alert.alert(
@@ -21,18 +22,34 @@ function displayOKAlert(title, message) {
   );
 }
 
+const Login = props => {
+
+
+const profileId = props.navigation.getParam('userId');
+const displayName = props.navigation.getParam('displayName');
+const email = props.navigation.getParam('userEmail');
+
+const dispatch = useDispatch()
+
+const saveHandler = useCallback(() => {
+  dispatch(UserProfileActions.createProfile(profileId, displayName, email, '', 'homeless', '', '', '', false));
+  props.navigation.goBack();
+}, [dispatch, profileId, displayName, email]);
+
 /**
  * Logs a user in with the specified username and password. This also increments
  * userCount, adds the username to the onlineUsers list, and sends them to the 
  * Chatroom & CME screen.
- * @param {string} username 
+ * @param {string} email 
  * @param {string} password 
  * @param {Object} props 
  */
-function logUserIn(username, password, props) {
-  firebase.auth().signInWithEmailAndPassword(username, password).then(function () {
+
+function logUserIn(email, password) {
+  firebase.auth().signInWithEmailAndPassword(email, password).then(function () {
     Firebase.shared.setUserCount = 1;
-    Firebase.shared.addOnlineUser(username)
+    Firebase.shared.addOnlineUser(email);
+    saveHandler;
     props.navigation.navigate({ routeName: 'Categories' });
   }).catch(function (err) {
     displayOKAlert('No account with that email was found', 'Feel free to create an account first!')
@@ -45,20 +62,14 @@ let userInfo = {
   passwordValue: ""
 }
 
-function handleEmail(text) {
+const handleEmail = (text) => {
   userInfo.userValue = text
 }
 
-function handlePassword(text) {
+const handlePassword= (text) => {
   userInfo.passwordValue = text
 }
 
-export default class Login extends Component {
-
-  static navigationOptions = {
-    title: 'Login',
-  };
-  render() {
     return (
       <KeyboardAvoidingView styles={styles.container} behavior="position" enabled keyboardVerticalOffset="100">
         <View>
@@ -77,13 +88,13 @@ export default class Login extends Component {
             onChangeText={handlePassword}
           />
           <TouchableOpacity style={styles.loginButton} onPress={() => {
-            logUserIn(userInfo.userValue, userInfo.passwordValue, this.props)
+            logUserIn(userInfo.userValue, userInfo.passwordValue)
           }}
           >
             <Text style={styles.text}>Log in</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.signUpButton} onPress={() => {
-            this.props.navigation.navigate('SignUp')
+            props.navigation.navigate('SignUp')
           }}
           >
             <Text style={styles.text}>New? Create an account!</Text>
@@ -92,7 +103,6 @@ export default class Login extends Component {
       </ KeyboardAvoidingView>
     );
   }
-}
 
 
 let screenHeight = Math.round(Dimensions.get('window').height)
@@ -152,7 +162,8 @@ const styles = StyleSheet.create({
     resizeMode: 'stretch',
     alignSelf: 'center',
     marginTop: 20,
-    marginLeft:30
+    marginLeft: 30
   }
 })
 
+export default Login;

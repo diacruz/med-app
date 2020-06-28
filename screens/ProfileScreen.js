@@ -1,19 +1,17 @@
-import React, { useState, Component } from 'react';
+import React, { useState, Component, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../components/CustomHeaderButton';
 import { Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { Dropdown } from 'react-native-material-dropdown';
 import {
     View,
     SafeAreaView,
     ScrollView,
-    Button,
     Text,
     StyleSheet,
     Platform,
     Image,
     TouchableOpacity,
-    Dimensions,
     TouchableNativeFeedback
 } from 'react-native';
 import * as firebase from 'firebase'
@@ -23,11 +21,35 @@ import UserPermission from '../utilities/UserPermission';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import Colors from '../constants/Colors';
 import CME from '../screens/CMEScreen'
-import SignOut from '../screens/SignOut'
-import Login from '../screens/LoginScreen'
+import SignOut from '../screens/SignOut';
+import Login from '../screens/LoginScreen';
+import { UPDATE_PROFILE } from '../store/actions/userProfile';
 
 
-class ProfileScreen extends Component {
+const ProfileScreen = props => {
+    
+    const profileid = firebase.auth().currentUser.uid
+    
+    console.log('Profile Id: ' + profileid)
+
+    const selectedProfile = useSelector(state =>
+        state.userContent.userContent.find(prod => prod.subId === profileid)
+    );
+    console.log('SelectedProfile Id: ' + selectedProfile)
+
+    const [loading, setLoading] = useState(false);
+
+    const dispatch = useDispatch();
+    useEffect(() => {
+        const loadingUserProfile = async () => {
+            setLoading(true);
+            await dispatch(UserProfileActions.fetchUserProfile());
+            setLoading(false);
+        };
+        loadingUserProfile();
+
+    }, [dispatch, setLoading]);
+
     state = {
         email: "",
         displayName: "",
@@ -37,7 +59,7 @@ class ProfileScreen extends Component {
         buttonColor: 'red',
     };
 
-    handlePickAvatar = async () => {
+    const handlePickAvatar = async () => {
         UserPermission.getCameraPermission()
 
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -51,15 +73,14 @@ class ProfileScreen extends Component {
         }
 
     };
-
-    componentDidMount() {
-        const { email, displayName } = firebase.auth().currentUser;
-        this.setState({ email, displayName });
-    };
-
-    onButtonPress = () => {
-
-        if (this.state.buttonColor === 'red') {
+    /*
+        componentDidMount() {
+            const { email, displayName } = firebase.auth().currentUser;
+            this.setState({ email, displayName });
+        };
+    */
+    const onButtonPress = () => {
+        if (state.buttonColor === 'red') {
             this.setState({ buttonColor: "#34FFB9" });
         }
 
@@ -68,100 +89,99 @@ class ProfileScreen extends Component {
         }
     }
 
-    handleSignOut = () => {
-        new SignOut().signOut(this.props)
+    const handleSignOut = () => {
+        new SignOut().signOut(props)
     }
 
+    let TouchableCmp = TouchableOpacity;
 
-    render() {
-        let TouchableCmp = TouchableOpacity;
+    if (Platform.OS === 'android' && Platform.Version >= 21) {
+        TouchableCmp = TouchableNativeFeedback;
+    }
+    var image = state.showDefault ? require('../components/img/default-profile-pic.jpg') : { uri: state.avatar };
+    return (
+        <SafeAreaView style={styles.container}>
+            <View style={styles.responsiveBox}>
+                <ScrollView showsVerticalScrollIndicator={false}>
+                    <View style={{ alignSelf: "center" }}>
+                        <View style={styles.profileImage}>
+                            <Image source={image} style={styles.avatar} resizeMode="cover"></Image>
+                        </View>
+                        <TouchableCmp onPress={onButtonPress}>
+                            <View style={styles.active} backgroundColor={state.buttonColor}></View>
+                        </TouchableCmp>
+                        <View style={styles.add}>
+                            <Ionicons name={Platform.OS === 'android' ? 'md-add' : 'ios-add'} size={30} color="#DFD8C8" style={{ marginTop: 0, marginLeft: 2 }} onPress={handlePickAvatar}></Ionicons>
+                        </View>
+                    </View>
+                    <View style={styles.infoContainer}>
+                        <Text style={[styles.text, { fontWeight: "200", fontSize: 20, fontWeight: "bold" }]}>{selectedProfile.name}</Text>
+                        <Text style={[styles.text, { color: "#AEB5BC", fontSize: 16 }]}>{selectedProfile.title}</Text>
+                    </View>
 
-        if (Platform.OS === 'android' && Platform.Version >= 21) {
-            TouchableCmp = TouchableNativeFeedback;
-        }
-        var image = this.state.showDefault ? require('../components/img/default-profile-pic.jpg') : { uri: this.state.avatar };
-        return (
-            <SafeAreaView style={styles.container}>
-                <View style={styles.responsiveBox}>
-                    <ScrollView showsVerticalScrollIndicator={false}>
-                        <View style={{ alignSelf: "center" }}>
-                            <View style={styles.profileImage}>
-                                <Image source={image} style={styles.avatar} resizeMode="cover"></Image>
-                            </View>
-                            <TouchableCmp onPress={this.onButtonPress}>
-                                <View style={styles.active} backgroundColor={this.state.buttonColor}></View>
-                            </TouchableCmp>
-                            <View style={styles.add}>
-                                <Ionicons name={Platform.OS === 'android' ? 'md-add' : 'ios-add'} size={30} color="#DFD8C8" style={{ marginTop: 0, marginLeft: 2 }} onPress={this.handlePickAvatar}></Ionicons>
-                            </View>
-                        </View>
-                        <View style={styles.infoContainer}>
-                            <Text style={[styles.text, { fontWeight: "200", fontSize: 20, fontWeight: "bold" }]}></Text>
-                            <Text style={[styles.text, { color: "#AEB5BC", fontSize: 16 }]}>Title</Text>
-                        </View>
-
-                        <View style={styles.statusContainer}>
-                            <View style={styles.status}>
-                                <TouchableOpacity style={{ alignItems: "center" }}>
-                                    <MaterialCommunityIcons name="emoticon-happy-outline" size={20}></MaterialCommunityIcons>
-                                    <Text>Set Status</Text>
-                                </TouchableOpacity>
-                            </View>
-                            <View style={styles.status}>
-                                <TouchableOpacity style={{ alignItems: "center" }} onPress={() => this.props.navigation.navigate('Edit')}>
-                                    <MaterialIcons name="edit" size={20}></MaterialIcons>
-                                    <Text>Edit Profile</Text>
-                                </TouchableOpacity>
-                            </View>
-                            <View style={styles.status}>
-                                <TouchableOpacity style={{ alignItems: "center" }}>
-                                    <MaterialIcons name="more-horiz" size={20}></MaterialIcons>
-                                    <Text>More</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-
-
-
-                        <View style={[styles.detailContainer]}>
-                            <View style={styles.iconBox}>
-                                <MaterialIcons name="email" size={20}></MaterialIcons>
-                            </View>
-                            <View style={styles.detailBox}>
-                                <Text style={[styles.text, { fontSize: 16 }]}>Email Address: </Text>
-                                <Text style={[styles.text, styles.subText]}>{this.state.email}</Text>
-                            </View>
-                        </View>
-                        <View style={[styles.detailContainer]}>
-                            <View style={styles.iconBox}>
-                                <MaterialIcons name="local-phone" size={20}></MaterialIcons>
-                            </View>
-                            <View style={styles.detailBox}>
-                                <Text style={[styles.text, { fontSize: 16 }]}>Phone Number: </Text>
-                                <Text style={[styles.text, styles.subText]}>786-234-4567</Text>
-                            </View>
-                        </View>
-                        <View style={[styles.detailContainer]}>
-                            <View style={styles.iconBox}>
-                                <MaterialCommunityIcons name="certificate" size={20}></MaterialCommunityIcons>
-                            </View>
-                            <View style={styles.detailBox}>
-                                <Text style={[styles.text, { fontSize: 16 }]}>Certifications:</Text>
-                                <Text style={[styles.text, styles.subText]}
-                                    onPress={() => this.props.navigation.navigate('CME')}> Show All {'>'} </Text>
-                            </View>
-                        </View>
-                        <View style={styles.buttonStyle}>
-                            <TouchableOpacity onPress={this.handleSignOut}>
-                                <Text style={styles.button}>LOGOUT</Text>
+                    <View style={styles.statusContainer}>
+                        <View style={styles.status}>
+                            <TouchableOpacity style={{ alignItems: "center" }}>
+                                <MaterialCommunityIcons name="emoticon-happy-outline" size={20}></MaterialCommunityIcons>
+                                <Text>Set Status</Text>
                             </TouchableOpacity>
                         </View>
-                    </ScrollView>
-                </View>
-            </SafeAreaView>
-        );
-    }
+                        <View style={styles.status}>
+                            <TouchableOpacity style={{ alignItems: "center" }} onPress={() => props.navigation.navigate({ routeName: 'Edit', params: { userProfileId: profileid } })}>
+                                <MaterialIcons name="edit" size={20}></MaterialIcons>
+                                <Text>Edit Profile</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.status}>
+                            <TouchableOpacity style={{ alignItems: "center" }}>
+                                <MaterialIcons name="more-horiz" size={20}></MaterialIcons>
+                                <Text>More</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
+
+
+                    <View style={[styles.detailContainer]}>
+                        <View style={styles.iconBox}>
+                            <MaterialIcons name="email" size={20}></MaterialIcons>
+                        </View>
+                        <View style={styles.detailBox}>
+                            <Text style={[styles.text, { fontSize: 16 }]}>Email Address: </Text>
+                            <Text style={[styles.text, styles.subText]}>{selectedProfile.email}</Text>
+                        </View>
+                    </View>
+                    <View style={[styles.detailContainer]}>
+                        <View style={styles.iconBox}>
+                            <MaterialIcons name="local-phone" size={20}></MaterialIcons>
+                        </View>
+                        <View style={styles.detailBox}>
+                            <Text style={[styles.text, { fontSize: 16 }]}>Phone Number: </Text>
+                            <Text style={[styles.text, styles.subText]}>{selectedProfile.number}</Text>
+                        </View>
+                    </View>
+                    <View style={[styles.detailContainer]}>
+                        <View style={styles.iconBox}>
+                            <MaterialCommunityIcons name="certificate" size={20}></MaterialCommunityIcons>
+                        </View>
+                        <View style={styles.detailBox}>
+                            <Text style={[styles.text, { fontSize: 16 }]}>Certifications:</Text>
+                            <Text style={[styles.text, styles.subText]}
+                                onPress={() => this.props.navigation.navigate('CME')}> Show All {'>'} </Text>
+                        </View>
+                    </View>
+                    <View style={styles.buttonStyle}>
+                        <TouchableOpacity onPress={handleSignOut}>
+                            <Text style={styles.button}>LOGOUT</Text>
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
+            </View>
+        </SafeAreaView>
+    );
 }
+
+export default ProfileScreen;
 
 const styles = StyleSheet.create({
     container: {
@@ -292,8 +312,5 @@ ProfileScreen.navigationOptions = navigationdata => {
                 />
             </HeaderButtons>
         ),
-
     }
 };
-
-export default ProfileScreen;

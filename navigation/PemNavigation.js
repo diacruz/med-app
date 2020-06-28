@@ -55,7 +55,7 @@ const CatNavigator = createStackNavigator({
   Search: {
     screen: SearchScreen,
     navigationOptions: {
-      header: null
+      headerShown: false
     }
   },
   SubCategories: {
@@ -128,7 +128,6 @@ const ProfileNavigator = createStackNavigator({
           color={drawerConfig.tintColor}
         />
       )
-
     },
     defaultNavigationOptions: defaultStackNavOptions
   }
