@@ -29,31 +29,13 @@ const CreateAccount = props => {
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [user, setUser] = useState(null)
-
-
-  const handleDisplayName = (text) => {
-    setDisplayName(text)
-  }
-
-  const handleEmail = (text) => {
-    setEmail(text)
-  }
-
-  const handlePassword = (text) => {
-    setPassword(text)
-  }
+  const [avatar, setAvatar] = useState(null);
 
   const clearTextInputs = () => {
     setDisplayName({ displayName: "" }),
       setEmail({ email: "" }),
       setPassword({ password: "" })
   }
-
- 
-
- 
-  
 
   /**
    * Creates an account with the specified username and password. If it works,
@@ -69,31 +51,29 @@ const CreateAccount = props => {
     firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
-      .then(
+      .then((userCredentials) => {
+        if (userCredentials.user) {
+            userCredentials.user.updateProfile({
+              displayName: displayName
+          })
+        }
+      }).then(
         function () {
           displayOKAlert('Success!', 'Your account has been created'),
-          firebase.auth().onAuthStateChanged((user) => {
-            if (user) {
-              props.navigation.replace({ routeName: 'Login', params: { userId: user.uid, displayName: displayName, userEmail: email}})
-                console.log('user: ' + user.uid)
-              console.log(user.uid);
-            } else {
-              // User not logged in or has just logged out.
-            }
-          });
-          firebase
-            .auth()
-            .signOut()
-            .then(
-              function () {
-                console.log('User has been signed out')
-              }).catch(function (err) {
-                console.log('An error has occured in createUserAccount signOut: ',
-                  err,
-                  //'\nF:', fullname,
-                  '\nU:', username,
-                  '| P:', password);
-              })
+          props.navigation.replace('Login')
+            firebase
+              .auth()
+              .signOut()
+              .then(
+                function () {
+                  console.log('User has been signed out')
+                }).catch(function (err) {
+                  console.log('An error has occured in createUserAccount signOut: ',
+                    err,
+                    //'\nF:', fullname,
+                    '\nU:', username,
+                    '| P:', password);
+                })
         }).catch(function (err) {
           displayOKAlert('Oh no!', (err + "").substring(7))
           console.log('An error has occured when creating your account: ',
@@ -194,25 +174,25 @@ const CreateAccount = props => {
       <TextInput
         style={[styles.textField, styles.fullName]}
         placeholder='Fullname'
-        onChangeText={handleDisplayName}
+        onChangeText={text => setDisplayName(text)}
         value={displayName}
       />
       <TextInput
         style={[styles.textField, styles.email]}
         placeholder='Email'
-        onChangeText={handleEmail}
+        onChangeText={text => setEmail(text)}
         value={email}
       />
       <TextInput
         secureTextEntry
         style={styles.textField}
         placeholder='Password (At least 6 characters)'
-        onChangeText={handlePassword}
+        onChangeText={text => setPassword(text)}
         value={password}
       />
       <TouchableOpacity style={styles.button} onPress={() => {
         createUserAccount(email, password, displayName);
-         // saveHandler
+        // saveHandler
       }}>
         <Text style={styles.text}>Confirm</Text>
       </TouchableOpacity>
@@ -225,6 +205,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  profileImage: {
+    borderColor: 'gray',
+    borderRadius: 80,
+    borderWidth: 2,
+    height: 160,
+    marginBottom: 30,
+    width: 160,
   },
 
   textField: {
