@@ -14,10 +14,14 @@ const EditCatContentScreen = props => {
     const editedSelectedSubCategories = useSelector(state =>
         state.categoriesContent.categoriesContent.find(prod => prod.id === subCategoryId)
     );
+
     const selectedCategory = useSelector(state =>
         state.categories.categories.find(prod => prod.id === categoryId)
     );
 
+    const SelectedSubCategories = useSelector(state => 
+        state.categoriesContent.categoriesContent
+    );
     const dispatch = useDispatch();
 
     const [title, setTitle] = useState(editedSelectedSubCategories ? editedSelectedSubCategories.title : '');
@@ -28,11 +32,13 @@ const EditCatContentScreen = props => {
     const [references, setReferences] = useState(editedSelectedSubCategories ? editedSelectedSubCategories.references : '');
     const [image, setImage] = useState(editedSelectedSubCategories ? editedSelectedSubCategories.image : null);
     const [textBoxWidth, SetTextBoxWidth] = useState('99%');
+
     const submitHandler = useCallback(() => {
         if (editedSelectedSubCategories) {
             dispatch(CatContentActions.updateCatContent(subCategoryId, title, evaluation, signs, management, medications, references, image));
         }
         else {
+
             dispatch(CatContentActions.createCatContent(title, selectedCategory.color, selectedCategory.id, evaluation, signs, management, medications, references, image));
         }
         props.navigation.goBack();

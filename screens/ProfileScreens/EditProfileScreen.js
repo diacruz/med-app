@@ -1,34 +1,28 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, Button, Text, StyleSheet, Platform, TextInput, Icon, TouchableOpacity, Switch } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
-import CustomHeaderButton from '../components/CustomHeaderButton';
-//import { useSelector, useDispatch } from 'react-redux'
-//import {HeaderButtons, Item } from 'react-navigation-header-buttons';
-//import CustomHeaderButton from '../components/CustomHeaderButton';
-
-const updateInfo = (name, title, number, cert, isVisible) => {
-    return {
-        profileData: {
-            name, title, number, cert, isVisible
-        }
-    }
-}
+import CustomHeaderButton from '../../components/CustomHeaderButton';
+import * as firebase from 'firebase'
 
 const EditProfileScreen = props => {
+
+    const uid = props.navigation.getParam('userID');
+    const db = firebase.firestore();
+
     const [name, setName] = useState('');
     const [title, setTitle] = useState('');
     const [number, setNumber] = useState('');
-    const [isVisible, setIsVisible] = useState(false)
+    const [status, setStatus] = useState('');
+    const [isVisible, setIsVisible] = useState(false);
 
-    //const userId = props.navigation.getParam('userId');
-    const saveHandler = useCallback(() => {
-        console.log('Saving....')
-    });
 
-    useEffect(() => {
-        props.navigation.setParams({save: saveHandler});
-    }, []);
+    const userRef = db.collection('users').doc(uid)
 
+    userRef.set({
+        name: name,
+        title: title,
+        number: number
+    }, { merge: true });
 
     return (
         <ScrollView>
@@ -38,7 +32,9 @@ const EditProfileScreen = props => {
                     <TextInput
                         style={styles.input}
                         value={name}
-                        onChangeText={text => setName(text)}>
+                        onChangeText={text => setName(text)}
+                        selectTextOnFocus={true}
+                        returnKeyType="next">
                     </TextInput>
                 </View>
                 <View style={styles.formControl}>
@@ -46,7 +42,9 @@ const EditProfileScreen = props => {
                     <TextInput
                         style={styles.input}
                         value={title}
-                        onChangeText={text => setTitle(text)}>
+                        onChangeText={text => setTitle(text)}
+                        selectTextOnFocus={true}
+                        returnKeyType="next">
                     </TextInput>
                 </View>
                 <View style={styles.formControl}>
@@ -54,7 +52,9 @@ const EditProfileScreen = props => {
                     <TextInput
                         style={styles.input}
                         value={number}
-                        onChangeText={text => setNumber(text)}>
+                        onChangeText={text => setNumber(text)}
+                        selectTextOnFocus={true}
+                        returnKeyType="next">
                     </TextInput>
                 </View>
                 <View style={styles.switchStyle}>
@@ -67,17 +67,15 @@ const EditProfileScreen = props => {
 };
 
 EditProfileScreen.navigationOptions = navData => {
-    const saveFn = navData.navigation.getParam('save');
-
     return {
         headerTitle: 'Edit Screen',
         headerRight: () => (
-                <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-                    <Item title='Save' iconName={Platform.OS === 'android' ? 'md-checkmark' : 'ios-checkmark'}
-                        onPress={saveFn}
-                    />
-                </HeaderButtons>
-            ),
+            <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+                <Item title='Save' iconName={Platform.OS === 'android' ? 'md-checkmark' : 'ios-checkmark'}
+                    onPress={() => {navData.navigation.goBack();}}
+                />
+            </HeaderButtons>
+        ),
 
     }
 }

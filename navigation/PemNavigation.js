@@ -10,7 +10,7 @@ import ChatTabScreen from '../screens/ChatTabScreen';
 import SubCategoriesScreen from '../screens/SubCategoriesScreen';
 import CatContentScreen from '../screens/CatContentScreen';
 import ChatroomScreen from '../screens/ChatroomScreen';
-import ProfileScreen from '../screens/ProfileScreen';
+import ProfileScreen from '../screens/ProfileScreens/ProfileScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
@@ -22,7 +22,7 @@ import AdminSubCategoriesScreen from '../screens/AdminScreens/AdminSubCategories
 import Colors from '../constants/Colors';
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import EditProfileScreen from '../screens/EditProfileScreen';
+import EditProfileScreen from '../screens/ProfileScreens/EditProfileScreen';
 import DrawerComponent from "../components/DrawerComponent";
 //import AppContainer from '../screens/ChatTabScreen'
 //import SignOut from '../screens/SignOut'
@@ -55,7 +55,7 @@ const CatNavigator = createStackNavigator({
   Search: {
     screen: SearchScreen,
     navigationOptions: {
-      header: null
+      headerShown: false
     }
   },
   SubCategories: {
@@ -114,12 +114,12 @@ const FavNavigator = createStackNavigator({
     defaultNavigationOptions: defaultStackNavOptions
   }
 );
-
 const ProfileNavigator = createStackNavigator({
   Profile: ProfileScreen,
   Edit: EditProfileScreen,
   CME: CMEScreen,
 },
+
   {
     navigationOptions: {
       drawerIcon: drawerConfig => (
@@ -128,7 +128,6 @@ const ProfileNavigator = createStackNavigator({
           color={drawerConfig.tintColor}
         />
       )
-
     },
     defaultNavigationOptions: defaultStackNavOptions
   }

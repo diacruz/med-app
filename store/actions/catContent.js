@@ -1,16 +1,55 @@
+import CatContent from "../../models/catContent";
+
 export const DELETE_CATCONTENT = 'DELETE_CATCONTENT';
 export const CREATE_CATCONTENT = 'CREATE_CATCONTENT';
 export const UPDATE_CATCONTENT = 'UPDATE_CATCONTENT';
-import {CATCONTENT} from '../../data/categoriesData';
+export const SET_CATCONTENT = 'SET_CATCONTENT';
+
+export const fetchCatContent = () =>{
+
+    return async dispatch =>{
+        // you can access here any async code!
+       const response = await fetch('',{
+        });
+        const resData = await response.json();
+        const catContentFireBaseData = [];
+
+        for(const key in resData){
+            catContentFireBaseData.push(new CatContent(
+                key, 
+                resData[key].title,
+                resData[key].color,
+                resData[key].subId,
+                resData[key].evaluation,
+                resData[key].signs,
+                resData[key].management,
+                resData[key].medications,
+                resData[key].references,
+                resData[key].image,
+                ));
+        }
+
+        dispatch({type: SET_CATCONTENT, catcontent: catContentFireBaseData })
+    };
+};
 
 export const deleteCatContent = (catContentId) => {
-    return { type: DELETE_CATCONTENT, catContentId: catContentId };
+    return async dispatch =>{
+        const response = await fetch(``,{
+            method: 'DELETE',
+        });
+        dispatch({ type: DELETE_CATCONTENT, catContentId: catContentId });
+    }
 }
 
 export const createCatContent = (title, color, subId, evaluation, signs, management, medications,references,image) => {
     return async dispatch =>{
         // you can access here any async code!
+<<<<<<< HEAD
        const response = await fetch('https://med-app-519aa.firebaseio.com//categories.json',{
+=======
+       const response = await fetch('',{
+>>>>>>> master
             method: 'POST',
             headers:{
                 'Content-Type': 'application/json'
@@ -49,17 +88,37 @@ export const createCatContent = (title, color, subId, evaluation, signs, managem
 };
 
 export const updateCatContent = (id, title, evaluation, signs, management, medications, references, image) => {
-    return {
-        type: UPDATE_CATCONTENT,
-        catContentId: id,
-        catContentData: {
-            title: title,
-            evaluation: evaluation,
-            signs: signs,
-            management: management,
-            medications: medications,
-            references: references,
-            image: image
-        }
+    return async dispatch =>{
+        await fetch(``,
+        {
+            method: 'PATCH',
+            headers:{
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                title,
+                evaluation,
+                signs,
+                management,
+                medications,
+                references,
+                image
+            })
+        });
+
+        dispatch({
+            type: UPDATE_CATCONTENT,
+            catContentId: id,
+            catContentData: {
+                title: title,
+                evaluation: evaluation,
+                signs: signs,
+                management: management,
+                medications: medications,
+                references: references,
+                image: image
+            }
+        });
     };
+   
 };

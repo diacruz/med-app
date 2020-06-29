@@ -15,43 +15,65 @@ const CategoryGridTile = props => {
     TouchableCmp = TouchableNativeFeedback;
   }
   return (
-    <View style={styles.gridItem}>
-      <TouchableCmp style={{ flex: 1 }} onPress={props.onSelect}>
-        <View
-          style={{ ...styles.container, ...{ backgroundColor: props.color } }}
-        >
-          <Text style={styles.title} numberOfLines={2}>
-            {props.title}
-          </Text>
+      <View style={styles.gridItem}>
+        <View style={{ ...styles.container, ...{ backgroundColor: props.color } }}>
+          <View style={styles.touchable}>
+            <TouchableCmp onPress={props.onSelect} useForeground>
+              <View style={styles.infoContainer}>
+                <View style={styles.textContainer}>
+                  <Text style={styles.title}>
+                    {props.title}
+                  </Text>
+                </View>
+              </View>
+            </TouchableCmp>
+          </View>
         </View>
-      </TouchableCmp>
+
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  gridItem: {
+  gridItem:{
     flex: 1,
-    margin: 15,
-    borderRadius: 10,
-    overflow: 'hidden'
+    marginTop: 20,
+    paddingBottom: 5,
+    height: 150,
   },
   container: {
-    //flex: 1,
-    height: 110,
-    borderRadius: 10,
+    flex: 1,
     shadowColor: 'black',
     shadowOpacity: 0.26,
     shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 10,
-    elevation: 6,
-    padding: 15,
+    shadowRadius: 8,
+    elevation: 5,
+    borderRadius: 10,
+    backgroundColor: 'white',
+    height: 150,
+    marginHorizontal: 10,
+  },
+  textContainer: {
+    width: '100%',
+    height: '60%',
     alignItems: 'center',
+    padding: 10
+  },
+  infoContainer: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  touchable: {
+    overflow: 'hidden',
+    borderRadius: 10,
   },
   title: {
     fontFamily: 'open-sans-bold',
     fontSize: 20,
-    textAlign: 'center'
+    textAlign: 'center',
+    
   }
 });
 
