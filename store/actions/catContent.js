@@ -9,7 +9,7 @@ export const fetchCatContent = () =>{
 
     return async dispatch =>{
         // you can access here any async code!
-       const response = await fetch('',{
+       const response = await fetch('https://med-app-519aa.firebaseio.com/categories.json',{
         });
         const resData = await response.json();
         const catContentFireBaseData = [];
@@ -35,7 +35,7 @@ export const fetchCatContent = () =>{
 
 export const deleteCatContent = (catContentId) => {
     return async dispatch =>{
-        const response = await fetch(``,{
+        const response = await fetch(`https://med-app-519aa.firebaseio.com/categories/${catContentId}.json`,{
             method: 'DELETE',
         });
         dispatch({ type: DELETE_CATCONTENT, catContentId: catContentId });
@@ -45,7 +45,7 @@ export const deleteCatContent = (catContentId) => {
 export const createCatContent = (title, color, subId, evaluation, signs, management, medications,references,image) => {
     return async dispatch =>{
         // you can access here any async code!
-       const response = await fetch('',{
+       const response = await fetch('https://med-app-519aa.firebaseio.com/categories.json',{
             method: 'POST',
             headers:{
                 'Content-Type': 'application/json'
@@ -85,7 +85,7 @@ export const createCatContent = (title, color, subId, evaluation, signs, managem
 
 export const updateCatContent = (id, title, evaluation, signs, management, medications, references, image) => {
     return async dispatch =>{
-        await fetch(``,
+        await fetch(`https://med-app-519aa.firebaseio.com/categories/${id}.json`,
         {
             method: 'PATCH',
             headers:{
