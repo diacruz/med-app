@@ -21,7 +21,7 @@ class Firebase {
         databaseURL: "",
         projectId: "",
         storageBucket: "",
-      
+
       };
 
       firebase.initializeApp(firebaseConfig);

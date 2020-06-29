@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, Button, Text, StyleSheet, Platform, TextInput, Icon, TouchableOpacity, Switch } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../../components/CustomHeaderButton';
+import Colors from '../../constants/Colors';
 import * as firebase from 'firebase'
 
 const EditProfileScreen = props => {
@@ -16,13 +17,18 @@ const EditProfileScreen = props => {
     const [isVisible, setIsVisible] = useState(false);
 
 
-    const userRef = db.collection('users').doc(uid)
+    const userRef = db.collection('users').doc(uid);
+    // userRef.update(data);
 
-    userRef.set({
-        name: name,
-        title: title,
-        number: number
-    }, { merge: true });
+    async function addInfo() {
+        await userRef.update({
+            name: name,
+            title: title,
+            number: number
+        });
+        props.navigation.goBack();
+    }
+
 
     return (
         <ScrollView>
@@ -61,6 +67,11 @@ const EditProfileScreen = props => {
                     <Text style={styles.label}> Public / Private</Text>
                     <Switch value={isVisible} onValueChange={newValue => setIsVisible(newValue)}></Switch>
                 </View>
+                <View style={styles.buttonStyle}>
+                    <TouchableOpacity onPress={() => addInfo()}>
+                        <Text style={styles.button}>Submit</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         </ScrollView>
     );
@@ -69,14 +80,6 @@ const EditProfileScreen = props => {
 EditProfileScreen.navigationOptions = navData => {
     return {
         headerTitle: 'Edit Screen',
-        headerRight: () => (
-            <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-                <Item title='Save' iconName={Platform.OS === 'android' ? 'md-checkmark' : 'ios-checkmark'}
-                    onPress={() => {navData.navigation.goBack();}}
-                />
-            </HeaderButtons>
-        ),
-
     }
 }
 
@@ -115,6 +118,24 @@ const styles = StyleSheet.create({
         flex: 1,
         marginTop: 20,
         justifyContent: "center"
+    },
+    buttonStyle: {
+        marginTop: 50,
+        alignContent: "center",
+        alignSelf: "center"
+    },
+    button: {
+        backgroundColor: Colors.primaryColor,
+        borderColor: 'white',
+        borderWidth: 1,
+        borderRadius: 20,
+        color: 'white',
+        fontSize: 15,
+        fontWeight: 'bold',
+        overflow: 'hidden',
+        padding: 12,
+        textAlign: 'center',
+        width: 90,
     }
 
 });

@@ -67,14 +67,12 @@ const Login = props => {
           placeholder='Email'
           onChangeText={handleEmail}
           autoCapitalize='none'
-          required
         />
         <TextInput
           secureTextEntry
           style={styles.textField}
           placeholder='Password'
           onChangeText={handlePassword}
-          required
         />
         <TouchableOpacity style={styles.loginButton} onPress={() => {
           logUserIn(userInfo.userValue, userInfo.passwordValue)
