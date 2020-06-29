@@ -22,7 +22,7 @@ class Firebase {
         projectId: "",
         storageBucket: "",
       };
-
+ 
       /**apiKey: "",
         authDomain: "",
         databaseURL: "",
