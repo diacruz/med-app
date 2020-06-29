@@ -33,7 +33,8 @@ const EditProfileScreen = props => {
                         style={styles.input}
                         value={name}
                         onChangeText={text => setName(text)}
-                        selectTextOnFocus={true}>
+                        selectTextOnFocus={true}
+                        returnKeyType="next">
                     </TextInput>
                 </View>
                 <View style={styles.formControl}>
@@ -42,7 +43,8 @@ const EditProfileScreen = props => {
                         style={styles.input}
                         value={title}
                         onChangeText={text => setTitle(text)}
-                        selectTextOnFocus={true}>
+                        selectTextOnFocus={true}
+                        returnKeyType="next">
                     </TextInput>
                 </View>
                 <View style={styles.formControl}>
@@ -51,7 +53,8 @@ const EditProfileScreen = props => {
                         style={styles.input}
                         value={number}
                         onChangeText={text => setNumber(text)}
-                        selectTextOnFocus={true}>
+                        selectTextOnFocus={true}
+                        returnKeyType="next">
                     </TextInput>
                 </View>
                 <View style={styles.switchStyle}>
