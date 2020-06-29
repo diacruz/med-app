@@ -1,85 +1,214 @@
-import React, { Component, useState, useCallback, useEffect, useReducer } from 'react';
+import React, { Component, useState, useCallback, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import { ActivityIndicator, ScrollView, StyleSheet, KeyboardAvoidingView, View, TextInput, TouchableOpacity, Text, Alert, Image } from 'react-native';
+import { StyleSheet, View, TextInput, TouchableOpacity, Text, Alert, Image } from 'react-native';
 import UserPermission from '../utilities/UserPermission'
 import * as firebase from 'firebase';
 import 'firebase/firestore';
 import * as ImagePicker from 'expo-image-picker';
-import { useSelector, useDispatch } from 'react-redux';
-import * as AuthActions from '../store/actions/auth';
-import { isLoaded } from '../node_modules/expo-font/build/Font';
-import Colors from '../constants/Colors';
+import { firebrick } from 'color-name';
 
-const SignUp = props => {
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState();
+/**
+ * Displays an alert box with the specified title
+ * and message.
+ * @param {string} title
+ * @param {string} message
+ */
 
-  const dispatch = useDispatch()
+function displayOKAlert(title, message) {
+  Alert.alert(
+    title,
+    message
+  );
+}
 
+
+const CreateAccount = props => {
+
+  const [isLoading, setIsLoading] = useState(false);
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [avatar, setAvatar] = useState(null);
+
+  const clearTextInputs = () => {
+    setDisplayName({ displayName: "" }),
+      setEmail({ email: "" }),
+      setPassword({ password: "" })
+  }
   /*
-    const signupHandler = useCallback(() => {
-        await dispatch(AuthActions.signup(email, password))
-    }, [dispatch, email, password]);
+    const saveInfo = (userCredentials) => {
+      if (userCredentials.user) {
+        console.log('Sign up user:' + userCredentials.user.uid);
+        useCallback(() => {
+        dispatch(UserProfileActions.createProfile(userCredentials.user.uid, displayName, email, '', 'homeless', '', '', '', false));
+        }, [dispatch, userCredentials.user.uid, displayName, email]);}
+      }
   */
-  useEffect(() => {
-    if (error) {
-      Alert.alert('There was an error', error, [{ text: 'Ok' }]);
-    }
-  }, [error]);
+  /**
+   * Creates an account with the specified username and password. If it works,
+   * an alert box is displayed, the user is brought to the Login page, and the
+   * user is signed out (because creating an account automatically signs the user
+   * in). If it fails, an alert box is shown notifying the user of the error.
+   * @param {string} displayName
+   * @param {string} email
+   * @param {string} password
+   */
 
-  const signupAsyncHandler = async () => {
-    let action = AuthActions.signup(email, password);
-    setError(null);
-    setIsLoading(true);
-    try {
-      await dispatch(action);
-      props.navigation.goBack();
-    } catch (err) {
-      setError(err.message);
-      setIsLoading(false)
-    }
-  };
+  const db = firebase.firestore();
 
+  const createUserAccount = (email, password, displayName) => {
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then(cred => {
+        return db.collection('users').doc(cred.user.uid)
+        .set({
+          name: displayName,
+          email: email,
+          avatar: '',
+          title: '',
+          status: '', 
+          certs: '', 
+          isVisible: false
+        })}).then(
+        function () {
+          displayOKAlert('Success!', 'Your account has been created'),
+            props.navigation.replace('Login')
+          firebase
+            .auth()
+            .signOut()
+            .then(
+              function () {
+                console.log('User has been signed out')
+              }).catch(function (err) {
+                console.log('An error has occured in createUserAccount signOut: ',
+                  err,
+                  //'\nF:', fullname,
+                  '\nU:', username,
+                  '| P:', password);
+              })
+        }).catch(function (err) {
+          displayOKAlert('Oh no!', (err + "").substring(7))
+          console.log('An error has occured when creating your account: ',
+            err,
+            '\nU:', email,
+            '| P:', password);
+        })
+    clearTextInputs()
+  }
+
+  /*
+  export default class CreateAccount extends Component {
+  
+    static navigationOptions = {
+      title: 'Sign Up',
+    };
+  
+    constructor(props) {
+      super(props)
+      this.state = {
+        fullName: "",
+        username: "",
+        password: "",
+      }
+      this.handleFullName = this.handleFullName.bind(this)
+      this.handleEmail = this.handleEmail.bind(this)
+      this.handlePassword = this.handlePassword.bind(this)
+    }
+    handleFullName(text) {
+      this.setState({ fullName: text })
+    }
+  
+    handleEmail(text) {
+      this.setState({ username: text })
+    }
+  
+    handlePassword(text) {
+      this.setState({ password: text })
+    }
+  
+    /**
+     * Clears the text inputs. This is so that if there's an error,
+     * the user doesn't have to backspace everything they put.
+     */
+  /*
+  clearTextInputs() {
+    this.setState({ fullname: "", username: "", password: "" })
+  }
+  
+  /**
+   * Creates an account with the specified username and password. If it works,
+   * an alert box is displayed, the user is brought to the Login page, and the
+   * user is signed out (because creating an account automatically signs the user
+   * in). If it fails, an alert box is shown notifying the user of the error.
+   * @param {string} fullname
+   * @param {string} username
+   * @param {string} password
+   * @param {Object} props
+   */
+
+  /*
+    createUserAccount(username, password, fullname, props) {
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(username, password)
+        .then(
+          function () {
+            displayOKAlert('Success!', 'Your account has been created'),
+              props.navigation.replace('Login')
+            firebase
+              .auth()
+              .signOut()
+              .then(
+                function () {
+                  console.log('User has been signed out')
+                }).catch(function (err) {
+                  console.log('An error has occured in createUserAccount signOut: ',
+                    err,
+                    //'\nF:', fullname,
+                    '\nU:', username,
+                    '| P:', password);
+                })
+          }).catch(function (err) {
+            displayOKAlert('Oh no!', (err + "").substring(7))
+            console.log('An error has occured in createUserAccount createUserWithEmailAndPassword: ',
+              err,
+              '\nU:', username,
+              '| P:', password);
+          })
+      this.clearTextInputs()
+    }*/
+  //uri: this.state.user.avatar
   return (
     <View style={styles.container}>
       <TextInput
         style={[styles.textField, styles.fullName]}
         placeholder='Fullname'
-        keyboardType="default"
         onChangeText={text => setDisplayName(text)}
         value={displayName}
-        required
-        errorText="Please enter a valid name"
       />
       <TextInput
         style={[styles.textField, styles.email]}
-        placeholder='Email'
-        keyboardType="email-address"
+        placeholder="email@gmail.com"
         onChangeText={text => setEmail(text)}
         value={email}
         required
-        autoCapitalize="none"
-        errorText="Please enter a valid email"
+        autoCapitalize='none'
       />
       <TextInput
         secureTextEntry
         style={styles.textField}
         placeholder='Password (At least 6 characters)'
-        keyboardType="default"
         onChangeText={text => setPassword(text)}
-        value={password}
         required
-        errorText="Please enter a valid password"
+        value={password}
       />
-      {isLoading ? (<ActivityIndicator size="small" color={Colors.primaryColor}/>) : 
-        <TouchableOpacity style={styles.button} onPress={signupAsyncHandler}>
-          <Text style={styles.text}>Confirm</Text>
-        </TouchableOpacity>
-      }
-      </View>
+      <TouchableOpacity style={styles.button} onPress={() => {
+        createUserAccount(email, password, displayName);
+      }}>
+        <Text style={styles.text}>Confirm</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
@@ -126,4 +255,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default SignUp;
+export default CreateAccount;

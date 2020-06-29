@@ -17,8 +17,6 @@ import ReduxThunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import categoriesReducer from './store/reducers/categories';
 import catContentReducer from './store/reducers/catContent';
-import AuthReducer from './store/reducers/auth';
-import ProfileReducer from './store/reducers/userProfile'
 
 
 /*
@@ -120,8 +118,6 @@ const fetchFonts = () => {
 const rootReducer = combineReducers({
   categories: categoriesReducer,
   categoriesContent: catContentReducer,
-  auth: AuthReducer,
-  userContent: ProfileReducer
   //userContent: userContent,
 });
 

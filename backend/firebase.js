@@ -28,8 +28,11 @@ class Firebase {
         databaseURL: "",
         projectId: "",
         storageBucket: "", */
-        
+
       firebase.initializeApp(firebaseConfig);
+      /*
+      firestore = firebase.firestore();
+      firestore.settings({ timestampsInSnapshots: true})*/
       this.counter()
       this.whosOnline()
     } else {

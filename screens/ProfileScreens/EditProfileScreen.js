@@ -1,63 +1,28 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, Button, Text, StyleSheet, Platform, TextInput, Icon, TouchableOpacity, Switch } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
-import CustomHeaderButton from '../components/CustomHeaderButton';
-import * as UserProfileActions from '../store/actions/userProfile';
-import { useSelector, useDispatch } from 'react-redux';
+import CustomHeaderButton from '../../components/CustomHeaderButton';
+import * as firebase from 'firebase'
 
 const EditProfileScreen = props => {
-    const userProfileId = props.navigation.getParam('userProfileId');
-    
-    const editedProfile = useSelector(state =>
-        state.userContent.userContent.find(user => user.id === userProfileId)
-    );
 
-    const dispatch = useDispatch();
+    const uid = props.navigation.getParam('userID');
+    const db = firebase.firestore();
 
-    const [name, setName] = useState(editedProfile ? editedProfile.name : '');
-    const [title, setTitle] = useState(editedProfile ? editedProfile.title : '');
-    const [number, setNumber] = useState(editedProfile ? editedProfile.number : '');
-    const [status, setStatus] = useState(editedProfile ? editedProfile.status : '');
-    const [isVisible, setIsVisible] = useState(editedProfile ? editedProfile.isVisible : false);
-    const [avatar, setAvatar] = useState(editedProfile ? editedProfile.avatar : null);
+    const [name, setName] = useState('');
+    const [title, setTitle] = useState('');
+    const [number, setNumber] = useState('');
+    const [status, setStatus] = useState('');
+    const [isVisible, setIsVisible] = useState(false);
 
-    //const userId = props.navigation.getParam('userId');
-    const saveHandler = useCallback(() => {
-            dispatch(UserProfileActions.updateProfile(userProfileId, name, number, title, avatar, status, isVisible));
-        /*
-        else {
-            dispatch(UserProfileActions.createProfile(name, number, title, avatar, status, isVisible));
-        }*/
-        props.navigation.goBack();
-    }, [dispatch, userProfileId, name, number, title, avatar, status, isVisible, editedProfile]);
 
-    useEffect(() => {
-        (async () => {
-            if (Platform.ios) {
-                const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
-                if (status !== 'granted') {
-                    alert('Sorry, camera roll permission is required!');
-                }
-            }
-        })();
-    }, []);
-    
-    useEffect(() => {
-        props.navigation.setParams({ save: saveHandler });
-    }, [saveHandler]);
+    const userRef = db.collection('users').doc(uid)
 
-    const pickImage = async () => {
-        let selectedImage = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
-            allowsEditing: true,
-            quality: 1,
-        });
-
-        if (!selectedImage.cancelled) {
-            setImage(selectedImage.uri);
-        }
-    };
-
+    userRef.set({
+        name: name,
+        title: title,
+        number: number
+    }, { merge: true });
 
     return (
         <ScrollView>
@@ -77,7 +42,7 @@ const EditProfileScreen = props => {
                         style={styles.input}
                         value={title}
                         onChangeText={text => setTitle(text)}
-                            selectTextOnFocus={true}>
+                        selectTextOnFocus={true}>
                     </TextInput>
                 </View>
                 <View style={styles.formControl}>
@@ -99,14 +64,12 @@ const EditProfileScreen = props => {
 };
 
 EditProfileScreen.navigationOptions = navData => {
-    const saveFn = navData.navigation.getParam('save');
-
     return {
         headerTitle: 'Edit Screen',
         headerRight: () => (
             <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
                 <Item title='Save' iconName={Platform.OS === 'android' ? 'md-checkmark' : 'ios-checkmark'}
-                    onPress={saveFn}
+                    onPress={() => {navData.navigation.goBack();}}
                 />
             </HeaderButtons>
         ),

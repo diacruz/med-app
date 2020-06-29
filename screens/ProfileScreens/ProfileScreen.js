@@ -1,7 +1,7 @@
 import React, { useState, Component, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
-import CustomHeaderButton from '../components/CustomHeaderButton';
+import CustomHeaderButton from '../../components/CustomHeaderButton';
 import { Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import {
     View,
@@ -17,45 +17,44 @@ import {
 import * as firebase from 'firebase'
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import * as ImagePicker from 'expo-image-picker';
-import UserPermission from '../utilities/UserPermission';
-import EditProfileScreen from '../screens/EditProfileScreen';
-import Colors from '../constants/Colors';
-import CME from '../screens/CMEScreen'
-import SignOut from '../screens/SignOut';
-import Login from '../screens/LoginScreen';
-import { UPDATE_PROFILE } from '../store/actions/userProfile';
+import UserPermission from '../../utilities/UserPermission';
+import EditProfileScreen from './EditProfileScreen';
+import Colors from '../../constants/Colors';
+import CME from '../CMEScreen'
+import SignOut from '../SignOut';
+import Login from '../LoginScreen';
 
 
 const ProfileScreen = props => {
 
-    const profileid = firebase.auth().currentUser.uid
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [title, setTitle] = useState('');
+    const [number, setNumber] = useState('');
+    const [status, setStatus] = useState('');
+    const [isVisible, setIsVisible] = useState(false);
 
-    console.log('Profile Id: ' + profileid)
+    const [avatar, setAvatar] = useState('');
+    const [buttonColor, setButtonColor] = useState('red');
+    const showDefault = useState(false);
 
-    const selectedProfile = useSelector(state =>
-        state.userContent.userContent.find(prod => prod.subId === profileid)
-    );
-    console.log('SelectedProfile Id: ' + selectedProfile)
+    const uid = firebase.auth().currentUser.uid
+    const db = firebase.firestore()
 
-    const [loading, setLoading] = useState(false);
+    const userRef = db.collection('users').doc(uid)
 
-    const dispatch = useDispatch();
+    const observer = userRef.onSnapshot(docSnapshot => {
+        console.log(`Received doc snapshot: ${docSnapshot}`);
+        userRef.get().then(doc => {
+            setName(doc.data().name);
+            setEmail(doc.data().email);
+            setTitle(doc.data().title);
+            setNumber(doc.data().number);
+        })
+      }, err => {
+        console.log(`Encountered error: ${err}`);
+      });
 
-    const loadingUserProfile = async () => {
-        setLoading(true);
-        await dispatch(UserProfileActions.fetchUserProfile());
-        setLoading(false);
-    };
-    loadingUserProfile();
-
-    const state = {
-        email: "",
-        displayName: "",
-        avatar: '',
-        showDefault: true,
-        status: '',
-        buttonColor: 'red',
-    };
 
     const handlePickAvatar = async () => {
         UserPermission.getCameraPermission()
@@ -66,11 +65,10 @@ const ProfileScreen = props => {
             aspect: [4, 3]
         })
         if (!result.cancelled) {
-            this.setState({ avatar: result.uri })
-            this.setState({ showDefault: false })
+            setAvatar(result.uri)
         }
-
     };
+
     /*
         componentDidMount() {
             const { email, displayName } = firebase.auth().currentUser;
@@ -78,12 +76,12 @@ const ProfileScreen = props => {
         };
     */
     const onButtonPress = () => {
-        if (state.buttonColor === 'red') {
-            this.setState({ buttonColor: "#34FFB9" });
+        if (buttonColor === 'red') {
+            setButtonColor("#34FFB9");
         }
 
         else {
-            this.setState({ buttonColor: "red" });
+            setButtonColor("red");
         }
     }
 
@@ -96,7 +94,7 @@ const ProfileScreen = props => {
     if (Platform.OS === 'android' && Platform.Version >= 21) {
         TouchableCmp = TouchableNativeFeedback;
     }
-    var image = state.showDefault ? require('../components/img/default-profile-pic.jpg') : { uri: state.avatar };
+    var image = showDefault ? require('../../components/img/default-profile-pic.jpg') : { uri: avatar };
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.responsiveBox}>
@@ -106,15 +104,15 @@ const ProfileScreen = props => {
                             <Image source={image} style={styles.avatar} resizeMode="cover"></Image>
                         </View>
                         <TouchableCmp onPress={onButtonPress}>
-                            <View style={styles.active} backgroundColor={state.buttonColor}></View>
+                            <View style={styles.active} backgroundColor={buttonColor}></View>
                         </TouchableCmp>
                         <View style={styles.add}>
                             <Ionicons name={Platform.OS === 'android' ? 'md-add' : 'ios-add'} size={30} color="#DFD8C8" style={{ marginTop: 0, marginLeft: 2 }} onPress={handlePickAvatar}></Ionicons>
                         </View>
                     </View>
                     <View style={styles.infoContainer}>
-                        <Text style={[styles.text, { fontWeight: "200", fontSize: 20, fontWeight: "bold" }]}>{selectedProfile.name}</Text>
-                        <Text style={[styles.text, { color: "#AEB5BC", fontSize: 16 }]}>{selectedProfile.title}</Text>
+                        <Text style={[styles.text, { fontWeight: "200", fontSize: 20, fontWeight: "bold" }]}>{name}</Text>
+                        <Text style={[styles.text, { color: "#AEB5BC", fontSize: 16 }]}>{title}</Text>
                     </View>
 
                     <View style={styles.statusContainer}>
@@ -125,7 +123,7 @@ const ProfileScreen = props => {
                             </TouchableOpacity>
                         </View>
                         <View style={styles.status}>
-                            <TouchableOpacity style={{ alignItems: "center" }} onPress={() => props.navigation.navigate({ routeName: 'Edit', params: { userProfileId: profileid } })}>
+                            <TouchableOpacity style={{ alignItems: "center" }} onPress={() => props.navigation.navigate({ routeName: 'Edit', params: { userID: uid } })}>
                                 <MaterialIcons name="edit" size={20}></MaterialIcons>
                                 <Text>Edit Profile</Text>
                             </TouchableOpacity>
@@ -139,14 +137,13 @@ const ProfileScreen = props => {
                     </View>
 
 
-
                     <View style={[styles.detailContainer]}>
                         <View style={styles.iconBox}>
                             <MaterialIcons name="email" size={20}></MaterialIcons>
                         </View>
                         <View style={styles.detailBox}>
                             <Text style={[styles.text, { fontSize: 16 }]}>Email Address: </Text>
-                            <Text style={[styles.text, styles.subText]}>{selectedProfile.email}</Text>
+                            <Text style={[styles.text, styles.subText]}>{email}</Text>
                         </View>
                     </View>
                     <View style={[styles.detailContainer]}>
@@ -155,7 +152,7 @@ const ProfileScreen = props => {
                         </View>
                         <View style={styles.detailBox}>
                             <Text style={[styles.text, { fontSize: 16 }]}>Phone Number: </Text>
-                            <Text style={[styles.text, styles.subText]}>{selectedProfile.number}</Text>
+                            <Text style={[styles.text, styles.subText]}>{number}</Text>
                         </View>
                     </View>
                     <View style={[styles.detailContainer]}>
@@ -165,7 +162,7 @@ const ProfileScreen = props => {
                         <View style={styles.detailBox}>
                             <Text style={[styles.text, { fontSize: 16 }]}>Certifications:</Text>
                             <Text style={[styles.text, styles.subText]}
-                                onPress={() => this.props.navigation.navigate('CME')}> Show All {'>'} </Text>
+                                onPress={() => props.navigation.navigate('CME')}> Show All {'>'} </Text>
                         </View>
                     </View>
                     <View style={styles.buttonStyle}>
