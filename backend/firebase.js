@@ -16,14 +16,18 @@ class Firebase {
   init = () => {
     if (!firebase.apps.length) {
       const firebaseConfig = {
-        apiKey: "",
+        apiKey: "AIzaSyChQr3uVBA_HttkD_FBS7ot0t5tJRy3On0",
+        authDomain: "pedemapp-6ee7f.firebaseapp.com",
+        databaseURL: "https://pedemapp-6ee7f.firebaseio.com",
+        projectId: "pedemapp-6ee7f",
+        storageBucket: "pedemapp-6ee7f.appspot.com",
+      };
+
+      /**apiKey: "",
         authDomain: "",
         databaseURL: "",
         projectId: "",
-        storageBucket: "",
-      };
-
-    
+        storageBucket: "", */
         
       firebase.initializeApp(firebaseConfig);
       this.counter()

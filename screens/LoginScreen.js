@@ -1,4 +1,4 @@
-import React, { Component, useCallback } from 'react';
+import React, { Component, useCallback, useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -8,54 +8,43 @@ import {
   Alert,
   KeyboardAvoidingView,
   Dimensions,
+  ActivityIndicator,
   Image,
 } from 'react-native';
 import * as firebase from 'firebase';
 import 'firebase/firestore';
 import Firebase from '../backend/firebase'
 import { useSelector, useDispatch } from 'react-redux';
-
-function displayOKAlert(title, message) {
-  Alert.alert(
-    title,
-    message
-  );
-}
+import * as AuthActions from '../store/actions/auth';
+import Colors from '../constants/Colors';
 
 const Login = props => {
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState();
+  const dispatch = useDispatch();
 
-  /**
-   * Logs a user in with the specified username and password. This also increments
-   * userCount, adds the username to the onlineUsers list, and sends them to the 
-   * Chatroom & CME screen.
-   * @param {string} email 
-   * @param {string} password 
-   * @param {Object} props 
-   */
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  function logUserIn(email, password) {
-    firebase.auth().signInWithEmailAndPassword(email, password).then(function () {
-      Firebase.shared.setUserCount = 1;
-      Firebase.shared.addOnlineUser(email);
-      props.navigation.navigate({ routeName: 'Categories' });
-    }).catch(function (err) {
-      displayOKAlert('No account with that email was found', 'Feel free to create an account first!')
-      console.log(err)
-    })
-  }
+  useEffect(() => {
+    if (error) {
+      Alert.alert('There was an error', error, [{ text: 'Ok' }]);
+    }
+  }, [error]);
 
-  let userInfo = {
-    userValue: "",
-    passwordValue: ""
-  }
+  const loginAsyncHandler = async () => {
+    let action = AuthActions.login(email, password);
+    setError(null);
+    setIsLoading(true);
+    try {
+      await dispatch(action);
+      props.navigation.navigate('Categories')
+    } catch (err) {
+      setError(err.message);
+      setIsLoading(false)
+    }
+  };
 
-  const handleEmail = (text) => {
-    userInfo.userValue = text
-  }
-
-  const handlePassword = (text) => {
-    userInfo.passwordValue = text
-  }
 
   return (
     <KeyboardAvoidingView styles={styles.container} behavior="position" enabled keyboardVerticalOffset="100">
@@ -66,19 +55,21 @@ const Login = props => {
         <TextInput
           style={[styles.textField, styles.email]}
           placeholder='Email'
-          onChangeText={handleEmail}
+          autoCapitalize="none"
+          onChangeText={text => setEmail(text)}
         />
         <TextInput
           secureTextEntry
+          autoCapitalize="none"
           style={styles.textField}
           placeholder='Password'
-          onChangeText={handlePassword}
+          onChangeText={text => setPassword(text)}
         />
-        <TouchableOpacity style={styles.loginButton} onPress={() => {
-          logUserIn(userInfo.userValue, userInfo.passwordValue)
-        }}>
-          <Text style={styles.text}>Log in</Text>
-        </TouchableOpacity>
+        {isLoading ? (<ActivityIndicator size="small" color={Colors.primaryColor}/>) :
+            <TouchableOpacity style={styles.loginButton} onPress={loginAsyncHandler}>
+              <Text style={styles.text}>Log in</Text>
+            </TouchableOpacity>
+            }
         <TouchableOpacity style={styles.signUpButton} onPress={() => {
           props.navigation.navigate('SignUp')
         }}

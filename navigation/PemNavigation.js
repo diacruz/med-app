@@ -114,12 +114,12 @@ const FavNavigator = createStackNavigator({
     defaultNavigationOptions: defaultStackNavOptions
   }
 );
-
 const ProfileNavigator = createStackNavigator({
   Profile: ProfileScreen,
   Edit: EditProfileScreen,
   CME: CMEScreen,
 },
+
   {
     navigationOptions: {
       drawerIcon: drawerConfig => (

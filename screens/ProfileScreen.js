@@ -24,36 +24,31 @@ import CME from '../screens/CMEScreen'
 import SignOut from '../screens/SignOut';
 import Login from '../screens/LoginScreen';
 import { UPDATE_PROFILE } from '../store/actions/userProfile';
-import * as UserProfileActions from '../store/actions/userProfile';
 
 
 const ProfileScreen = props => {
 
-    const [buttonColor, setButtonColor] = useState('');
-    const [avatar, setAvatar] = useState(null);
-    const showDefault = useState(true)
-    
     const profileid = firebase.auth().currentUser.uid
-    console.log('Profile Id: ' + profileid)
-    
-    const selectedProfile = useSelector(state => state.userContent.userContent);
 
-    const profileaInfo = firebase
+    console.log('Profile Id: ' + profileid)
+
+    const selectedProfile = useSelector(state =>
+        state.userContent.userContent.find(prod => prod.subId === profileid)
+    );
+    console.log('SelectedProfile Id: ' + selectedProfile)
 
     const [loading, setLoading] = useState(false);
+
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        const loadingUserProfile = async () => {
-            setLoading(true);
-            await dispatch(UserProfileActions.fetchUserProfile());
-            setLoading(false);
-        };
-        loadingUserProfile();
+    const loadingUserProfile = async () => {
+        setLoading(true);
+        await dispatch(UserProfileActions.fetchUserProfile());
+        setLoading(false);
+    };
+    loadingUserProfile();
 
-    }, [dispatch, setLoading]);
-/*
-    state = {
+    const state = {
         email: "",
         displayName: "",
         avatar: '',
@@ -61,7 +56,6 @@ const ProfileScreen = props => {
         status: '',
         buttonColor: 'red',
     };
-    */
 
     const handlePickAvatar = async () => {
         UserPermission.getCameraPermission()
@@ -72,8 +66,8 @@ const ProfileScreen = props => {
             aspect: [4, 3]
         })
         if (!result.cancelled) {
-            setAvatar(result.uri)
-           // this.setState({ showDefault: false })
+            this.setState({ avatar: result.uri })
+            this.setState({ showDefault: false })
         }
 
     };
@@ -84,12 +78,12 @@ const ProfileScreen = props => {
         };
     */
     const onButtonPress = () => {
-        if (buttonColor === 'red') {
-            setButtonColor("#34FFB9");
+        if (state.buttonColor === 'red') {
+            this.setState({ buttonColor: "#34FFB9" });
         }
 
         else {
-            setButtonColor("red");
+            this.setState({ buttonColor: "red" });
         }
     }
 
@@ -102,7 +96,7 @@ const ProfileScreen = props => {
     if (Platform.OS === 'android' && Platform.Version >= 21) {
         TouchableCmp = TouchableNativeFeedback;
     }
-    var image = showDefault ? require('../components/img/default-profile-pic.jpg') : { uri: avatar };
+    var image = state.showDefault ? require('../components/img/default-profile-pic.jpg') : { uri: state.avatar };
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.responsiveBox}>
@@ -112,7 +106,7 @@ const ProfileScreen = props => {
                             <Image source={image} style={styles.avatar} resizeMode="cover"></Image>
                         </View>
                         <TouchableCmp onPress={onButtonPress}>
-                            <View style={styles.active} backgroundColor={buttonColor}></View>
+                            <View style={styles.active} backgroundColor={state.buttonColor}></View>
                         </TouchableCmp>
                         <View style={styles.add}>
                             <Ionicons name={Platform.OS === 'android' ? 'md-add' : 'ios-add'} size={30} color="#DFD8C8" style={{ marginTop: 0, marginLeft: 2 }} onPress={handlePickAvatar}></Ionicons>
@@ -171,7 +165,7 @@ const ProfileScreen = props => {
                         <View style={styles.detailBox}>
                             <Text style={[styles.text, { fontSize: 16 }]}>Certifications:</Text>
                             <Text style={[styles.text, styles.subText]}
-                                onPress={() => props.navigation.navigate('CME')}> Show All {'>'} </Text>
+                                onPress={() => this.props.navigation.navigate('CME')}> Show All {'>'} </Text>
                         </View>
                     </View>
                     <View style={styles.buttonStyle}>
@@ -317,4 +311,4 @@ ProfileScreen.navigationOptions = navigationdata => {
             </HeaderButtons>
         ),
     }
-}
+};
