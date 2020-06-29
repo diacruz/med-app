@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useCallback } from 'react';
 import {
   StyleSheet,
   View,
@@ -21,77 +21,75 @@ function displayOKAlert(title, message) {
   );
 }
 
-/**
- * Logs a user in with the specified username and password. This also increments
- * userCount, adds the username to the onlineUsers list, and sends them to the 
- * Chatroom & CME screen.
- * @param {string} username 
- * @param {string} password 
- * @param {Object} props 
- */
-function logUserIn(username, password, props) {
-  firebase.auth().signInWithEmailAndPassword(username, password).then(function () {
-    Firebase.shared.setUserCount = 1;
-    Firebase.shared.addOnlineUser(username)
-    props.navigation.navigate({ routeName: 'Categories' });
-  }).catch(function (err) {
-    displayOKAlert('No account with that email was found', 'Feel free to create an account first!')
-    console.log(err)
-  })
-}
+const Login = props => {
 
-let userInfo = {
-  userValue: "",
-  passwordValue: ""
-}
+  /**
+   * Logs a user in with the specified username and password. This also increments
+   * userCount, adds the username to the onlineUsers list, and sends them to the 
+   * Chatroom & CME screen.
+   * @param {string} email 
+   * @param {string} password 
+   * @param {Object} props 
+   */
 
-function handleEmail(text) {
-  userInfo.userValue = text
-}
-
-function handlePassword(text) {
-  userInfo.passwordValue = text
-}
-
-export default class Login extends Component {
-
-  static navigationOptions = {
-    title: 'Login',
-  };
-  render() {
-    return (
-      <KeyboardAvoidingView styles={styles.container} behavior="position" enabled keyboardVerticalOffset="100">
-        <View>
-          <Image style={styles.logo} source={require('../data/logo.png')} />
-        </View>
-        <View styles={styles.view}>
-          <TextInput
-            style={[styles.textField, styles.email]}
-            placeholder='Email'
-            onChangeText={handleEmail}
-          />
-          <TextInput
-            secureTextEntry
-            style={styles.textField}
-            placeholder='Password'
-            onChangeText={handlePassword}
-          />
-          <TouchableOpacity style={styles.loginButton} onPress={() => {
-            logUserIn(userInfo.userValue, userInfo.passwordValue, this.props)
-          }}
-          >
-            <Text style={styles.text}>Log in</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.signUpButton} onPress={() => {
-            this.props.navigation.navigate('SignUp')
-          }}
-          >
-            <Text style={styles.text}>New? Create an account!</Text>
-          </TouchableOpacity>
-        </View>
-      </ KeyboardAvoidingView>
-    );
+  function logUserIn(email, password) {
+    firebase.auth().signInWithEmailAndPassword(email, password).then(function () {
+      Firebase.shared.setUserCount = 1;
+      Firebase.shared.addOnlineUser(email);
+      props.navigation.navigate({ routeName: 'Categories' });
+    }).catch(function (err) {
+      displayOKAlert('No account with that email was found', 'Feel free to create an account first!')
+      console.log(err)
+    })
   }
+
+  let userInfo = {
+    userValue: "",
+    passwordValue: ""
+  }
+
+  const handleEmail = (text) => {
+    userInfo.userValue = text
+  }
+
+  const handlePassword = (text) => {
+    userInfo.passwordValue = text
+  }
+
+  return (
+    <KeyboardAvoidingView styles={styles.container} behavior="position" enabled keyboardVerticalOffset="100">
+      <View>
+        <Image style={styles.logo} source={require('../data/logo.png')} />
+      </View>
+      <View styles={styles.view}>
+        <TextInput
+          style={[styles.textField, styles.email]}
+          placeholder='Email'
+          onChangeText={handleEmail}
+          autoCapitalize='none'
+          required
+        />
+        <TextInput
+          secureTextEntry
+          style={styles.textField}
+          placeholder='Password'
+          onChangeText={handlePassword}
+          required
+        />
+        <TouchableOpacity style={styles.loginButton} onPress={() => {
+          logUserIn(userInfo.userValue, userInfo.passwordValue)
+        }}>
+          <Text style={styles.text}>Log in</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.signUpButton} onPress={() => {
+          props.navigation.navigate('SignUp')
+        }}
+        >
+          <Text style={styles.text}>New? Create an account!</Text>
+        </TouchableOpacity>
+      </View>
+    </ KeyboardAvoidingView>
+  );
 }
 
 
@@ -152,7 +150,8 @@ const styles = StyleSheet.create({
     resizeMode: 'stretch',
     alignSelf: 'center',
     marginTop: 20,
-    marginLeft:30
+    marginLeft: 30
   }
 })
 
+export default Login;

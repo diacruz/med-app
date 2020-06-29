@@ -118,6 +118,7 @@ const fetchFonts = () => {
 const rootReducer = combineReducers({
   categories: categoriesReducer,
   categoriesContent: catContentReducer,
+  //userContent: userContent,
 });
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
