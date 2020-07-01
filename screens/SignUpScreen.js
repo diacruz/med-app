@@ -1,6 +1,6 @@
 import React, { Component, useState, useCallback, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import { StyleSheet, View, TextInput, TouchableOpacity, Text, Alert, Image } from 'react-native';
+import { StyleSheet, View, TextInput, TouchableOpacity, Text, Alert} from 'react-native';
 import UserPermission from '../utilities/UserPermission'
 import * as firebase from 'firebase';
 import 'firebase/firestore';
@@ -65,8 +65,9 @@ const CreateAccount = props => {
         .set({
           name: displayName,
           email: email,
+          number: '(###) ###-####',
           avatar: '',
-          title: '',
+          title: 'Job Title',
           status: '', 
           certs: '', 
           isVisible: false

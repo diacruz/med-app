@@ -1,5 +1,4 @@
 import React, { useState, Component, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../../components/CustomHeaderButton';
 import { Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -12,7 +11,8 @@ import {
     Platform,
     Image,
     TouchableOpacity,
-    TouchableNativeFeedback
+    TouchableNativeFeedback,
+    ActivityIndicator
 } from 'react-native';
 import * as firebase from 'firebase'
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -32,6 +32,7 @@ const ProfileScreen = props => {
     const [title, setTitle] = useState('');
     const [number, setNumber] = useState('');
     const [status, setStatus] = useState('');
+    const [loading, setLoading] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
 
     const [avatar, setAvatar] = useState('');
@@ -41,20 +42,19 @@ const ProfileScreen = props => {
     const uid = firebase.auth().currentUser.uid
     const db = firebase.firestore()
 
-    const userRef = db.collection('users').doc(uid)
+    const userRef = db.collection('users').doc(uid);
 
     const observer = userRef.onSnapshot(docSnapshot => {
-        console.log(`Received doc snapshot: ${docSnapshot}`);
         userRef.get().then(doc => {
-            setName(doc.data().name);
-            setEmail(doc.data().email);
-            setTitle(doc.data().title);
-            setNumber(doc.data().number);
+            const {name, email, title, number} = doc.data();
+            setName(name);
+            setEmail(email);
+            setTitle(title);
+            setNumber(number);
         })
-      }, err => {
+    }, err => {
         console.log(`Encountered error: ${err}`);
-      });
-
+    });
 
     const handlePickAvatar = async () => {
         UserPermission.getCameraPermission()
@@ -75,11 +75,11 @@ const ProfileScreen = props => {
             this.setState({ email, displayName });
         };
     */
-    const onButtonPress = () => {
-        if (buttonColor === 'red') {
+
+    const onStatusPress = () => {
+        if (uid) {
             setButtonColor("#34FFB9");
         }
-
         else {
             setButtonColor("red");
         }
@@ -94,8 +94,9 @@ const ProfileScreen = props => {
     if (Platform.OS === 'android' && Platform.Version >= 21) {
         TouchableCmp = TouchableNativeFeedback;
     }
-    var image = showDefault ? require('../../components/img/default-profile-pic.jpg') : { uri: avatar };
+    var image = showDefault ? require('../../components/img/default-profile-pic.jpg') : avatar ;
     return (
+        <View style={{height: "100%"}}>
         <SafeAreaView style={styles.container}>
             <View style={styles.responsiveBox}>
                 <ScrollView showsVerticalScrollIndicator={false}>
@@ -103,16 +104,13 @@ const ProfileScreen = props => {
                         <View style={styles.profileImage}>
                             <Image source={image} style={styles.avatar} resizeMode="cover"></Image>
                         </View>
-                        <TouchableCmp onPress={onButtonPress}>
+                        <TouchableCmp>
                             <View style={styles.active} backgroundColor={buttonColor}></View>
                         </TouchableCmp>
-                        <View style={styles.add}>
-                            <Ionicons name={Platform.OS === 'android' ? 'md-add' : 'ios-add'} size={30} color="#DFD8C8" style={{ marginTop: 0, marginLeft: 2 }} onPress={handlePickAvatar}></Ionicons>
-                        </View>
                     </View>
                     <View style={styles.infoContainer}>
                         <Text style={[styles.text, { fontWeight: "200", fontSize: 20, fontWeight: "bold" }]}>{name}</Text>
-                        <Text style={[styles.text, { color: "#AEB5BC", fontSize: 16 }]}>{title}</Text>
+                        <Text style={[styles.text, { fontSize: 16 }]}>{title}</Text>
                     </View>
 
                     <View style={styles.statusContainer}>
@@ -123,7 +121,8 @@ const ProfileScreen = props => {
                             </TouchableOpacity>
                         </View>
                         <View style={styles.status}>
-                            <TouchableOpacity style={{ alignItems: "center" }} onPress={() => props.navigation.navigate({ routeName: 'Edit', params: { userID: uid } })}>
+                            <TouchableOpacity style={{ alignItems: "center" }} onPress={() => props.navigation.navigate({ 
+                                routeName: 'Edit', params: { userID: uid, name: name, title: title, number: number} })}>
                                 <MaterialIcons name="edit" size={20}></MaterialIcons>
                                 <Text>Edit Profile</Text>
                             </TouchableOpacity>
@@ -165,14 +164,17 @@ const ProfileScreen = props => {
                                 onPress={() => props.navigation.navigate('CME')}> Show All {'>'} </Text>
                         </View>
                     </View>
+                    {loading ? <ActivityIndicator/> :
                     <View style={styles.buttonStyle}>
                         <TouchableOpacity onPress={handleSignOut}>
                             <Text style={styles.button}>LOGOUT</Text>
                         </TouchableOpacity>
                     </View>
+                    }
                 </ScrollView>
             </View>
         </SafeAreaView>
+        </View>
     );
 }
 
@@ -212,23 +214,12 @@ const styles = StyleSheet.create({
         height: 20,
         width: 20,
         borderRadius: 10
-    },
-    add: {
-        backgroundColor: "#41444B",
-        position: "absolute",
-        right: 8,
-        bottom: 13,
-        width: 30,
-        height: 30,
-        borderRadius: 30,
-        alignItems: "center",
-        justifyContent: "center",
-    },
+    }, 
     infoContainer: {
         alignSelf: "center",
         alignItems: "center",
-        marginTop: 8,
-        marginBottom: 15
+        marginTop: 5,
+        marginBottom: 11
     },
     detailContainer: {
         flexDirection: "row",
@@ -254,7 +245,7 @@ const styles = StyleSheet.create({
     statusContainer: {
         flexDirection: "row",
         alignSelf: "center",
-        marginBottom: 10,
+        marginBottom: 5,
         width: 270,
     },
     iconBox: {
@@ -276,7 +267,7 @@ const styles = StyleSheet.create({
         marginTop: 5
     },
     buttonStyle: {
-        marginTop: 30,
+        marginTop: 20,
         alignContent: "center",
         alignSelf: "center"
     },
