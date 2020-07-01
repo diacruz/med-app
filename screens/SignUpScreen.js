@@ -1,6 +1,6 @@
 import React, { Component, useState, useCallback, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import { StyleSheet, View, TextInput, TouchableOpacity, Text, Alert} from 'react-native';
+import { StyleSheet, View, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
 import UserPermission from '../utilities/UserPermission'
 import * as firebase from 'firebase';
 import 'firebase/firestore';
@@ -62,16 +62,17 @@ const CreateAccount = props => {
       .createUserWithEmailAndPassword(email, password)
       .then(cred => {
         return db.collection('users').doc(cred.user.uid)
-        .set({
-          name: displayName,
-          email: email,
-          number: '(###) ###-####',
-          avatar: '',
-          title: 'Job Title',
-          status: '', 
-          certs: '', 
-          isVisible: false
-        })}).then(
+          .set({
+            name: displayName,
+            email: email,
+            number: '(###) ###-####',
+            avatar: '',
+            title: 'Job Title',
+            status: '',
+            certs: '',
+            isVisible: false
+          })
+      }).then(
         function () {
           displayOKAlert('Success!', 'Your account has been created'),
             props.navigation.replace('Login')

@@ -1,4 +1,4 @@
-import React, { useState, Component, useEffect } from 'react';
+import React, { useState, Component, useEffect, useCallback } from 'react';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../../components/CustomHeaderButton';
 import { Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -12,7 +12,8 @@ import {
     Image,
     TouchableOpacity,
     TouchableNativeFeedback,
-    ActivityIndicator
+    ActivityIndicator,
+    ImageBackground
 } from 'react-native';
 import * as firebase from 'firebase'
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -32,7 +33,9 @@ const ProfileScreen = props => {
     const [title, setTitle] = useState('');
     const [number, setNumber] = useState('');
     const [status, setStatus] = useState('');
-    const [loading, setLoading] = useState(false);
+    const [certs, setCerts] = useState([])
+
+    const [loading, setLoading] = useState(true);
     const [isVisible, setIsVisible] = useState(false);
 
     const [avatar, setAvatar] = useState('');
@@ -44,37 +47,22 @@ const ProfileScreen = props => {
 
     const userRef = db.collection('users').doc(uid);
 
-    const observer = userRef.onSnapshot(docSnapshot => {
-        userRef.get().then(doc => {
-            const {name, email, title, number} = doc.data();
-            setName(name);
-            setEmail(email);
-            setTitle(title);
-            setNumber(number);
-        })
-    }, err => {
-        console.log(`Encountered error: ${err}`);
-    });
 
-    const handlePickAvatar = async () => {
-        UserPermission.getCameraPermission()
+    useEffect(() => {
+        userRef.onSnapshot(docSnapshot => {
+            userRef.get().then(doc => {
+                const { name, email, avatar, title, number } = doc.data();
+                setName(name);
+                setEmail(email);
+                setAvatar(avatar)
+                setTitle(title);
+                setNumber(number);
+            })
+        }, err => {
+            console.log(`Encountered error: ${err}`);
+        });
+    }, []);
 
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 3]
-        })
-        if (!result.cancelled) {
-            setAvatar(result.uri)
-        }
-    };
-
-    /*
-        componentDidMount() {
-            const { email, displayName } = firebase.auth().currentUser;
-            this.setState({ email, displayName });
-        };
-    */
 
     const onStatusPress = () => {
         if (uid) {
@@ -94,86 +82,112 @@ const ProfileScreen = props => {
     if (Platform.OS === 'android' && Platform.Version >= 21) {
         TouchableCmp = TouchableNativeFeedback;
     }
-    var image = showDefault ? require('../../components/img/default-profile-pic.jpg') : avatar ;
+
+    useEffect(() => {
+        (async () => {
+        var cmeRef = firebase.database().ref('userCmes/userId:' + uid)
+        cmeRef.orderByChild("cmes").on('value', function (snapshot) {
+            snapshot.forEach(function (childSnapshot) {
+                var childData = childSnapshot.val();
+                childData.key = childSnapshot.key;
+                setCerts(childData)
+            });
+        })
+    })
+    }, [])
+
+    const handleCerts = async () => {
+            if(certs.length === 0){
+                await userRef.update({
+                    certs: [],
+                });
+            }else{
+                await userRef.update({
+                    certs: certs,
+                });
+            }
+        props.navigation.navigate('CME')
+    }
+
+    var image = !avatar ? require('../../components/img/default-profile-pic.jpg') : { uri: avatar };
+
     return (
-        <View style={{height: "100%"}}>
-        <SafeAreaView style={styles.container}>
-            <View style={styles.responsiveBox}>
-                <ScrollView showsVerticalScrollIndicator={false}>
-                    <View style={{ alignSelf: "center" }}>
-                        <View style={styles.profileImage}>
-                            <Image source={image} style={styles.avatar} resizeMode="cover"></Image>
+        <View style={{ height: "100%" }}>
+            <SafeAreaView style={styles.container}>
+                <View style={styles.responsiveBox}>
+                    <ScrollView showsVerticalScrollIndicator={false}>
+                        <View style={{ alignSelf: "center" }}>
+                            <View style={styles.profileImage}>
+                                <Image source={image} style={styles.avatar} resizeMode="cover"></Image>
+                            </View>
+                            <TouchableCmp>
+                                <View style={styles.active} backgroundColor={buttonColor}></View>
+                            </TouchableCmp>
                         </View>
-                        <TouchableCmp>
-                            <View style={styles.active} backgroundColor={buttonColor}></View>
-                        </TouchableCmp>
-                    </View>
-                    <View style={styles.infoContainer}>
-                        <Text style={[styles.text, { fontWeight: "200", fontSize: 20, fontWeight: "bold" }]}>{name}</Text>
-                        <Text style={[styles.text, { fontSize: 16 }]}>{title}</Text>
-                    </View>
+                        <View style={styles.infoContainer}>
+                            <Text style={[styles.text, { fontWeight: "200", fontSize: 20, fontWeight: "bold" }]}>{name}</Text>
+                            <Text style={[styles.text, { fontSize: 16 }]}>{title}</Text>
+                        </View>
+                        <View style={styles.statusContainer}>
+                            <View style={styles.status}>
+                                <TouchableOpacity style={{ alignItems: "center" }}>
+                                    <MaterialCommunityIcons name="emoticon-happy-outline" size={20}></MaterialCommunityIcons>
+                                    <Text>Set Status</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={styles.status}>
+                                <TouchableOpacity style={{ alignItems: "center" }} onPress={() => props.navigation.navigate({
+                                    routeName: 'Edit', params: { userID: uid, name: name, title: title, number: number, avatar: avatar }
+                                })}>
+                                    <MaterialIcons name="edit" size={20}></MaterialIcons>
+                                    <Text>Edit Profile</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={styles.status}>
+                                <TouchableOpacity style={{ alignItems: "center" }}>
+                                    <MaterialIcons name="more-horiz" size={20}></MaterialIcons>
+                                    <Text>More</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
 
-                    <View style={styles.statusContainer}>
-                        <View style={styles.status}>
-                            <TouchableOpacity style={{ alignItems: "center" }}>
-                                <MaterialCommunityIcons name="emoticon-happy-outline" size={20}></MaterialCommunityIcons>
-                                <Text>Set Status</Text>
+
+                        <View style={[styles.detailContainer]}>
+                            <View style={styles.iconBox}>
+                                <MaterialIcons name="email" size={20}></MaterialIcons>
+                            </View>
+                            <View style={styles.detailBox}>
+                                <Text style={[styles.text, { fontSize: 16 }]}>Email Address: </Text>
+                                <Text style={[styles.text, styles.subText]}>{email}</Text>
+                            </View>
+                        </View>
+                        <View style={[styles.detailContainer]}>
+                            <View style={styles.iconBox}>
+                                <MaterialIcons name="local-phone" size={20}></MaterialIcons>
+                            </View>
+                            <View style={styles.detailBox}>
+                                <Text style={[styles.text, { fontSize: 16 }]}>Phone Number: </Text>
+                                <Text style={[styles.text, styles.subText]}>{number}</Text>
+                            </View>
+                        </View>
+                        <View style={[styles.detailContainer]}>
+                            <View style={styles.iconBox}>
+                                <MaterialCommunityIcons name="certificate" size={20}></MaterialCommunityIcons>
+                            </View>
+                            <View style={styles.detailBox}>
+                                <Text style={[styles.text, { fontSize: 16 }]}>Certifications:</Text>
+                                <Text style={[styles.text, styles.subText]}
+                                    onPress={handleCerts}> Show All {'>'} </Text>
+                            </View>
+                        </View>
+                        <View style={styles.buttonStyle}>
+                            <TouchableOpacity onPress={handleSignOut}>
+                                <Text style={styles.button}>LOGOUT</Text>
                             </TouchableOpacity>
                         </View>
-                        <View style={styles.status}>
-                            <TouchableOpacity style={{ alignItems: "center" }} onPress={() => props.navigation.navigate({ 
-                                routeName: 'Edit', params: { userID: uid, name: name, title: title, number: number} })}>
-                                <MaterialIcons name="edit" size={20}></MaterialIcons>
-                                <Text>Edit Profile</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={styles.status}>
-                            <TouchableOpacity style={{ alignItems: "center" }}>
-                                <MaterialIcons name="more-horiz" size={20}></MaterialIcons>
-                                <Text>More</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-
-
-                    <View style={[styles.detailContainer]}>
-                        <View style={styles.iconBox}>
-                            <MaterialIcons name="email" size={20}></MaterialIcons>
-                        </View>
-                        <View style={styles.detailBox}>
-                            <Text style={[styles.text, { fontSize: 16 }]}>Email Address: </Text>
-                            <Text style={[styles.text, styles.subText]}>{email}</Text>
-                        </View>
-                    </View>
-                    <View style={[styles.detailContainer]}>
-                        <View style={styles.iconBox}>
-                            <MaterialIcons name="local-phone" size={20}></MaterialIcons>
-                        </View>
-                        <View style={styles.detailBox}>
-                            <Text style={[styles.text, { fontSize: 16 }]}>Phone Number: </Text>
-                            <Text style={[styles.text, styles.subText]}>{number}</Text>
-                        </View>
-                    </View>
-                    <View style={[styles.detailContainer]}>
-                        <View style={styles.iconBox}>
-                            <MaterialCommunityIcons name="certificate" size={20}></MaterialCommunityIcons>
-                        </View>
-                        <View style={styles.detailBox}>
-                            <Text style={[styles.text, { fontSize: 16 }]}>Certifications:</Text>
-                            <Text style={[styles.text, styles.subText]}
-                                onPress={() => props.navigation.navigate('CME')}> Show All {'>'} </Text>
-                        </View>
-                    </View>
-                    {loading ? <ActivityIndicator/> :
-                    <View style={styles.buttonStyle}>
-                        <TouchableOpacity onPress={handleSignOut}>
-                            <Text style={styles.button}>LOGOUT</Text>
-                        </TouchableOpacity>
-                    </View>
-                    }
-                </ScrollView>
-            </View>
-        </SafeAreaView>
+                    </ScrollView>
+                </View>
+            </SafeAreaView>
         </View>
     );
 }
@@ -189,6 +203,11 @@ const styles = StyleSheet.create({
         height: "100%",
         width: "100%",
         flexDirection: "column"
+    },
+    backgroundimage: {
+        flex: 1,
+        resizeMode: "cover",
+        justifyContent: "center"
     },
     text: {
         fontFamily: "open-sans",
@@ -214,7 +233,7 @@ const styles = StyleSheet.create({
         height: 20,
         width: 20,
         borderRadius: 10
-    }, 
+    },
     infoContainer: {
         alignSelf: "center",
         alignItems: "center",

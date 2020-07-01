@@ -4,6 +4,8 @@ import { HelperText, HeaderButtons, Item } from 'react-navigation-header-buttons
 import CustomHeaderButton from '../../components/CustomHeaderButton';
 import Colors from '../../constants/Colors';
 import * as firebase from 'firebase';
+import * as ImagePicker from 'expo-image-picker';
+import UserPermission from '../../utilities/UserPermission';
 //import PhoneInput from "react-native-phone-input";
 
 const EditProfileScreen = props => {
@@ -15,6 +17,7 @@ const EditProfileScreen = props => {
     const name = props.navigation.getParam('name');
     const title = props.navigation.getParam('title');
     const number = props.navigation.getParam('number');
+    const avatarImage = props.navigation.getParam('avatar');
 
     const [displayName, setDisplayName] = useState(name);
     const [jobTitle, setJobTitle] = useState(title);
@@ -25,13 +28,8 @@ const EditProfileScreen = props => {
     const [errorNumber, setErrorNumber] = useState('');
     //const [status, setStatus] = useState('');
 
-    const [avatar, setAvatar] = useState('');
+    const [avatar, setAvatar] = useState(avatarImage);
     const [isVisible, setIsVisible] = useState(false);
-    const showDefault = useState(false);
-
-    const [isName, setIsName] = useState(false);
-    const [isTitle, setIsTitle] = useState(false);
-    const [isNumber, setIsNumber] = useState(false);
 
     async function addInfo() {
         if (errorName || errorTitle || errorNumber) {
@@ -52,6 +50,9 @@ const EditProfileScreen = props => {
                     number: numberType,
                 });
             }
+            await userRef.update({
+                avatar: avatar,
+            });
             props.navigation.goBack();
         }
     };
@@ -69,7 +70,6 @@ const EditProfileScreen = props => {
     };
 
     const handleNameChange = (value) => {
-        setIsName(true)
         setDisplayName(value)
         if (!value) {
             setErrorName("Name field cannot be empty")
@@ -79,7 +79,6 @@ const EditProfileScreen = props => {
     }
 
     const handleTitleChange = (value) => {
-        setIsTitle(true)
         setJobTitle(value)
         if (!value) {
             setErrorTitle("Title field cannot be empty")
@@ -88,7 +87,6 @@ const EditProfileScreen = props => {
         }
     }
     const handleNumberChange = (value) => {
-        setIsNumber(true)
         if (value === "") {
             setErrorNumber("Number field cannot be empty")
         }
@@ -101,8 +99,34 @@ const EditProfileScreen = props => {
         setNumberType(prevState => (normalizeInput(value, prevState.number)));
     };
 
-    var image = showDefault ? require('../../components/img/default-profile-pic.jpg') : avatar;
+    useEffect(() => {
+        (async () => {
+            if (Platform.ios) {
+                const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
+                if (status !== 'granted') {
+                    alert('Sorry, camera roll permission is required!');
+                }
+            }
+        });
+    }, []);
 
+    const pickImage = async () => {
+        let selectedImage = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            quality: 1,
+        });
+
+        if (!selectedImage.cancelled) {
+            setAvatar(selectedImage.uri);
+        }
+    };
+
+    const handleDeleteAvatar = async () => {
+        setAvatar('')
+    }
+
+    var image = !avatar ? require('../../components/img/default-profile-pic.jpg') : { uri: avatar };
 
     return (
         <View style={{ justifyContent: 'center', height: "100%" }}>
@@ -112,10 +136,10 @@ const EditProfileScreen = props => {
                         <Image source={image} style={styles.avatar} resizeMode="cover"></Image>
                     </View>
                     <View style={[styles.buttonStyle, { flexDirection: 'column', marginLeft: 20 }]}>
-                        <TouchableOpacity style={styles.buttonText}>
+                        <TouchableOpacity style={styles.buttonText} onPress={pickImage}>
                             <Text style={{ fontSize: 15, fontWeight: 'bold', color: 'white' }}>Upload Image</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.buttonText}>
+                        <TouchableOpacity style={styles.buttonText} onPress={handleDeleteAvatar}>
                             <Text style={{ fontSize: 15, fontWeight: 'bold', color: 'white' }}>Delete Image</Text>
                         </TouchableOpacity>
                     </View>
@@ -128,8 +152,7 @@ const EditProfileScreen = props => {
                             value={displayName}
                             placeholder="Please enter your name"
                             onChangeText={text => handleNameChange(text)}
-                            selectTextOnFocus={true}
-                            onFocus={() => setIsName(true)}>
+                            selectTextOnFocus={true}>
                         </TextInput>
                         {!!errorName && (
                             <Text style={{ color: 'red' }}>
@@ -144,8 +167,7 @@ const EditProfileScreen = props => {
                             value={jobTitle}
                             placeholder="Please enter your title"
                             onChangeText={text => handleTitleChange(text)}
-                            selectTextOnFocus={true}
-                            onFocus={() => setIsTitle(true)}>
+                            selectTextOnFocus={true}>
                         </TextInput>
                         {!!errorTitle && (
                             <Text style={{ color: 'red' }}>
@@ -164,8 +186,7 @@ const EditProfileScreen = props => {
                             value={numberType}
                             placeholder="Please enter your phone number"
                             onChangeText={text => handleNumberChange(text)}
-                            selectTextOnFocus={true}
-                            onFocus={() => setIsNumber(true)}>
+                            selectTextOnFocus={true}>
                         </TextInput>
                         {!!errorNumber && (
                             <Text style={{ color: 'red' }}>
