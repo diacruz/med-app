@@ -1,28 +1,45 @@
-import React from 'react';
-import { View, Button, Text, StyleSheet, Platform } from 'react-native';
+import React, { Component } from 'react';
+import { View, Button, Text, StyleSheet, Platform, FlatList, Image } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../components/CustomHeaderButton';
+import Chat from '../components/Chat';
 import Chatroom from '../screens/ChatroomScreen';
 import * as firebase from 'firebase'
 import 'firebase/firestore';
 import Firebase from '../backend/firebase'
+import Colors from '../constants/Colors';
 //import {HeaderButtons, Item } from 'react-navigation-header-buttons';
 //import CustomHeaderButton from '../components/CustomHeaderButton';
 
-const ChatTabScreen = props => {
-    return (
-        <View style={styles.screen}>
-            <Text>Display Chats</Text>
-            <Button title='Go to Global Chat' onPress={() => props.navigation.navigate('Chatroom', { name: firebase.auth().currentUser.email })}></Button>
-        </View>
-    );
-};
+class ChatTabScreen extends Component {
+    constructor(props) {
+        super(props)        
+    }
+    
+    render() {
+        
+        return (
+            <View style={styles.screen}>
+                <Chat navigation={this.props.navigation} ></Chat>
+            </View>
+        );
+    }
+}
 
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
+        padding: 5,
+        paddingVertical: 5,
+        backgroundColor: "#eaeaea"
+    },
+    buttons: {
+        flex: 1,
+        height: 2000
+    },
+    sep: {
+        borderBottomColor: "#eaeaea",
+        borderBottomWidth: 15
     }
 });
 
@@ -37,6 +54,9 @@ ChatTabScreen.navigationOptions = navigationData => {
                         navigationData.navigation.toggleDrawer();
                     }}
                 />
+                <Item title='Refresh'onPress ={() => {
+
+                }}/>
             </HeaderButtons>
         ),
 

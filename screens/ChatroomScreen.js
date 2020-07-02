@@ -97,33 +97,36 @@ class Chatroom extends Component {
    * Sets the onlineUsers string. This is what will be passed to displayOKAlert.
    */
   setOnlineUsersStr() {
-    console.log('RUNNING SETONLINEUSERS')
+    //console.log('RUNNING SETONLINEUSERS')
     let userStr = ''
     firebase.database().ref('onlineUsers').on('value', function (snapshot) {
       let arr = snapshot.val().onlineUsers
       if (arr) {
-        console.log('ARR', arr)
+        //console.log('ARR', arr)
         arr.forEach(element => {
           if (!userStr.includes(element)) {
             userStr += element + '\n'
           }
         });
       } else {
-        console.log('arr is undefined')
+        //console.log('arr is undefined')
       }
 
     })
     this.setState({
       onlineUsers: userStr
     })
-    console.log('STATE IN SETONLINEUSERS', this.state.onlineUsers)
+    //console.log('STATE IN SETONLINEUSERS', this.state.onlineUsers)
   }
 
   componentWillUnmount() {
     Firebase.shared.off();
   }
 
+  Send() {
+    Firebase.shared.send
 
+  }
   get user() {
     // Return our name and our UID for GiftedChat to parse
     return {
