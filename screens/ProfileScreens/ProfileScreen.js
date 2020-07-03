@@ -13,7 +13,7 @@ import {
     TouchableOpacity,
     TouchableNativeFeedback,
     ActivityIndicator,
-    Dimensions
+    Dimensions,
 } from 'react-native';
 import * as firebase from 'firebase'
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -24,7 +24,7 @@ import Colors from '../../constants/Colors';
 import CME from '../CMEScreen'
 import SignOut from '../SignOut';
 import Login from '../LoginScreen';
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import ModalDropdown from 'react-native-modal-dropdown';
 
 
 const ProfileScreen = props => {
@@ -35,13 +35,13 @@ const ProfileScreen = props => {
     const [number, setNumber] = useState('');
     const [status, setStatus] = useState('');
     const [certs, setCerts] = useState([])
-
-    const [loading, setLoading] = useState(true);
+    const [avatar, setAvatar] = useState('');
     const [isVisible, setIsVisible] = useState(false);
 
-    const [avatar, setAvatar] = useState('');
+    const [loading, setLoading] = useState(true);
+
     const [buttonColor, setButtonColor] = useState('red');
-    const showDefault = useState(false);
+    const [selected, setSelected] = useState(false);
 
     const uid = firebase.auth().currentUser.uid
     const db = firebase.database()
@@ -49,7 +49,7 @@ const ProfileScreen = props => {
     const userRef = db.ref('users/' + uid + '/profile')
 
     useEffect(() => {
-        setLoading(false)
+        setLoading(true)
         userRef.on('value', function (snapshot) {
             console.log(snapshot.val())
             const { name, email, avatar, title, certs, number } = snapshot.val();
@@ -62,30 +62,20 @@ const ProfileScreen = props => {
         }, err => {
             console.log(`Encountered error: ${err}`);
         })
-        setLoading(true)
+        setLoading(false)
     }, []);
 
-    const onStatusPress = () => {
-        if (uid) {
-            setButtonColor("#34FFB9");
-        }
-        else {
-            setButtonColor("red");
-        }
-    }
 
     const handleSignOut = () => {
+        setLoading(true)
         new SignOut().signOut(props)
+        setLoading(false)
     }
 
     let TouchableCmp = TouchableOpacity;
 
     if (Platform.OS === 'android' && Platform.Version >= 21) {
         TouchableCmp = TouchableNativeFeedback;
-    }
-
-    if(loading){
-        <ActivityIndicator size="large"></ActivityIndicator>
     }
 
     useEffect(() => {
@@ -100,91 +90,125 @@ const ProfileScreen = props => {
     }, [])
 
     const handleCerts = () => {
-            userRef.update({
-                certs: certs,
-            });
+        userRef.update({
+            certs: certs,
+        });
         props.navigation.navigate('CME')
     }
 
-    var image = !avatar ? require('../../components/img/default-profile-pic.jpg') : { uri: avatar };
+    const menuArray = ["Turn On", "Turn Off"]
+
+    useEffect(() => {
+        if(selected === "Turn On"){
+        setButtonColor("#34FFB9");
+
+        userRef.update({
+            status: 'Active',
+        });
+    }
+    }, [selected])
+
+    useEffect(() => {
+        if(selected === "Turn Off"){
+        setButtonColor("red");
+
+        userRef.update({
+            status: 'Busy',
+        });
+    }
+    }, [selected])
+
+
+    var image = avatar ? { uri: avatar } : require('../../components/img/default-profile-pic.jpg');
 
     return (
         <View style={{ flex: 1 }}>
-            <SafeAreaView style={styles.container}>
-                <View style={styles.responsiveBox}>
-                    <ScrollView showsVerticalScrollIndicator={false}>
-                        <View style={{ alignSelf: "center" }}>
-                            <View style={styles.profileImage}>
-                                <Image source={image} style={styles.avatar} resizeMode="cover"></Image>
+            {(loading) ? <ActivityIndicator size="large"></ActivityIndicator> :
+                <SafeAreaView style={styles.container}>
+                    <View style={styles.responsiveBox}>
+                        <ScrollView showsVerticalScrollIndicator={false}>
+                            <View style={{ alignSelf: "center" }}>
+                                <View style={styles.profileImage}>
+                                    <Image source={image} style={styles.avatar} resizeMode="cover"></Image>
+                                </View>
+                                <TouchableCmp>
+                                    <View style={styles.active} backgroundColor={buttonColor}></View>
+                                </TouchableCmp>
                             </View>
-                            <TouchableCmp>
-                                <View style={styles.active} backgroundColor={buttonColor}></View>
-                            </TouchableCmp>
-                        </View>
-                        <View style={styles.infoContainer}>
-                            <Text style={[styles.text, { fontWeight: "200", fontSize: 20, fontWeight: "bold" }]}>{name}</Text>
-                            <Text style={[styles.text, { fontSize: 16 }]}>{title}</Text>
-                        </View>
-                        <View style={styles.statusContainer}>
-                            <View style={styles.status}>
-                                <TouchableOpacity style={{ alignItems: "center" }}>
-                                    <MaterialCommunityIcons name="emoticon-happy-outline" size={20}></MaterialCommunityIcons>
-                                    <Text style={{fontSize: 0.04 * screenWidth}}>Set Status</Text>
-                                </TouchableOpacity>
+                            <View style={styles.infoContainer}>
+                                <Text style={[styles.text, { fontWeight: "200", fontSize: 20, fontWeight: "bold" }]}>{name}</Text>
+                                <Text style={[styles.text, { fontSize: 16 }]}>{title}</Text>
                             </View>
-                            <View style={styles.status}>
-                                <TouchableOpacity style={{ alignItems: "center" }} onPress={() => props.navigation.navigate({
-                                    routeName: 'Edit', params: { userID: uid, name: name, title: title, number: number, avatar: avatar }
-                                })}>
-                                    <MaterialIcons name="edit" size={20}></MaterialIcons>
-                                    <Text style={{fontSize: 0.04 * screenWidth}}>Edit Profile</Text>
-                                </TouchableOpacity>
+                            <View style={styles.statusContainer}>
+                                <View style={styles.status}>
+                                    <ModalDropdown
+                                        options={menuArray}
+                                        dropdownStyle={{ height: 40 * menuArray.length, alignItems: 'center' }}
+                                        dropdownTextStyle={{ fontSize: 0.04 * screenWidth, color: 'black' }}
+                                        textStyle={{ fontSize: 0.04 * screenWidth, color: 'black', alignSelf: "center" }}
+                                        defaultValue=''
+                                        onSelect={(index,value)=>{setSelected(value)}}>
+                                        <View style={{ alignItems: "center" }}>
+                                            <MaterialCommunityIcons name="emoticon-happy-outline" size={20}></MaterialCommunityIcons>
+                                            <Text style={{ fontSize: 0.04 * screenWidth }}>Active Status</Text>
+                                        </View>
+                                    </ModalDropdown>
+                                </View>
+                                <View style={styles.status}>
+                                    <TouchableOpacity style={{ alignItems: "center" }} onPress={() => props.navigation.navigate({
+                                        routeName: 'Edit', params: { userID: uid, name: name, title: title, number: number, avatar: avatar }
+                                    })}>
+                                        <MaterialIcons name="edit" size={20}></MaterialIcons>
+                                        <Text style={{ fontSize: 0.04 * screenWidth }}>Edit Profile</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={styles.status}>
+                                    <TouchableOpacity style={{ alignItems: "center" }} 
+                                    onPress={() => props.navigation.navigate({routeName: 'Calendar'})}>
+                                        <MaterialCommunityIcons name="calendar-heart" size={20}></MaterialCommunityIcons>
+                                        <Text style={{ fontSize: 0.04 * screenWidth }}>Calendar</Text>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
-                            <View style={styles.status}>
-                                <TouchableOpacity style={{ alignItems: "center" }}>
-                                    <MaterialIcons name="more-horiz" size={20}></MaterialIcons>
-                                    <Text style={{fontSize: 0.04 * screenWidth}}>More</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
 
 
-                        <View style={[styles.detailContainer]}>
-                            <View style={styles.iconBox}>
-                                <MaterialIcons name="email" size={20}></MaterialIcons>
+                            <View style={[styles.detailContainer]}>
+                                <View style={styles.iconBox}>
+                                    <MaterialIcons name="email" size={20}></MaterialIcons>
+                                </View>
+                                <View style={styles.detailBox}>
+                                    <Text style={styles.text}>Email Address: </Text>
+                                    <Text style={[styles.text, styles.subText]}>{email}</Text>
+                                </View>
                             </View>
-                            <View style={styles.detailBox}>
-                                <Text style={styles.text}>Email Address: </Text>
-                                <Text style={[styles.text, styles.subText]}>{email}</Text>
+                            <View style={[styles.detailContainer]}>
+                                <View style={styles.iconBox}>
+                                    <MaterialIcons name="local-phone" size={20}></MaterialIcons>
+                                </View>
+                                <View style={styles.detailBox}>
+                                    <Text style={styles.text}>Phone Number: </Text>
+                                    <Text style={[styles.text, styles.subText]}>{number}</Text>
+                                </View>
                             </View>
-                        </View>
-                        <View style={[styles.detailContainer]}>
-                            <View style={styles.iconBox}>
-                                <MaterialIcons name="local-phone" size={20}></MaterialIcons>
+                            <View style={[styles.detailContainer]}>
+                                <View style={styles.iconBox}>
+                                    <MaterialCommunityIcons name="certificate" size={20}></MaterialCommunityIcons>
+                                </View>
+                                <View style={styles.detailBox}>
+                                    <Text style={styles.text}>Certifications:</Text>
+                                    <Text style={[styles.text, styles.subText]}
+                                        onPress={handleCerts}> Show All {'>'} </Text>
+                                </View>
                             </View>
-                            <View style={styles.detailBox}>
-                                <Text style={styles.text}>Phone Number: </Text>
-                                <Text style={[styles.text, styles.subText]}>{number}</Text>
+                            <View style={styles.buttonStyle}>
+                                <TouchableOpacity onPress={handleSignOut}>
+                                    <Text style={styles.button}>LOGOUT</Text>
+                                </TouchableOpacity>
                             </View>
-                        </View>
-                        <View style={[styles.detailContainer]}>
-                            <View style={styles.iconBox}>
-                                <MaterialCommunityIcons name="certificate" size={20}></MaterialCommunityIcons>
-                            </View>
-                            <View style={styles.detailBox}>
-                                <Text style={styles.text}>Certifications:</Text>
-                                <Text style={[styles.text, styles.subText]}
-                                    onPress={handleCerts}> Show All {'>'} </Text>
-                            </View>
-                        </View>
-                        <View style={styles.buttonStyle}>
-                            <TouchableOpacity onPress={handleSignOut}>
-                                <Text style={styles.button}>LOGOUT</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </ScrollView>
-                </View>
-            </SafeAreaView>
+                        </ScrollView>
+                    </View>
+                </SafeAreaView>
+            }
         </View>
     );
 }
@@ -262,7 +286,6 @@ const styles = StyleSheet.create({
     status: {
         flex: 1,
         alignItems: "center",
-        marginHorizontal: "4%"
     },
     statusContainer: {
         flexDirection: "row",

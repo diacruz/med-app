@@ -118,7 +118,6 @@ const EditProfileScreen = props => {
             allowsEditing: true,
             quality: 1,
         });
-
         if (!selectedImage.cancelled) {
             setAvatar(selectedImage.uri);
         }
@@ -128,7 +127,7 @@ const EditProfileScreen = props => {
         setAvatar('')
     }
 
-    var image = !avatar ? require('../../components/img/default-profile-pic.jpg') : { uri: avatar };
+    var image = avatar ? { uri: avatar } : require('../../components/img/default-profile-pic.jpg');
 
     return (
         <View style={styles.constainer}>
@@ -150,7 +149,7 @@ const EditProfileScreen = props => {
                     <View style={styles.formControl}>
                         <Text style={styles.label}>Fullname</Text>
                         <View style={{ flexDirection: "row" }}>
-                            <Icon style={{ marginRight: "2%" }} name="user" size={18}></Icon>
+                            <Icon style={{ marginRight: "2%"}} name="user" size={18}></Icon>
                             <TextInput
                                 style={styles.input}
                                 value={displayName}
@@ -184,7 +183,7 @@ const EditProfileScreen = props => {
                     <View style={styles.formControl}>
                         <Text style={styles.label}>Phone Number</Text>
                         <View style={{ flexDirection: "row" }}>
-                            <MaterialIcons style={{ marginRight: "2%" }} name="phone" size={18}></MaterialIcons>
+                            <MaterialIcons style={{ marginRight: "2%"}} name="phone" size={18}></MaterialIcons>
                             <TextInput
                                 style={styles.input}
                                 maxLength={15}
@@ -312,7 +311,8 @@ const styles = StyleSheet.create({
         padding: "6%",
         width: "100%%",
         marginTop: "6%",
-        right: "5%"
+        right: "5%",
+        backgroundColor: Colors.primaryColor
     },
     text: {
         fontSize: 0.043 * screenWidth,
