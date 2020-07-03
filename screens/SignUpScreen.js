@@ -60,17 +60,22 @@ const CreateAccount = props => {
     firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
-      .then(cred => {
-        return db.collection('users').doc(cred.user.uid)
+      .then(() => {
+        const { currentUser } = firebase.auth();
+        firebase
+          .database()
+          .ref(`/users/${currentUser.uid}/`)
           .set({
-            name: displayName,
-            email: email,
-            number: '(###) ###-####',
-            avatar: '',
-            title: 'Job Title',
-            status: '',
-            certs: '',
-            isVisible: false
+            profile: {
+              name: displayName,
+              email: email,
+              number: '(###) ###-####',
+              avatar: '',
+              title: 'Job Title',
+              status: '',
+              certs: '',
+              isVisible: false
+            }
           })
       }).then(
         function () {

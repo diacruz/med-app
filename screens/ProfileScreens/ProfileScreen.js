@@ -43,26 +43,23 @@ const ProfileScreen = props => {
     const showDefault = useState(false);
 
     const uid = firebase.auth().currentUser.uid
-    const db = firebase.firestore()
+    const db = firebase.database()
 
-    const userRef = db.collection('users').doc(uid);
-
+    const userRef = db.ref('users/' + uid + '/profile')
 
     useEffect(() => {
-        userRef.onSnapshot(docSnapshot => {
-            userRef.get().then(doc => {
-                const { name, email, avatar, title, number } = doc.data();
-                setName(name);
-                setEmail(email);
-                setAvatar(avatar)
-                setTitle(title);
-                setNumber(number);
-            })
+        userRef.on('value', function (snapshot) {
+            console.log(snapshot.val())
+            const { name, email, avatar, title, number } = snapshot.val();
+            setName(name);
+            setEmail(email);
+            setAvatar(avatar)
+            setTitle(title);
+            setNumber(number);
         }, err => {
             console.log(`Encountered error: ${err}`);
-        });
+        })
     }, []);
-
 
     const onStatusPress = () => {
         if (uid) {
@@ -84,7 +81,6 @@ const ProfileScreen = props => {
     }
 
     useEffect(() => {
-        (async () => {
         var cmeRef = firebase.database().ref('userCmes/userId:' + uid)
         cmeRef.orderByChild("cmes").on('value', function (snapshot) {
             snapshot.forEach(function (childSnapshot) {
@@ -93,19 +89,18 @@ const ProfileScreen = props => {
                 setCerts(childData)
             });
         })
-    })
     }, [])
 
     const handleCerts = async () => {
-            if(certs.length === 0){
-                await userRef.update({
-                    certs: [],
-                });
-            }else{
-                await userRef.update({
-                    certs: certs,
-                });
-            }
+        if (certs.length === 0) {
+            await userRef.update({
+                certs: [],
+            });
+        } else {
+            await userRef.update({
+                certs: certs,
+            });
+        }
         props.navigation.navigate('CME')
     }
 

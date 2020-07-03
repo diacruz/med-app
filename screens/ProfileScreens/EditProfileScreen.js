@@ -11,8 +11,8 @@ import UserPermission from '../../utilities/UserPermission';
 const EditProfileScreen = props => {
 
     const uid = props.navigation.getParam('userID');
-    const db = firebase.firestore();
-    const userRef = db.collection('users').doc(uid);
+    const db = firebase.database()
+    const userRef = db.ref('users/' + uid + '/profile')
 
     const name = props.navigation.getParam('name');
     const title = props.navigation.getParam('title');
