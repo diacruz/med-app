@@ -16,7 +16,7 @@
     "expo-calendar": "^8.2.1",
     "expo-font": "^8.0.0",
     "expo-image-picker": "~8.0.1",
-    "firebase": "^7.9.0",
+    "firebase": "^7.15.5",
     "firebase-admin": "^8.12.1",
     "firebase-functions": "^3.7.0",
     "install": "^0.13.0",
