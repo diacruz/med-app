@@ -135,12 +135,19 @@ class Chatroom extends Component {
     };
   }
 
+  onPress() {
+    console.log("Avatar Pressed")
+    //this.props.navigation.navigate('Chatroom', { name: firebase.auth().currentUser.email })
+  }
+
   render() {
     return (
       <GiftedChat
         messages={this.state.messages}
         onSend={Firebase.shared.send}
         user={this.user}
+        alwaysShowSend
+        onPressAvatar={this.onPress}
       />
     );
   }

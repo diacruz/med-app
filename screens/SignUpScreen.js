@@ -192,7 +192,6 @@ const CreateAccount = props => {
         placeholder="email@gmail.com"
         onChangeText={text => setEmail(text)}
         value={email}
-        required
         autoCapitalize='none'
       />
       <TextInput
@@ -200,7 +199,6 @@ const CreateAccount = props => {
         style={styles.textField}
         placeholder='Password (At least 6 characters)'
         onChangeText={text => setPassword(text)}
-        required
         value={password}
       />
       <TouchableOpacity style={styles.button} onPress={() => {

@@ -17,7 +17,6 @@ const Chat = props => {
     return (
         <View> 
             <TouchableCmp onPress={ function () {
-                props.update()
                 props.navigation.navigate('Chatroom', { name: firebase.auth().currentUser.email })
             }}>
                 <View>
