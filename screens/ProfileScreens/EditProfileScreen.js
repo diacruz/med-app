@@ -1,96 +1,237 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, ScrollView, Button, Text, StyleSheet, Platform, TextInput, Icon, TouchableOpacity, Switch } from 'react-native';
-import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+import { Image, Alert, View, ScrollView, Button, Text, StyleSheet, Platform, TextInput, Icon, TouchableOpacity, Switch } from 'react-native';
+import { HelperText, HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../../components/CustomHeaderButton';
-import * as firebase from 'firebase'
+import Colors from '../../constants/Colors';
+import * as firebase from 'firebase';
+import * as ImagePicker from 'expo-image-picker';
+import UserPermission from '../../utilities/UserPermission';
+//import PhoneInput from "react-native-phone-input";
 
 const EditProfileScreen = props => {
 
     const uid = props.navigation.getParam('userID');
-    const db = firebase.firestore();
+    const db = firebase.database()
+    const userRef = db.ref('users/' + uid + '/profile')
 
-    const [name, setName] = useState('');
-    const [title, setTitle] = useState('');
-    const [number, setNumber] = useState('');
-    const [status, setStatus] = useState('');
+    const name = props.navigation.getParam('name');
+    const title = props.navigation.getParam('title');
+    const number = props.navigation.getParam('number');
+    const avatarImage = props.navigation.getParam('avatar');
+
+    const [displayName, setDisplayName] = useState(name);
+    const [jobTitle, setJobTitle] = useState(title);
+    const [numberType, setNumberType] = useState(number);
+
+    const [errorName, setErrorName] = useState('');
+    const [errorTitle, setErrorTitle] = useState('');
+    const [errorNumber, setErrorNumber] = useState('');
+    //const [status, setStatus] = useState('');
+
+    const [avatar, setAvatar] = useState(avatarImage);
     const [isVisible, setIsVisible] = useState(false);
 
+    async function addInfo() {
+        if (errorName || errorTitle || errorNumber) {
+            alert("Invalid input")
+        } else {
+            if (displayName != "") {
+                await userRef.update({
+                    name: displayName,
+                });
+            }
+            if (jobTitle != "") {
+                await userRef.update({
+                    title: jobTitle,
+                });
+            }
+            if (numberType != "") {
+                await userRef.update({
+                    number: numberType,
+                });
+            }
+            await userRef.update({
+                avatar: avatar,
+            });
+            props.navigation.goBack();
+        }
+    };
 
-    const userRef = db.collection('users').doc(uid)
+    const normalizeInput = (value, previousValue) => {
+        if (!value) return value;
+        const currentValue = value.replace(/[^\d]/g, '');
+        const cvLength = currentValue.length;
 
-    userRef.set({
-        name: name,
-        title: title,
-        number: number
-    }, { merge: true });
+        if (!previousValue || value.length > previousValue.length) {
+            if (cvLength < 4) return currentValue;
+            if (cvLength < 7) return `(${currentValue.slice(0, 3)}) ${currentValue.slice(3)}`;
+            return `(${currentValue.slice(0, 3)}) ${currentValue.slice(3, 6)}-${currentValue.slice(6, 10)}`;
+        }
+    };
+
+    const handleNameChange = (value) => {
+        setDisplayName(value)
+        if (!value) {
+            setErrorName("Name field cannot be empty")
+        } else {
+            setErrorName(null)
+        }
+    }
+
+    const handleTitleChange = (value) => {
+        setJobTitle(value)
+        if (!value) {
+            setErrorTitle("Title field cannot be empty")
+        } else {
+            setErrorTitle(null)
+        }
+    }
+    const handleNumberChange = (value) => {
+        if (value === "") {
+            setErrorNumber("Number field cannot be empty")
+        }
+        else if (value.length <= 13) {
+            setErrorNumber("Invalid phone format. ex: (555) 555-5555")
+        }
+        else {
+            setErrorNumber(null)
+        }
+        setNumberType(prevState => (normalizeInput(value, prevState.number)));
+    };
+
+    useEffect(() => {
+        (async () => {
+            if (Platform.ios) {
+                const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
+                if (status !== 'granted') {
+                    alert('Sorry, camera roll permission is required!');
+                }
+            }
+        });
+    }, []);
+
+    const pickImage = async () => {
+        let selectedImage = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            quality: 1,
+        });
+
+        if (!selectedImage.cancelled) {
+            setAvatar(selectedImage.uri);
+        }
+    };
+
+    const handleDeleteAvatar = async () => {
+        setAvatar('')
+    }
+
+    var image = !avatar ? require('../../components/img/default-profile-pic.jpg') : { uri: avatar };
 
     return (
-        <ScrollView>
-            <View style={styles.form}>
-                <View style={styles.formControl}>
-                    <Text style={styles.label}>Name</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={name}
-                        onChangeText={text => setName(text)}
-                        selectTextOnFocus={true}
-                        returnKeyType="next">
-                    </TextInput>
+        <View style={{ justifyContent: 'center', height: "100%" }}>
+            <ScrollView>
+                <View style={{ flexDirection: 'row' }}>
+                    <View style={[styles.profileImage, { marginLeft: 20 }]}>
+                        <Image source={image} style={styles.avatar} resizeMode="cover"></Image>
+                    </View>
+                    <View style={[styles.buttonStyle, { flexDirection: 'column', marginLeft: 20 }]}>
+                        <TouchableOpacity style={styles.buttonText} onPress={pickImage}>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: 'white' }}>Upload Image</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.buttonText} onPress={handleDeleteAvatar}>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: 'white' }}>Delete Image</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-                <View style={styles.formControl}>
-                    <Text style={styles.label}>Title</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={title}
-                        onChangeText={text => setTitle(text)}
-                        selectTextOnFocus={true}
-                        returnKeyType="next">
-                    </TextInput>
+                <View style={styles.form}>
+                    <View style={styles.formControl}>
+                        <Text style={styles.label}>Name</Text>
+                        <TextInput
+                            style={styles.input}
+                            value={displayName}
+                            placeholder="Please enter your name"
+                            onChangeText={text => handleNameChange(text)}
+                            selectTextOnFocus={true}>
+                        </TextInput>
+                        {!!errorName && (
+                            <Text style={{ color: 'red' }}>
+                                {errorName}
+                            </Text>
+                        )}
+                    </View>
+                    <View style={styles.formControl}>
+                        <Text style={styles.label}>Job Title</Text>
+                        <TextInput
+                            style={styles.input}
+                            value={jobTitle}
+                            placeholder="Please enter your title"
+                            onChangeText={text => handleTitleChange(text)}
+                            selectTextOnFocus={true}>
+                        </TextInput>
+                        {!!errorTitle && (
+                            <Text style={{ color: 'red' }}>
+                                {errorTitle}
+                            </Text>
+                        )}
+                    </View>
+                    <View style={styles.formControl}>
+                        <Text style={styles.label}>Phone Number</Text>
+                        <TextInput
+                            style={styles.input}
+                            maxLength={15}
+                            keyboardType={'phone-pad'}
+                            textContentType='telephoneNumber'
+                            dataDetectorTypes='phoneNumber'
+                            value={numberType}
+                            placeholder="Please enter your phone number"
+                            onChangeText={text => handleNumberChange(text)}
+                            selectTextOnFocus={true}>
+                        </TextInput>
+                        {!!errorNumber && (
+                            <Text style={{ color: 'red' }}>
+                                {errorNumber}
+                            </Text>
+                        )}
+                    </View>
+                    <View style={styles.switchStyle}>
+                        <Text style={styles.label}> Public / Private</Text>
+                        <Switch value={isVisible} onValueChange={newValue => setIsVisible(newValue)}></Switch>
+                    </View>
+                    <TouchableOpacity style={styles.buttonSubmit} onPress={() => addInfo()}>
+                        <Text style={styles.button}>Submit</Text>
+                    </TouchableOpacity>
                 </View>
-                <View style={styles.formControl}>
-                    <Text style={styles.label}>Phone Number</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={number}
-                        onChangeText={text => setNumber(text)}
-                        selectTextOnFocus={true}
-                        returnKeyType="next">
-                    </TextInput>
-                </View>
-                <View style={styles.switchStyle}>
-                    <Text style={styles.label}> Public / Private</Text>
-                    <Switch value={isVisible} onValueChange={newValue => setIsVisible(newValue)}></Switch>
-                </View>
-            </View>
-        </ScrollView>
+            </ScrollView>
+        </View>
     );
 };
 
 EditProfileScreen.navigationOptions = navData => {
     return {
         headerTitle: 'Edit Screen',
-        headerRight: () => (
-            <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-                <Item title='Save' iconName={Platform.OS === 'android' ? 'md-checkmark' : 'ios-checkmark'}
-                    onPress={() => {navData.navigation.goBack();}}
-                />
-            </HeaderButtons>
-        ),
-
     }
 }
 
 const styles = StyleSheet.create({
     form: {
-        margin: 20
-    },
-    container: {
-        marginTop: 70,
-        justifyContent: 'space-between',
-        alignItems: 'center',
+        margin: 30,
+        marginTop: 10
     },
     formControl: {
         width: '100%',
+    },
+    profileImage: {
+        width: 150,
+        height: 150,
+        borderRadius: 80,
+        overflow: "hidden",
+        marginTop: 10,
+    },
+    avatar: {
+        flex: 1,
+        width: null,
+        height: null,
     },
     label: {
         fontFamily: 'open-sans-bold',
@@ -115,7 +256,44 @@ const styles = StyleSheet.create({
         flex: 1,
         marginTop: 20,
         justifyContent: "center"
-    }
+    },
+    buttonImage: {
+        borderColor: '#8e44ad',
+        backgroundColor: 'white',
+        borderRadius: 0,
+        borderWidth: 3,
+    },
+    buttonStyle: {
+        marginTop: 20,
+        alignContent: "center",
+        alignSelf: "center",
+    },
+    buttonSubmit: {
+        top: "105%",
+        alignContent: "center",
+        alignSelf: "center",
+        position: 'absolute'
+    },
+    button: {
+        backgroundColor: Colors.primaryColor,
+        borderColor: 'white',
+        borderWidth: 1,
+        borderRadius: 20,
+        color: 'white',
+        fontSize: 15,
+        fontWeight: 'bold',
+        overflow: 'hidden',
+        padding: 12,
+        textAlign: 'center',
+        width: 90,
+    },
+    buttonText: {
+        alignItems: 'center',
+        backgroundColor: '#c0c0c0',
+        padding: 10,
+        width: 150,
+        marginTop: 10
+    },
 
 });
 
