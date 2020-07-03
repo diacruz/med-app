@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Image, Alert, View, ScrollView, Button, Text, StyleSheet, Platform, TextInput, Icon, TouchableOpacity, Switch } from 'react-native';
+import { Dimensions, Image, Alert, View, ScrollView, Button, Text, StyleSheet, Platform, TextInput, TouchableOpacity, Switch } from 'react-native';
 import { HelperText, HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../../components/CustomHeaderButton';
 import Colors from '../../constants/Colors';
 import * as firebase from 'firebase';
 import * as ImagePicker from 'expo-image-picker';
 import UserPermission from '../../utilities/UserPermission';
+import { Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import Icon from 'react-native-vector-icons/FontAwesome';
 //import PhoneInput from "react-native-phone-input";
 
 const EditProfileScreen = props => {
@@ -31,26 +33,26 @@ const EditProfileScreen = props => {
     const [avatar, setAvatar] = useState(avatarImage);
     const [isVisible, setIsVisible] = useState(false);
 
-    async function addInfo() {
+    function addInfo() {
         if (errorName || errorTitle || errorNumber) {
             alert("Invalid input")
         } else {
             if (displayName != "") {
-                await userRef.update({
+                userRef.update({
                     name: displayName,
                 });
             }
             if (jobTitle != "") {
-                await userRef.update({
+                userRef.update({
                     title: jobTitle,
                 });
             }
             if (numberType != "") {
-                await userRef.update({
+                userRef.update({
                     number: numberType,
                 });
             }
-            await userRef.update({
+            userRef.update({
                 avatar: avatar,
             });
             props.navigation.goBack();
@@ -129,31 +131,33 @@ const EditProfileScreen = props => {
     var image = !avatar ? require('../../components/img/default-profile-pic.jpg') : { uri: avatar };
 
     return (
-        <View style={{ justifyContent: 'center', height: "100%" }}>
-            <ScrollView>
+        <View style={styles.constainer}>
+            <ScrollView style={{ flex: 1, height: "100%" }}>
                 <View style={{ flexDirection: 'row' }}>
                     <View style={[styles.profileImage, { marginLeft: 20 }]}>
                         <Image source={image} style={styles.avatar} resizeMode="cover"></Image>
                     </View>
-                    <View style={[styles.buttonStyle, { flexDirection: 'column', marginLeft: 20 }]}>
+                    <View style={[styles.buttonStyle, { flexDirection: 'column', marginLeft: "5%" }]}>
                         <TouchableOpacity style={styles.buttonText} onPress={pickImage}>
-                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: 'white' }}>Upload Image</Text>
+                            <Text style={styles.text}>Upload Image</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.buttonText} onPress={handleDeleteAvatar}>
-                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: 'white' }}>Delete Image</Text>
+                            <Text style={styles.text}>Delete Image</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
                 <View style={styles.form}>
                     <View style={styles.formControl}>
-                        <Text style={styles.label}>Name</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={displayName}
-                            placeholder="Please enter your name"
-                            onChangeText={text => handleNameChange(text)}
-                            selectTextOnFocus={true}>
-                        </TextInput>
+                        <Text style={styles.label}>Fullname</Text>
+                        <View style={{ flexDirection: "row" }}>
+                            <Icon style={{ marginRight: "2%" }} name="user" size={18}></Icon>
+                            <TextInput
+                                style={styles.input}
+                                value={displayName}
+                                placeholder="Please enter your name"
+                                onChangeText={text => handleNameChange(text)}>
+                            </TextInput>
+                        </View>
                         {!!errorName && (
                             <Text style={{ color: 'red' }}>
                                 {errorName}
@@ -162,13 +166,15 @@ const EditProfileScreen = props => {
                     </View>
                     <View style={styles.formControl}>
                         <Text style={styles.label}>Job Title</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={jobTitle}
-                            placeholder="Please enter your title"
-                            onChangeText={text => handleTitleChange(text)}
-                            selectTextOnFocus={true}>
-                        </TextInput>
+                        <View style={{ flexDirection: "row" }}>
+                            <MaterialIcons style={{ marginRight: "2%" }} name="work" size={18}></MaterialIcons>
+                            <TextInput
+                                style={styles.input}
+                                value={jobTitle}
+                                placeholder="Please enter your title"
+                                onChangeText={text => handleTitleChange(text)}>
+                            </TextInput>
+                        </View>
                         {!!errorTitle && (
                             <Text style={{ color: 'red' }}>
                                 {errorTitle}
@@ -177,17 +183,19 @@ const EditProfileScreen = props => {
                     </View>
                     <View style={styles.formControl}>
                         <Text style={styles.label}>Phone Number</Text>
-                        <TextInput
-                            style={styles.input}
-                            maxLength={15}
-                            keyboardType={'phone-pad'}
-                            textContentType='telephoneNumber'
-                            dataDetectorTypes='phoneNumber'
-                            value={numberType}
-                            placeholder="Please enter your phone number"
-                            onChangeText={text => handleNumberChange(text)}
-                            selectTextOnFocus={true}>
-                        </TextInput>
+                        <View style={{ flexDirection: "row" }}>
+                            <MaterialIcons style={{ marginRight: "2%" }} name="phone" size={18}></MaterialIcons>
+                            <TextInput
+                                style={styles.input}
+                                maxLength={15}
+                                keyboardType={'phone-pad'}
+                                textContentType='telephoneNumber'
+                                dataDetectorTypes='phoneNumber'
+                                value={numberType}
+                                placeholder="Please enter your phone number"
+                                onChangeText={text => handleNumberChange(text)}>
+                            </TextInput>
+                        </View>
                         {!!errorNumber && (
                             <Text style={{ color: 'red' }}>
                                 {errorNumber}
@@ -196,9 +204,9 @@ const EditProfileScreen = props => {
                     </View>
                     <View style={styles.switchStyle}>
                         <Text style={styles.label}> Public / Private</Text>
-                        <Switch value={isVisible} onValueChange={newValue => setIsVisible(newValue)}></Switch>
+                        <Switch style={{ justifyContent: "flex-end" }} value={isVisible} onValueChange={newValue => setIsVisible(newValue)}></Switch>
                     </View>
-                    <TouchableOpacity style={styles.buttonSubmit} onPress={() => addInfo()}>
+                    <TouchableOpacity style={styles.buttonStyle2} onPress={() => addInfo()}>
                         <Text style={styles.button}>Submit</Text>
                     </TouchableOpacity>
                 </View>
@@ -213,49 +221,59 @@ EditProfileScreen.navigationOptions = navData => {
     }
 }
 
+let screenHeight = Math.round(Dimensions.get('screen').height);
+let screenWidth = Math.round(Dimensions.get('screen').width);
+
 const styles = StyleSheet.create({
+    constainer: {
+        flex: 1,
+        height: screenHeight,
+        width: screenWidth
+    },
     form: {
-        margin: 30,
-        marginTop: 10
+        margin: "8%",
+        marginTop: "1%",
     },
     formControl: {
-        width: '100%',
+        marginBottom: "5%"
+    },
+    ImageStyle: {
+        padding: 10,
+        margin: 5,
+        height: 25,
+        width: 25,
+        resizeMode: 'stretch',
+        alignItems: 'center',
     },
     profileImage: {
-        width: 150,
-        height: 150,
-        borderRadius: 80,
+        width: screenWidth * 0.42,
+        borderRadius: 100,
         overflow: "hidden",
-        marginTop: 10,
+        marginTop: "2%",
+        aspectRatio: 1
     },
     avatar: {
         flex: 1,
         width: null,
         height: null,
+        resizeMode: 'contain',
     },
     label: {
         fontFamily: 'open-sans-bold',
-        marginVertical: 8
+        marginVertical: "4%",
+        fontSize: 0.040 * screenWidth
     },
     input: {
         paddingHorizontal: 2,
-        paddingVertical: 5,
         borderBottomColor: '#ccc',
-        borderBottomWidth: 1
-    },
-    buttonStyle2: {
-        flex: 1,
-        justifyContent: 'center',
-        width: 80,
-        height: 60,
-        backgroundColor: 'blue',
-        borderRadius: 50,
-        justifyContent: "center"
+        borderBottomWidth: 1,
+        fontSize: 0.040 * screenWidth,
+        flex: 1
     },
     switchStyle: {
         flex: 1,
-        marginTop: 20,
-        justifyContent: "center"
+        marginTop: "3%",
+        left: 0,
     },
     buttonImage: {
         borderColor: '#8e44ad',
@@ -264,36 +282,43 @@ const styles = StyleSheet.create({
         borderWidth: 3,
     },
     buttonStyle: {
-        marginTop: 20,
+        marginTop: screenHeight * 0.035,
         alignContent: "center",
         alignSelf: "center",
     },
-    buttonSubmit: {
-        top: "105%",
+    buttonStyle2: {
+        marginTop: screenHeight * 0.025,
         alignContent: "center",
         alignSelf: "center",
-        position: 'absolute'
     },
     button: {
         backgroundColor: Colors.primaryColor,
         borderColor: 'white',
-        borderWidth: 1,
         borderRadius: 20,
         color: 'white',
-        fontSize: 15,
+        fontSize: 0.045 * screenWidth,
         fontWeight: 'bold',
         overflow: 'hidden',
-        padding: 12,
+        padding: 13,
         textAlign: 'center',
-        width: 90,
+    },
+    switchStyle: {
+        flex: 1,
+        justifyContent: "flex-start"
     },
     buttonText: {
         alignItems: 'center',
         backgroundColor: '#c0c0c0',
-        padding: 10,
-        width: 150,
-        marginTop: 10
+        padding: "6%",
+        width: "100%%",
+        marginTop: "6%",
+        right: "5%"
     },
+    text: {
+        fontSize: 0.043 * screenWidth,
+        fontWeight: 'bold',
+        color: 'white',
+    }
 
 });
 

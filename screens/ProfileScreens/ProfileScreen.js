@@ -13,7 +13,7 @@ import {
     TouchableOpacity,
     TouchableNativeFeedback,
     ActivityIndicator,
-    ImageBackground
+    Dimensions
 } from 'react-native';
 import * as firebase from 'firebase'
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -24,6 +24,7 @@ import Colors from '../../constants/Colors';
 import CME from '../CMEScreen'
 import SignOut from '../SignOut';
 import Login from '../LoginScreen';
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
 
 const ProfileScreen = props => {
@@ -48,17 +49,20 @@ const ProfileScreen = props => {
     const userRef = db.ref('users/' + uid + '/profile')
 
     useEffect(() => {
+        setLoading(false)
         userRef.on('value', function (snapshot) {
             console.log(snapshot.val())
-            const { name, email, avatar, title, number } = snapshot.val();
+            const { name, email, avatar, title, certs, number } = snapshot.val();
             setName(name);
             setEmail(email);
             setAvatar(avatar)
             setTitle(title);
             setNumber(number);
+            setCerts(certs)
         }, err => {
             console.log(`Encountered error: ${err}`);
         })
+        setLoading(true)
     }, []);
 
     const onStatusPress = () => {
@@ -80,6 +84,10 @@ const ProfileScreen = props => {
         TouchableCmp = TouchableNativeFeedback;
     }
 
+    if(loading){
+        <ActivityIndicator size="large"></ActivityIndicator>
+    }
+
     useEffect(() => {
         var cmeRef = firebase.database().ref('userCmes/userId:' + uid)
         cmeRef.orderByChild("cmes").on('value', function (snapshot) {
@@ -91,23 +99,17 @@ const ProfileScreen = props => {
         })
     }, [])
 
-    const handleCerts = async () => {
-        if (certs.length === 0) {
-            await userRef.update({
-                certs: [],
-            });
-        } else {
-            await userRef.update({
+    const handleCerts = () => {
+            userRef.update({
                 certs: certs,
             });
-        }
         props.navigation.navigate('CME')
     }
 
     var image = !avatar ? require('../../components/img/default-profile-pic.jpg') : { uri: avatar };
 
     return (
-        <View style={{ height: "100%" }}>
+        <View style={{ flex: 1 }}>
             <SafeAreaView style={styles.container}>
                 <View style={styles.responsiveBox}>
                     <ScrollView showsVerticalScrollIndicator={false}>
@@ -127,7 +129,7 @@ const ProfileScreen = props => {
                             <View style={styles.status}>
                                 <TouchableOpacity style={{ alignItems: "center" }}>
                                     <MaterialCommunityIcons name="emoticon-happy-outline" size={20}></MaterialCommunityIcons>
-                                    <Text>Set Status</Text>
+                                    <Text style={{fontSize: 0.04 * screenWidth}}>Set Status</Text>
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.status}>
@@ -135,13 +137,13 @@ const ProfileScreen = props => {
                                     routeName: 'Edit', params: { userID: uid, name: name, title: title, number: number, avatar: avatar }
                                 })}>
                                     <MaterialIcons name="edit" size={20}></MaterialIcons>
-                                    <Text>Edit Profile</Text>
+                                    <Text style={{fontSize: 0.04 * screenWidth}}>Edit Profile</Text>
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.status}>
                                 <TouchableOpacity style={{ alignItems: "center" }}>
                                     <MaterialIcons name="more-horiz" size={20}></MaterialIcons>
-                                    <Text>More</Text>
+                                    <Text style={{fontSize: 0.04 * screenWidth}}>More</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -152,7 +154,7 @@ const ProfileScreen = props => {
                                 <MaterialIcons name="email" size={20}></MaterialIcons>
                             </View>
                             <View style={styles.detailBox}>
-                                <Text style={[styles.text, { fontSize: 16 }]}>Email Address: </Text>
+                                <Text style={styles.text}>Email Address: </Text>
                                 <Text style={[styles.text, styles.subText]}>{email}</Text>
                             </View>
                         </View>
@@ -161,7 +163,7 @@ const ProfileScreen = props => {
                                 <MaterialIcons name="local-phone" size={20}></MaterialIcons>
                             </View>
                             <View style={styles.detailBox}>
-                                <Text style={[styles.text, { fontSize: 16 }]}>Phone Number: </Text>
+                                <Text style={styles.text}>Phone Number: </Text>
                                 <Text style={[styles.text, styles.subText]}>{number}</Text>
                             </View>
                         </View>
@@ -170,7 +172,7 @@ const ProfileScreen = props => {
                                 <MaterialCommunityIcons name="certificate" size={20}></MaterialCommunityIcons>
                             </View>
                             <View style={styles.detailBox}>
-                                <Text style={[styles.text, { fontSize: 16 }]}>Certifications:</Text>
+                                <Text style={styles.text}>Certifications:</Text>
                                 <Text style={[styles.text, styles.subText]}
                                     onPress={handleCerts}> Show All {'>'} </Text>
                             </View>
@@ -189,15 +191,18 @@ const ProfileScreen = props => {
 
 export default ProfileScreen;
 
+let screenHeight = Math.round(Dimensions.get('screen').height);
+let screenWidth = Math.round(Dimensions.get('screen').width);
+
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fff"
+        backgroundColor: "#fff",
     },
     responsiveBox: {
-        height: "100%",
-        width: "100%",
-        flexDirection: "column"
+        width: screenWidth,
+        height: screenHeight,
     },
     backgroundimage: {
         flex: 1,
@@ -207,40 +212,42 @@ const styles = StyleSheet.create({
     text: {
         fontFamily: "open-sans",
         color: "#52575D",
+        fontSize: 0.043 * screenWidth
     },
     avatar: {
         flex: 1,
         width: null,
         height: null,
+        resizeMode: 'contain',
     },
     profileImage: {
-        width: 150,
-        height: 150,
-        borderRadius: 80,
+        width: screenWidth * 0.30,
+        height: screenHeight * 0.226,
+        borderRadius: 100,
         overflow: "hidden",
-        marginTop: 5,
+        marginTop: "2%",
+        aspectRatio: 1
     },
     active: {
         position: "absolute",
-        bottom: 20,
-        left: 5,
-        padding: 4,
-        height: 20,
-        width: 20,
-        borderRadius: 10
+        bottom: 18,
+        left: "5%",
+        padding: "7%",
+        borderRadius: 15
     },
     infoContainer: {
         alignSelf: "center",
         alignItems: "center",
-        marginTop: 5,
-        marginBottom: 11
+        marginTop: "2%",
+        marginBottom: "3%"
     },
     detailContainer: {
         flexDirection: "row",
         alignItems: "center",
-        height: 65,
+        maxHeight: "20%",
+        minHeight: "10%",
         alignSelf: "center",
-        marginTop: 15,
+        marginTop: "4%",
         marginHorizontal: 25,
         backgroundColor: "white",
         shadowColor: "gray",
@@ -255,12 +262,13 @@ const styles = StyleSheet.create({
     status: {
         flex: 1,
         alignItems: "center",
+        marginHorizontal: "4%"
     },
     statusContainer: {
         flexDirection: "row",
         alignSelf: "center",
-        marginBottom: 5,
-        width: 270,
+        marginBottom: "1%",
+        width: "82%",
     },
     iconBox: {
         flex: 0.3,
@@ -274,14 +282,14 @@ const styles = StyleSheet.create({
         marginLeft: 40
     },
     subText: {
-        fontSize: 14,
+        fontSize: 0.038 * screenWidth,
         color: "#AEB5BC",
         textTransform: "uppercase",
         fontWeight: "500",
-        marginTop: 5
+        marginTop: 5,
     },
     buttonStyle: {
-        marginTop: 20,
+        marginTop: screenHeight * 0.035,
         alignContent: "center",
         alignSelf: "center"
     },
@@ -291,12 +299,11 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 20,
         color: 'white',
-        fontSize: 15,
+        fontSize: 0.038 * screenWidth,
         fontWeight: 'bold',
         overflow: 'hidden',
         padding: 12,
         textAlign: 'center',
-        width: 90,
     }
 });
 
