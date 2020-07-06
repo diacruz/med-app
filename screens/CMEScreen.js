@@ -155,25 +155,29 @@ export default class CME extends Component {
           numColumns={1} />
 
             <View style={{ flexDirection: "row" }}>
+            <Text style={styles.header}>Certification </Text>
+            </View>
+
+          <View style={{ flexDirection: "row" }}>
           <TextInput style={styles.textField} onChangeText={this.handleCmeCert} placeholder='Certification here' />
         </View>
         
         <View style={{ flexDirection: "row" }}>
           <Text style={styles.header}>Renewal Date</Text>
         </View>
+
         <View style={{ flexDirection: "row" }}>
         <DatePicker
-         data={this.state.cmes}
           style={{   flex: 1,
             fontSize: 14,
             fontFamily: 'open-sans-bold',
             textAlign: 'center',
             alignSelf: 'center',
             width: '80%', }}
-          date={this.state.date} //initial date from state
-          mode="date" //The enum of date, datetime and time
+            date={this.state.date} //initial date from state
+          mode="date" 
           placeholder="select date"
-          format="MM-DD-YYYY"
+          format="MM/DD/YYYY"
           confirmBtnText="Confirm"
           cancelBtnText="Cancel"
           customStyles={{
@@ -184,14 +188,17 @@ export default class CME extends Component {
               marginLeft: 0,
             },
             dateInput: {
-              marginLeft: 36,
+              marginLeft: 36, 
             },
           }}
-          onDateChange={date => {
-            this.handleCmeExp
-          }}
+          onDateChange = {this.handleCmeExp}
+          //onDateChange={date => {this.handleCmeExp}}
+          //this.setState({ date: date }); 
+        //}}
+
         />
         </View>
+
         <TouchableOpacity
           style={styles.addCmeButton}
           onPress={this.addCme}
