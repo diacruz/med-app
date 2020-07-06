@@ -136,10 +136,11 @@ export default class CME extends Component {
         </View>
         <FlatList
           data={this.state.cmes}
+          keyExtractor={item => item.id}
           renderItem={(itemData) => (
             <View style={{ flexDirection: "row" }}>
-              <Text style={styles.cmeItem}>{itemData.item.cert}</Text>
-              <Text style={styles.cmeItem}>{itemData.item.exp}</Text>
+              <Text style={styles.cmeItem}>{(itemData.item.id, itemData.item.cert)}</Text>
+              <Text style={styles.cmeItem}>{(itemData.item.id, itemData.item.exp)}</Text>
             </View>
           )}
           numColumns={1} />

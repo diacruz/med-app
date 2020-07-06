@@ -11,6 +11,7 @@ import SubCategoriesScreen from '../screens/SubCategoriesScreen';
 import CatContentScreen from '../screens/CatContentScreen';
 import ChatroomScreen from '../screens/ChatroomScreen';
 import ProfileScreen from '../screens/ProfileScreens/ProfileScreen';
+import CalendarScreen from '../screens/ProfileScreens/CalendarScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
@@ -118,6 +119,7 @@ const ProfileNavigator = createStackNavigator({
   Profile: ProfileScreen,
   Edit: EditProfileScreen,
   CME: CMEScreen,
+  Calendar: CalendarScreen
 },
 
   {
@@ -225,10 +227,9 @@ const PemNavigator = createDrawerNavigator({
 
 
 const SwitchNavigator = createSwitchNavigator({
-  Login: LoginNavigator,
+ Login: LoginNavigator,
   Main: PemNavigator,
   TabMain: MenuTabNavigator,
-  //Chat: ChatNavigator
 },
   {
     initialRouteName: "Login"
