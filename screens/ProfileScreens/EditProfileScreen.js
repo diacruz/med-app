@@ -127,7 +127,7 @@ const EditProfileScreen = props => {
         setAvatar('')
     }
 
-    var image = avatar ? { uri: avatar } : require('../../components/img/default-profile-pic.jpg');
+    var image = !avatar ? require('../../components/img/default-profile-pic.jpg') : { uri: avatar };
 
     return (
         <View style={styles.constainer}>

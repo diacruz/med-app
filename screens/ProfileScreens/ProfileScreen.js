@@ -51,7 +51,7 @@ const ProfileScreen = props => {
     useEffect(() => {
         setLoading(true)
         userRef.on('value', function (snapshot) {
-            console.log(snapshot.val())
+           // console.log(snapshot.val())
             const { name, email, avatar, title, certs, number } = snapshot.val();
             setName(name);
             setEmail(email);
@@ -119,7 +119,7 @@ const ProfileScreen = props => {
     }, [selected])
 
 
-    var image = avatar ? { uri: avatar } : require('../../components/img/default-profile-pic.jpg');
+    var image = !avatar ? require('../../components/img/default-profile-pic.jpg') : { uri: avatar };
 
     return (
         <View style={{ flex: 1 }}>
