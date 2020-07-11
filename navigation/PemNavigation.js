@@ -11,6 +11,7 @@ import SubCategoriesScreen from '../screens/SubCategoriesScreen';
 import CatContentScreen from '../screens/CatContentScreen';
 import ChatroomScreen from '../screens/ChatroomScreen';
 import ProfileScreen from '../screens/ProfileScreens/ProfileScreen';
+import CalendarScreen from '../screens/ProfileScreens/CalendarScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
@@ -106,7 +107,7 @@ const FavNavigator = createStackNavigator({
       drawerIcon: drawerConfig => (
         <Ionicons
           name={Platform.OS === 'android' ? 'md-heart' : 'ios-heart'}
-          size={24}
+          size={27}
           color={drawerConfig.tintColor}
         />
       )
@@ -118,13 +119,14 @@ const ProfileNavigator = createStackNavigator({
   Profile: ProfileScreen,
   Edit: EditProfileScreen,
   CME: CMEScreen,
+  Calendar: CalendarScreen
 },
 
   {
     navigationOptions: {
       drawerIcon: drawerConfig => (
         <Icon name="user-circle"
-          size={24}
+          size={26}
           color={drawerConfig.tintColor}
         />
       )
@@ -146,7 +148,7 @@ const AdminNavigator = createStackNavigator({
       drawerIcon: drawerConfig => (
         <Ionicons
           name={Platform.OS === 'android' ? 'md-create' : 'ios-create'}
-          size={23}
+          size={26}
           color={drawerConfig.tintColor}
         />
       )
@@ -197,7 +199,7 @@ const PemNavigator = createDrawerNavigator({
       drawerIcon: drawerConfig => (
         <Ionicons
           name={Platform.OS === 'android' ? 'md-star' : 'ios-star'}
-          size={24}
+          size={26}
           color={drawerConfig.tintColor}
         />
       )
@@ -225,10 +227,9 @@ const PemNavigator = createDrawerNavigator({
 
 
 const SwitchNavigator = createSwitchNavigator({
-  Login: LoginNavigator,
+ Login: LoginNavigator,
   Main: PemNavigator,
   TabMain: MenuTabNavigator,
-  //Chat: ChatNavigator
 },
   {
     initialRouteName: "Login"
