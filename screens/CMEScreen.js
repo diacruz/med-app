@@ -1,9 +1,5 @@
 import React, { Component } from 'react';
-
-//import react in our code.
 import DatePicker from 'react-native-datepicker';
-//import DatePicker from the package we installed to install: npm install react-native-datepicker --save
-
 import {
   View,
   StyleSheet,
@@ -17,9 +13,6 @@ import {
 import * as firebase from 'firebase';
 import 'firebase/firestore';
 import Firebase from '../backend/firebase'
-
-
-
 
 //This will be the list of all CMEs the user has.
 let cmes = []
@@ -37,7 +30,6 @@ function displayOKAlert(title, message) {
     message
   );
 }
-
 
 export default class CME extends Component {
   /**
@@ -100,7 +92,7 @@ export default class CME extends Component {
       or earlier than the current date. I'm not allowing this since renewal dates supposed to be in the
       future.
       */
-     displayOKAlert('Invalid date', 'Please make sure your date is later than today')
+      displayOKAlert('Invalid date', 'Please make sure your date is later than today')
       return false
     }
     console.log('RETURNING TRUE')
@@ -136,14 +128,10 @@ export default class CME extends Component {
     }
   }
 
- 
+
   render() {
     return (
       <View>
-        <View style={{ flexDirection: "row" }}>
-          <Text style={styles.header}>CME</Text>
-        </View>
-
         <FlatList
           data={this.state.cmes}
           keyExtractor={item => item.id}
@@ -152,52 +140,56 @@ export default class CME extends Component {
               <Text style={styles.cmeItem}>{(itemData.item.id, itemData.item.cert)}</Text>
               <Text style={styles.cmeItem}>{(itemData.item.id, itemData.item.exp)}</Text>
             </View>
-          ) }
+          )}
           numColumns={1} />
 
-            <View style={{ flexDirection: "row" }}>
-            <Text style={styles.header}>Certification </Text>
-            </View>
+        <View style={{ flexDirection: "row", marginTop: "3%", marginBottom: "2%" }}>
+          <Text style={styles.header}>Certification </Text>
+        </View>
 
-          <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: "row" }}>
           <TextInput style={styles.textField} onChangeText={this.handleCmeCert} placeholder='Certification here' />
         </View>
-        
-        <View style={{ flexDirection: "row" }}>
+
+        <View style={{ flexDirection: "row", marginTop: "4%", marginBottom: "3%" }}>
           <Text style={styles.header}>Renewal Date</Text>
         </View>
 
         <View style={{ flexDirection: "row" }}>
-        <DatePicker
-          style={{   flex: 1,
-            fontSize: 14,
-            fontFamily: 'open-sans-bold',
-            textAlign: 'center',
-            alignSelf: 'center',
-            width: '80%', }}
+          <DatePicker
+            style={{
+              flex: 1,
+              //flexDirection: "column",
+              //fontSize: 14,
+              //fontFamily: 'open-sans-bold',
+              //textAlign: 'center',
+              alignSelf: 'center',
+              marginRight: '4%',
+              width: '100%',
+            }}
             date={this.state.date} //initial date from state
-          mode="date" 
-          placeholder="select date"
-          format="MM/DD/YYYY"
-          confirmBtnText="Confirm"
-          cancelBtnText="Cancel"
-          customStyles={{
-            dateIcon: {
-              position: 'absolute',
-              left: 0,
-              top: 4,
-              marginLeft: 0,
-            },
-            dateInput: {
-              marginLeft: 36, 
-            },
-          }}
-          onDateChange = {this.handleCmeExp}
+            mode="date"
+            placeholder="select date"
+            format="MM/DD/YYYY"
+            confirmBtnText="Confirm"
+            cancelBtnText="Cancel"
+            customStyles={{
+              dateIcon: {
+                position: 'absolute',
+                left: 4,
+                top: 4,
+                marginLeft: 0,
+              },
+              dateInput: {
+                marginLeft: 36,
+              },
+            }}
+            onDateChange={this.handleCmeExp}
           //onDateChange={date => {this.handleCmeExp}}
           //this.setState({ date: date }); 
-        //}}
+          //}}
 
-        />
+          />
         </View>
 
         <TouchableOpacity
@@ -238,7 +230,7 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   addCmeButton: {
-    marginTop: 10,
+    marginTop: "7%",
     alignSelf: 'center',
     padding: 10,
     width: 250,
@@ -247,6 +239,7 @@ const styles = StyleSheet.create({
   },
   cmeItem: {
     flex: 1,
+    marginTop: "1%",
     fontSize: 14,
     fontFamily: 'open-sans-bold',
     textAlign: 'center',

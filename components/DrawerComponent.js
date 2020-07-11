@@ -1,16 +1,71 @@
-import React, { Component } from "react";
-import { Alert, Text, TouchableOpacity, SafeAreaView, ScrollView, View, Image, Button, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from "react";
+import {
+    Alert,
+    Text,
+    TouchableOpacity,
+    SafeAreaView,
+    ScrollView,
+    View,
+    Image,
+    Button,
+    StyleSheet,
+    ActivityIndicator,
+} from 'react-native';
 import { DrawerItems } from "react-navigation-drawer";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
-import SignOut from '../screens/SignOut'
+import SignOut from '../screens/SignOut';
+import * as firebase from 'firebase';
 
 const DrawerComponent = (props) => {
+    const user = firebase.auth().currentUser
+    const db = firebase.database()
+    const userRef = db.ref('users/' + user.uid + '/profile')
+
+    const [name, setName] = useState('')
+    const [avatar, setAvatar] = useState('');
+    const [status, setStatus] = useState('');
+    const [buttonColor, setButtonColor] = useState('');
+
+    useEffect(() => {
+        userRef.on('value', function (snapshot) {
+            const { name, avatar, status } = snapshot.val();
+            setName(name);
+            setAvatar(avatar);
+            setStatus(status);
+        }, err => {
+            console.log(`Encountered error: ${err}`);
+        })
+    }, []);
+
+    useEffect(() => {
+        if (status === "Active") {
+            setButtonColor("#34FFB9");
+        }
+        else if (status === "Busy") {
+            setButtonColor("red");
+        }
+    });
+
+    let TouchableCmp = TouchableOpacity;
+
+    var image = avatar === '' ? require('../components/img/default-profile-pic.jpg') : { uri: avatar };
+    //backgroundColor: Colors.primaryColor
     return (
         <View style={styles.container} >
             <SafeAreaView>
                 <ScrollView>
-                    <View style={{ marginTop: '10%' }}>
+                    <View style={{ borderBottomColor: 'silver', borderBottomWidth: 0.5, height: 145 }}>
+                        <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 5 }}>
+                            <Image source={image} style={{ height: 90, width: 90, aspectRatio: 1, overflow: "hidden", borderRadius: 100 }} />
+                            <TouchableCmp>
+                                <View style={styles.active} backgroundColor={buttonColor}></View>
+                            </TouchableCmp>
+                            <Text style={[styles.signText, { marginTop: "2%" }]}>{name}</Text>
+                            <Text style={{ color: 'black', fontFamily: 'open-sans', fontWeight: '200', fontSize: 13 }}>{user.email}</Text>
+                        </View>
+                    </View>
+                    <View style={{ marginTop: '2%' }}>
                         <DrawerItems {...props} />
                     </View>
                 </ScrollView>
@@ -44,7 +99,8 @@ const DrawerComponent = (props) => {
 const styles = StyleSheet.create({
     signText: {
         fontWeight: "bold",
-        fontSize: 15
+        fontSize: 15,
+        color: 'black'
     },
     touchable: {
         position: 'absolute',
@@ -53,7 +109,20 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-    }
+    },
+    sideMenuProfileIcon: {
+        resizeMode: 'contain',
+        width: 150,
+        height: 130,
+        marginTop: 10,
+    },
+    active: {
+        position: "absolute",
+        bottom: 12,
+        padding: "3%",
+        borderRadius: 15,
+        right: "10%"
+    },
 
 });
 

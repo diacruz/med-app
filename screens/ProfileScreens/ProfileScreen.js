@@ -33,10 +33,10 @@ const ProfileScreen = props => {
     const [email, setEmail] = useState('');
     const [title, setTitle] = useState('');
     const [number, setNumber] = useState('');
-    const [status, setStatus] = useState('');
+    //const [status, setStatus] = useState('');
     const [certs, setCerts] = useState([])
     const [avatar, setAvatar] = useState('');
-    const [isVisible, setIsVisible] = useState(false);
+    const [visibility, setVisibility] = useState('')
 
     const [loading, setLoading] = useState(true);
 
@@ -49,20 +49,21 @@ const ProfileScreen = props => {
     const userRef = db.ref('users/' + uid + '/profile')
 
     useEffect(() => {
-        setLoading(true)
+        setLoading(true);
         userRef.on('value', function (snapshot) {
-           // console.log(snapshot.val())
-            const { name, email, avatar, title, certs, number } = snapshot.val();
+            // console.log(snapshot.val())
+            const { name, email, avatar, visibility, title, certs, number } = snapshot.val();
             setName(name);
             setEmail(email);
             setAvatar(avatar)
+            setVisibility(visibility)
             setTitle(title);
             setNumber(number);
             setCerts(certs)
         }, err => {
             console.log(`Encountered error: ${err}`);
         })
-        setLoading(false)
+        setLoading(false);
     }, []);
 
 
@@ -99,116 +100,120 @@ const ProfileScreen = props => {
     const menuArray = ["Turn On", "Turn Off"]
 
     useEffect(() => {
-        if(selected === "Turn On"){
-        setButtonColor("#34FFB9");
+        if (selected === "Turn On") {
+            setButtonColor("#34FFB9");
 
-        userRef.update({
-            status: 'Active',
-        });
-    }
+            userRef.update({
+                status: 'Active',
+            });
+        }
     }, [selected])
 
     useEffect(() => {
-        if(selected === "Turn Off"){
-        setButtonColor("red");
+        if (selected === "Turn Off") {
+            setButtonColor("red");
 
-        userRef.update({
-            status: 'Busy',
-        });
-    }
+            userRef.update({
+                status: 'Busy',
+            });
+        }
     }, [selected])
 
-
+    if (loading) {
+        return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <ActivityIndicator size='large' color={Colors.primaryColor} />
+        </View>
+    }
+    
     var image = !avatar ? require('../../components/img/default-profile-pic.jpg') : { uri: avatar };
 
     return (
         <View style={{ flex: 1 }}>
-            {(loading) ? <ActivityIndicator size="large"></ActivityIndicator> :
-                <SafeAreaView style={styles.container}>
-                    <View style={styles.responsiveBox}>
-                        <ScrollView showsVerticalScrollIndicator={false}>
-                            <View style={{ alignSelf: "center" }}>
-                                <View style={styles.profileImage}>
-                                    <Image source={image} style={styles.avatar} resizeMode="cover"></Image>
-                                </View>
-                                <TouchableCmp>
-                                    <View style={styles.active} backgroundColor={buttonColor}></View>
-                                </TouchableCmp>
+            <SafeAreaView style={styles.container}>
+                <View style={styles.responsiveBox}>
+                    <ScrollView showsVerticalScrollIndicator={false}>
+                        <View style={{ alignSelf: "center" }}>
+                            <View style={styles.profileImage}>
+                                <Image source={image} style={styles.avatar} resizeMode="cover"></Image>
                             </View>
-                            <View style={styles.infoContainer}>
-                                <Text style={[styles.text, { fontWeight: "200", fontSize: 20, fontWeight: "bold" }]}>{name}</Text>
-                                <Text style={[styles.text, { fontSize: 16 }]}>{title}</Text>
+                            <TouchableCmp>
+                                <View style={styles.active} backgroundColor={buttonColor}></View>
+                            </TouchableCmp>
+                        </View>
+                        <View style={styles.infoContainer}>
+                            <Text style={[styles.text, { fontWeight: "200", fontSize: 20, fontWeight: "bold" }]}>{name}</Text>
+                            <Text style={[styles.text, { fontSize: 16 }]}>{title}</Text>
+                        </View>
+                        <View style={styles.statusContainer}>
+                            <View style={styles.status}>
+                                <ModalDropdown
+                                    options={menuArray}
+                                    dropdownStyle={{ height: 40 * menuArray.length, alignItems: 'center' }}
+                                    dropdownTextStyle={{ fontSize: 0.04 * screenWidth, color: 'black' }}
+                                    textStyle={{ fontSize: 0.04 * screenWidth, color: 'black', alignSelf: "center" }}
+                                    defaultValue=''
+                                    onSelect={(index, value) => { setSelected(value) }}>
+                                    <View style={{ alignItems: "center" }}>
+                                        <MaterialCommunityIcons name="emoticon-happy-outline" size={20}></MaterialCommunityIcons>
+                                        <Text style={{ fontSize: 0.04 * screenWidth }}>Active Status</Text>
+                                    </View>
+                                </ModalDropdown>
                             </View>
-                            <View style={styles.statusContainer}>
-                                <View style={styles.status}>
-                                    <ModalDropdown
-                                        options={menuArray}
-                                        dropdownStyle={{ height: 40 * menuArray.length, alignItems: 'center' }}
-                                        dropdownTextStyle={{ fontSize: 0.04 * screenWidth, color: 'black' }}
-                                        textStyle={{ fontSize: 0.04 * screenWidth, color: 'black', alignSelf: "center" }}
-                                        defaultValue=''
-                                        onSelect={(index,value)=>{setSelected(value)}}>
-                                        <View style={{ alignItems: "center" }}>
-                                            <MaterialCommunityIcons name="emoticon-happy-outline" size={20}></MaterialCommunityIcons>
-                                            <Text style={{ fontSize: 0.04 * screenWidth }}>Active Status</Text>
-                                        </View>
-                                    </ModalDropdown>
-                                </View>
-                                <View style={styles.status}>
-                                    <TouchableOpacity style={{ alignItems: "center" }} onPress={() => props.navigation.navigate({
-                                        routeName: 'Edit', params: { userID: uid, name: name, title: title, number: number, avatar: avatar }
-                                    })}>
-                                        <MaterialIcons name="edit" size={20}></MaterialIcons>
-                                        <Text style={{ fontSize: 0.04 * screenWidth }}>Edit Profile</Text>
-                                    </TouchableOpacity>
-                                </View>
-                                <View style={styles.status}>
-                                    <TouchableOpacity style={{ alignItems: "center" }} 
-                                    onPress={() => props.navigation.navigate({routeName: 'Calendar'})}>
-                                        <MaterialCommunityIcons name="calendar-heart" size={20}></MaterialCommunityIcons>
-                                        <Text style={{ fontSize: 0.04 * screenWidth }}>Calendar</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-
-
-                            <View style={[styles.detailContainer]}>
-                                <View style={styles.iconBox}>
-                                    <MaterialIcons name="email" size={20}></MaterialIcons>
-                                </View>
-                                <View style={styles.detailBox}>
-                                    <Text style={styles.text}>Email Address: </Text>
-                                    <Text style={[styles.text, styles.subText]}>{email}</Text>
-                                </View>
-                            </View>
-                            <View style={[styles.detailContainer]}>
-                                <View style={styles.iconBox}>
-                                    <MaterialIcons name="local-phone" size={20}></MaterialIcons>
-                                </View>
-                                <View style={styles.detailBox}>
-                                    <Text style={styles.text}>Phone Number: </Text>
-                                    <Text style={[styles.text, styles.subText]}>{number}</Text>
-                                </View>
-                            </View>
-                            <View style={[styles.detailContainer]}>
-                                <View style={styles.iconBox}>
-                                    <MaterialCommunityIcons name="certificate" size={20}></MaterialCommunityIcons>
-                                </View>
-                                <View style={styles.detailBox}>
-                                    <Text style={styles.text}>Certifications:</Text>
-                                    <Text style={[styles.text, styles.subText]}
-                                        onPress={handleCerts}> Show All {'>'} </Text>
-                                </View>
-                            </View>
-                            <View style={styles.buttonStyle}>
-                                <TouchableOpacity onPress={handleSignOut}>
-                                    <Text style={styles.button}>LOGOUT</Text>
+                            <View style={styles.status}>
+                                <TouchableOpacity style={{ alignItems: "center" }} onPress={() => props.navigation.navigate({
+                                    routeName: 'Edit',
+                                    params: { userID: uid, name: name, title: title, number: number, avatar: avatar, visible: visibility }
+                                })}>
+                                    <MaterialIcons name="edit" size={20}></MaterialIcons>
+                                    <Text style={{ fontSize: 0.04 * screenWidth }}>Edit Profile</Text>
                                 </TouchableOpacity>
                             </View>
-                        </ScrollView>
-                    </View>
-                </SafeAreaView>
-            }
+                            <View style={styles.status}>
+                                <TouchableOpacity style={{ alignItems: "center" }}
+                                    onPress={() => props.navigation.navigate({ routeName: 'Calendar' })}>
+                                    <MaterialCommunityIcons name="calendar-heart" size={20}></MaterialCommunityIcons>
+                                    <Text style={{ fontSize: 0.04 * screenWidth }}>Calendar</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+
+
+                        <View style={[styles.detailContainer]}>
+                            <View style={styles.iconBox}>
+                                <MaterialIcons name="email" size={20}></MaterialIcons>
+                            </View>
+                            <View style={styles.detailBox}>
+                                <Text style={styles.text}>Email Address: </Text>
+                                <Text style={[styles.text, styles.subText]}>{email}</Text>
+                            </View>
+                        </View>
+                        <View style={[styles.detailContainer]}>
+                            <View style={styles.iconBox}>
+                                <MaterialIcons name="local-phone" size={20}></MaterialIcons>
+                            </View>
+                            <View style={styles.detailBox}>
+                                <Text style={styles.text}>Phone Number: </Text>
+                                <Text style={[styles.text, styles.subText]}>{number}</Text>
+                            </View>
+                        </View>
+                        <View style={[styles.detailContainer]}>
+                            <View style={styles.iconBox}>
+                                <MaterialCommunityIcons name="certificate" size={20}></MaterialCommunityIcons>
+                            </View>
+                            <View style={styles.detailBox}>
+                                <Text style={styles.text}>Certifications:</Text>
+                                <Text style={[styles.text, styles.subText]}
+                                    onPress={handleCerts}> Show All {'>'} </Text>
+                            </View>
+                        </View>
+                        <View style={styles.buttonStyle}>
+                            <TouchableOpacity onPress={handleSignOut}>
+                                <Text style={styles.button}>LOGOUT</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </ScrollView>
+                </View>
+            </SafeAreaView>
         </View>
     );
 }
