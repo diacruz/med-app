@@ -175,7 +175,7 @@ const EditCatContentScreen = props => {
                     <View style={styles.buttonRemove}>
                          <Button
                             color={Colors.primaryColor}
-                            title='Remove Image'
+                            title='Remove Imagee32'
                             onPress={removeImage}
                         />
                        
