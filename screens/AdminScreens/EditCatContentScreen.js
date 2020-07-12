@@ -175,10 +175,9 @@ const EditCatContentScreen = props => {
                     <View style={styles.buttonRemove}>
                          <Button
                             color={Colors.primaryColor}
-                            title='Remove Imagee32'
+                            title='Remove Image'
                             onPress={removeImage}
                         />
-                       
                     </View>
                     <View style={styles.imageContainer}>
                         {image && <Image style={styles.ImageSize} source={{ uri: image }} />}
@@ -231,11 +230,11 @@ const styles = StyleSheet.create({
         height: 200
     },
     buttonAttach: {
-        width: '60%',
+        width: '55%',
         paddingBottom: 10
     },
     buttonRemove: {
-        width: '60%',
+        width: '55%',
 
     },
     font: {

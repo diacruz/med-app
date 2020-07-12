@@ -53,7 +53,7 @@ const DrawerComponent = (props) => {
     //backgroundColor: Colors.primaryColor
     return (
         <View style={styles.container} >
-            <SafeAreaView>
+            <SafeAreaView style ={styles.padd}>
                 <ScrollView>
                     <View style={{ borderBottomColor: 'silver', borderBottomWidth: 0.5, height: 145 }}>
                         <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 5 }}>
@@ -109,6 +109,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
+        paddingTop: "10%"
     },
     sideMenuProfileIcon: {
         resizeMode: 'contain',
@@ -123,7 +124,6 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         right: "10%"
     },
-
 });
 
 export default DrawerComponent;
