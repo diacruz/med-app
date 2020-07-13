@@ -5,6 +5,13 @@ import * as firebase from 'firebase';
 import 'firebase/firestore';
 import Firebase from '../backend/firebase'
 
+/**
+ * The chatroom component is what takes care of showing the actual messages sent between users of the app.
+ * Right now, it only shows the global chat, which should be changed to showcase a specific chat as it is passed
+ * in the props. There are also some missing features described lower in the code.
+ */
+
+
 class Chatroom extends Component {
   static navigationOptions = {
     title: 'Chatroom',
@@ -135,12 +142,17 @@ class Chatroom extends Component {
     };
   }
 
+  // The method onPress is supposed to show a user's profile when their avatar is pressed in the chat. 
+  // Right now it does not happen because I was not able to successfully link it to the profile part of the program.
   onPress() {
     console.log("Avatar Pressed")
     //this.props.navigation.navigate('Chatroom', { name: firebase.auth().currentUser.email })
   }
 
   render() {
+      // For the actual chat, we are using a library called GiftedChat (https://www.npmjs.com/package/react-native-gifted-chat), 
+      // which has a lot of features out of the box, such as support for image and video, user avatar images, quick replies and
+      // a bunch more.
     return (
       <GiftedChat
         messages={this.state.messages}

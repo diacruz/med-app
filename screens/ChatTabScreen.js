@@ -11,6 +11,10 @@ import Colors from '../constants/Colors';
 //import {HeaderButtons, Item } from 'react-navigation-header-buttons';
 //import CustomHeaderButton from '../components/CustomHeaderButton';
 
+/**
+ * The ChatTabScreen component is the first thing in the hierarchy of the chat's functionality. It's the first thing 
+ * a user sees when they click on the chat section, and is meant to display all the user's chats. 
+ */
 class ChatTabScreen extends Component {
     constructor(props) {
         super(props)        
