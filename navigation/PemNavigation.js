@@ -107,7 +107,7 @@ const FavNavigator = createStackNavigator({
       drawerIcon: drawerConfig => (
         <Ionicons
           name={Platform.OS === 'android' ? 'md-heart' : 'ios-heart'}
-          size={24}
+          size={27}
           color={drawerConfig.tintColor}
         />
       )
@@ -126,7 +126,7 @@ const ProfileNavigator = createStackNavigator({
     navigationOptions: {
       drawerIcon: drawerConfig => (
         <Icon name="user-circle"
-          size={24}
+          size={26}
           color={drawerConfig.tintColor}
         />
       )
@@ -148,7 +148,7 @@ const AdminNavigator = createStackNavigator({
       drawerIcon: drawerConfig => (
         <Ionicons
           name={Platform.OS === 'android' ? 'md-create' : 'ios-create'}
-          size={23}
+          size={26}
           color={drawerConfig.tintColor}
         />
       )
@@ -199,7 +199,7 @@ const PemNavigator = createDrawerNavigator({
       drawerIcon: drawerConfig => (
         <Ionicons
           name={Platform.OS === 'android' ? 'md-star' : 'ios-star'}
-          size={24}
+          size={26}
           color={drawerConfig.tintColor}
         />
       )

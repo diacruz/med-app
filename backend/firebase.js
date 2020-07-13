@@ -16,18 +16,20 @@ class Firebase {
   init = () => {
     if (!firebase.apps.length) {
       const firebaseConfig = {
-        apiKey: "",
+        apiKey: "AIzaSyB9-PR4nCk8T6nNtqvnMhYFLyxr7ZLXJV8",
+        authDomain: "med-app-519aa.firebaseapp.com",
+        databaseURL: "https://med-app-519aa.firebaseio.com",
+        projectId: "med-app-519aa",
+        storageBucket: "med-app-519aa.appspot.com",
+      };
+      
+      /**apiKey: "",
         authDomain: "",
         databaseURL: "",
         projectId: "",
-        storageBucket: "",
-
-      };
-
+        storageBucket: "", */
+        
       firebase.initializeApp(firebaseConfig);
-      /*
-      firestore = firebase.firestore();
-      firestore.settings({ timestampsInSnapshots: true})*/
       this.counter()
       this.whosOnline()
     } else {

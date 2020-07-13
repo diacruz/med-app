@@ -19,6 +19,7 @@ const EditProfileScreen = props => {
     const name = props.navigation.getParam('name');
     const title = props.navigation.getParam('title');
     const number = props.navigation.getParam('number');
+    const visible = props.navigation.getParam('visible');
     const avatarImage = props.navigation.getParam('avatar');
 
     const [displayName, setDisplayName] = useState(name);
@@ -32,6 +33,7 @@ const EditProfileScreen = props => {
 
     const [avatar, setAvatar] = useState(avatarImage);
     const [isVisible, setIsVisible] = useState(false);
+    const [visibility, setVisibility] = useState(visible)
 
     function addInfo() {
         if (errorName || errorTitle || errorNumber) {
@@ -52,6 +54,16 @@ const EditProfileScreen = props => {
                     number: numberType,
                 });
             }
+            if(isVisible){
+                userRef.update({
+                    visibility: 'public',
+                });
+            } else {
+                userRef.update({
+                    visibility: 'private',
+                });
+            }
+
             userRef.update({
                 avatar: avatar,
             });
@@ -127,7 +139,12 @@ const EditProfileScreen = props => {
         setAvatar('')
     }
 
-    var image = avatar ? { uri: avatar } : require('../../components/img/default-profile-pic.jpg');
+    const handleVisibility = async (newValue) => {
+        setIsVisible(newValue)
+        
+    }
+
+    var image = !avatar ? require('../../components/img/default-profile-pic.jpg') : { uri: avatar };
 
     return (
         <View style={styles.constainer}>
@@ -203,7 +220,8 @@ const EditProfileScreen = props => {
                     </View>
                     <View style={styles.switchStyle}>
                         <Text style={styles.label}> Public / Private</Text>
-                        <Switch style={{ justifyContent: "flex-end" }} value={isVisible} onValueChange={newValue => setIsVisible(newValue)}></Switch>
+                        <Switch style={{ justifyContent: "flex-end" }} value={isVisible} onValueChange={handleVisibility}></Switch>
+                        <Text>{isVisible ?'Switch is ON':'Switch is OFF'}</Text>
                     </View>
                     <TouchableOpacity style={styles.buttonStyle2} onPress={() => addInfo()}>
                         <Text style={styles.button}>Submit</Text>

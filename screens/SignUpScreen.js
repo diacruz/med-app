@@ -72,9 +72,9 @@ const CreateAccount = props => {
               number: '(###) ###-####',
               avatar: '',
               title: 'Job Title',
-              status: '',
+              status: 'Active',
               certs: '',
-              isVisible: false
+              visibility: 'public'
             }
           })
       }).then(
