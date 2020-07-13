@@ -29,11 +29,17 @@ import ModalDropdown from 'react-native-modal-dropdown';
 
 const ProfileScreen = props => {
 
+    let TouchableCmp = TouchableOpacity;
+
+    if (Platform.OS === 'android' && Platform.Version >= 21) {
+        TouchableCmp = TouchableNativeFeedback;
+    }
+
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [title, setTitle] = useState('');
     const [number, setNumber] = useState('');
-    //const [status, setStatus] = useState('');
+    const [status, setStatus] = useState('');
     const [certs, setCerts] = useState([])
     const [avatar, setAvatar] = useState('');
     //const [isVisible, setIsVisible] = useState(false);
@@ -41,15 +47,15 @@ const ProfileScreen = props => {
     const [buttonColor, setButtonColor] = useState('red');
     const [selected, setSelected] = useState(false);
 
-    const uid = firebase.auth().currentUser.uid
-    const db = firebase.database()
+    const uid = firebase.auth().currentUser.uid;
+    const db = firebase.database();
 
-    const userRef = db.ref('users/' + uid + '/profile')
+    const userRef = db.ref('users/' + uid + '/profile');
 
     useEffect(() => {
         userRef.on('value', function (snapshot) {
             // console.log(snapshot.val())
-            const { name, email, avatar, visibility, title, certs, number } = snapshot.val();
+            const { name, email, avatar, title, number, certs } = snapshot.val();
             setName(name);
             setEmail(email);
             setAvatar(avatar);
@@ -61,15 +67,8 @@ const ProfileScreen = props => {
         })
     }, []);
 
-
     const handleSignOut = () => {
         new SignOut().signOut(props)
-    }
-
-    let TouchableCmp = TouchableOpacity;
-
-    if (Platform.OS === 'android' && Platform.Version >= 21) {
-        TouchableCmp = TouchableNativeFeedback;
     }
 
     useEffect(() => {
@@ -80,7 +79,7 @@ const ProfileScreen = props => {
                 childData.key = childSnapshot.key;
                 setCerts(childData)
             });
-        })
+        });
     }, [])
 
     const handleCerts = () => {
@@ -90,33 +89,30 @@ const ProfileScreen = props => {
         props.navigation.navigate('CME')
     }
 
-    const menuArray = ["Turn On", "Turn Off"]
+    const menuArray = ["Turn On", "Turn Off"];
 
     useEffect(() => {
         if (selected === "Turn On") {
             setButtonColor("#34FFB9");
-
+            setStatus('Active')
             userRef.update({
-                status: 'Active',
+                status: status,
             });
         }
-    }, [selected])
-
-    useEffect(() => {
         if (selected === "Turn Off") {
             setButtonColor("red");
-
+            setStatus('Busy')
             userRef.update({
-                status: 'Busy',
+                status: status,
             });
         }
-    }, [selected])
-    
+    })
+
     var image = !avatar ? require('../../components/img/default-profile-pic.jpg') : { uri: avatar };
 
     return (
-        <View style={{ flex: 1 }}>
-            <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
+            <SafeAreaView>
                 <View style={styles.responsiveBox}>
                     <ScrollView showsVerticalScrollIndicator={false}>
                         <View style={{ alignSelf: "center" }}>
@@ -131,6 +127,7 @@ const ProfileScreen = props => {
                             <Text style={[styles.text, { fontWeight: "200", fontSize: 20, fontWeight: "bold" }]}>{name}</Text>
                             <Text style={[styles.text, { fontSize: 16 }]}>{title}</Text>
                         </View>
+
                         <View style={styles.statusContainer}>
                             <View style={styles.status}>
                                 <ModalDropdown
@@ -147,56 +144,54 @@ const ProfileScreen = props => {
                                 </ModalDropdown>
                             </View>
                             <View style={styles.status}>
-                                <TouchableCmp style={{ alignItems: "center" }} onPress={() => props.navigation.navigate({
+                                <TouchableOpacity style={{ alignItems: "center" }} onPress={() => props.navigation.navigate({
                                     routeName: 'Edit',
-                                    params: { userID: uid, name: name, title: title, number: number, avatar: avatar, visible: visibility }
+                                    params: { userID: uid, name: name, title: title, number: number, avatar: avatar }
                                 })}>
                                     <MaterialIcons name="edit" size={20}></MaterialIcons>
                                     <Text style={{ fontSize: 0.04 * screenWidth }}>Edit Profile</Text>
-                                </TouchableCmp>
+                                </TouchableOpacity>
                             </View>
                             <View style={styles.status}>
-                                <TouchableCmp style={{ alignItems: "center" }}
+                                <TouchableOpacity style={{ alignItems: "center" }}
                                     onPress={() => props.navigation.navigate({ routeName: 'Calendar' })}>
                                     <MaterialCommunityIcons name="calendar-heart" size={20}></MaterialCommunityIcons>
                                     <Text style={{ fontSize: 0.04 * screenWidth }}>Calendar</Text>
-                                </TouchableCmp>
+                                </TouchableOpacity>
                             </View>
                         </View>
-
-
-                        <View style={[styles.detailContainer]}>
-                            <View style={styles.iconBox}>
-                                <MaterialIcons name="email" size={20}></MaterialIcons>
+                            <View style={[styles.detailContainer]}>
+                                <View style={styles.iconBox}>
+                                    <MaterialIcons name="email" size={20}></MaterialIcons>
+                                </View>
+                                <View style={styles.detailBox}>
+                                    <Text style={styles.text}>Email Address: </Text>
+                                    <Text style={[styles.text, styles.subText]}>{email}</Text>
+                                </View>
                             </View>
-                            <View style={styles.detailBox}>
-                                <Text style={styles.text}>Email Address: </Text>
-                                <Text style={[styles.text, styles.subText]}>{email}</Text>
+                            <View style={[styles.detailContainer]}>
+                                <View style={styles.iconBox}>
+                                    <MaterialIcons name="local-phone" size={20}></MaterialIcons>
+                                </View>
+                                <View style={styles.detailBox}>
+                                    <Text style={styles.text}>Phone Number: </Text>
+                                    <Text style={[styles.text, styles.subText]}>{number}</Text>
+                                </View>
                             </View>
-                        </View>
-                        <View style={[styles.detailContainer]}>
-                            <View style={styles.iconBox}>
-                                <MaterialIcons name="local-phone" size={20}></MaterialIcons>
+                            <View style={[styles.detailContainer]}>
+                                <View style={styles.iconBox}>
+                                    <MaterialCommunityIcons name="certificate" size={20}></MaterialCommunityIcons>
+                                </View>
+                                <View style={styles.detailBox}>
+                                    <Text style={styles.text}>Certifications:</Text>
+                                    <Text style={[styles.text, styles.subText]}
+                                        onPress={handleCerts}> Show All {'>'} </Text>
+                                </View>
                             </View>
-                            <View style={styles.detailBox}>
-                                <Text style={styles.text}>Phone Number: </Text>
-                                <Text style={[styles.text, styles.subText]}>{number}</Text>
-                            </View>
-                        </View>
-                        <View style={[styles.detailContainer]}>
-                            <View style={styles.iconBox}>
-                                <MaterialCommunityIcons name="certificate" size={20}></MaterialCommunityIcons>
-                            </View>
-                            <View style={styles.detailBox}>
-                                <Text style={styles.text}>Certifications:</Text>
-                                <Text style={[styles.text, styles.subText]}
-                                    onPress={handleCerts}> Show All {'>'} </Text>
-                            </View>
-                        </View>
                         <View style={styles.buttonStyle}>
-                            <TouchableCmp onPress={handleSignOut}>
+                            <TouchableOpacity onPress={handleSignOut}>
                                 <Text style={styles.button}>LOGOUT</Text>
-                            </TouchableCmp>
+                            </TouchableOpacity>
                         </View>
                     </ScrollView>
                 </View>
@@ -213,17 +208,12 @@ let screenWidth = Math.round(Dimensions.get('window').width);
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flex:1,
         backgroundColor: "#fff",
     },
     responsiveBox: {
         width: screenWidth,
-        height: screenHeight,
-    },
-    backgroundimage: {
-        flex: 1,
-        resizeMode: "cover",
-        justifyContent: "center"
+        height: screenHeight
     },
     text: {
         fontFamily: "open-sans",
@@ -246,9 +236,11 @@ const styles = StyleSheet.create({
     },
     active: {
         position: "absolute",
-        bottom: 18,
-        left: "5%",
-        padding: "7%",
+        bottom: 20,
+        left: 5,
+        padding: 4,
+        height: 25,
+        width: 25,
         borderRadius: 15
     },
     infoContainer: {
@@ -260,8 +252,7 @@ const styles = StyleSheet.create({
     detailContainer: {
         flexDirection: "row",
         alignItems: "center",
-        maxHeight: "20%",
-        minHeight: "10%",
+        height: screenHeight * 0.101,
         alignSelf: "center",
         marginTop: "4%",
         marginHorizontal: 25,
@@ -304,9 +295,9 @@ const styles = StyleSheet.create({
         marginTop: 5,
     },
     buttonStyle: {
-        marginTop: screenHeight * 0.035,
+        marginTop: screenHeight * 0.020,
         alignContent: "center",
-        alignSelf: "center"
+        alignSelf: "center",
     },
     button: {
         backgroundColor: Colors.primaryColor,
@@ -317,7 +308,7 @@ const styles = StyleSheet.create({
         fontSize: 0.038 * screenWidth,
         fontWeight: 'bold',
         overflow: 'hidden',
-        padding: 12,
+        padding: 15,
         textAlign: 'center',
     }
 });

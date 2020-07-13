@@ -119,8 +119,8 @@ const styles = StyleSheet.create({
     active: {
         position: "absolute",
         bottom: 12,
-        padding: "3%",
-        borderRadius: 15,
+        padding: 9,
+        borderRadius: 25,
         right: "10%"
     },
 
