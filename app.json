@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Blank Template",
-    "slug": "EME-trial",
+    "name": "PemMedExpo",
+    "slug": "pem-med-expo",
     "privacy": "public",
     "sdkVersion": "36.0.0",
     "platforms": [
@@ -24,7 +24,13 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.fiu.pemmed",
+      "config": {
+        "googleSignIn": {
+          "reservedClientId": ""
+        }
+      }
     }
   }
 }

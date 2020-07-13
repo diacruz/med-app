@@ -6,6 +6,13 @@ import 'firebase/firestore';
 import Firebase from '../backend/firebase';
 import UserProfileScreen from '../screens/UserProfileScreen';
 
+/**
+ * The chatroom component is what takes care of showing the actual messages sent between users of the app.
+ * Right now, it only shows the global chat, which should be changed to showcase a specific chat as it is passed
+ * in the props. There are also some missing features described lower in the code.
+ */
+
+
 class Chatroom extends Component {
   static navigationOptions = {
     title: 'Chatroom',
@@ -167,6 +174,9 @@ class Chatroom extends Component {
   }
 
   render() {
+      // For the actual chat, we are using a library called GiftedChat (https://www.npmjs.com/package/react-native-gifted-chat), 
+      // which has a lot of features out of the box, such as support for image and video, user avatar images, quick replies and
+      // a bunch more.
     return (
       <GiftedChat
         messages={this.state.messages}

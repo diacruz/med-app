@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 20,
     paddingBottom: 5,
-    height: 150,
+    height: 80,
   },
   container: {
     flex: 1,
@@ -48,16 +48,16 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 8,
     elevation: 5,
-    borderRadius: 10,
+    borderRadius: 25,
     backgroundColor: 'white',
-    height: 150,
-    marginHorizontal: 10,
+    // height: 30,
+    marginHorizontal: 30,
   },
   textContainer: {
-    width: '100%',
-    height: '60%',
-    alignItems: 'center',
-    padding: 10
+    // width: '100%',
+    // height: '60%',
+    // alignItems: 'center',
+    // padding: 30
   },
   infoContainer: {
     width: '100%',
@@ -70,10 +70,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   title: {
-    fontFamily: 'open-sans-bold',
-    fontSize: 20,
+    fontFamily: 'open-sans',
+    fontSize: 30,
+    fontWeight: '500',
     textAlign: 'center',
-    
   }
 });
 

@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
     input: {
         paddingHorizontal: 2,
         paddingVertical: 5,
-        borderColor: '#ccc',
+        borderColor: Colors.androidCustomWhite,
         borderWidth: 1
     }
 });

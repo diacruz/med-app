@@ -40,19 +40,18 @@ const CatContentLayout = props => {
 const styles = StyleSheet.create({
     orderItem: {
         flex: 1,
-        margin: 10,
-        paddingTop: 20
+        // margin: 10,
+        paddingTop: 30
     },
     detailItems: {
         paddingTop: 5,
         paddingHorizontal: 15,
-        width: '95%',
-        backgroundColor: 'white'
+        width: '80%',
+        // backgroundColor: 'white'
 
     },
     textBackgroundContainer: {
         alignItems: 'center',
-
     },
     container: {
         flex: 1,
@@ -61,9 +60,12 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowRadius: 8,
         elevation: 5,
-        borderRadius: 10,
+        borderRadius: 25,
         backgroundColor: Colors.primaryColor,
-        width: '100%'
+        width: '80%',
+        height: 40,
+        marginLeft: '10%',
+        marginRight: '10%'
 
     },
     touchable: {
@@ -77,14 +79,14 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 25,
-        fontFamily: 'open-sans-bold',
+        fontFamily: 'open-sans',
         color: 'white'
     },
     textSize: {
-        fontSize: 15,
-        alignItems: 'center',
+        // fontSize: 15,
+        // alignItems: 'center',
         fontFamily: 'open-sans',
-        textAlign: "left"
+        // textAlign: "left"
     }
 
 });
