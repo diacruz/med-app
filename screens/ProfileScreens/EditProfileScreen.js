@@ -1,5 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Dimensions, Image, Alert, View, ScrollView, Button, Text, StyleSheet, Platform, TextInput, TouchableOpacity, Switch } from 'react-native';
+import { 
+    Dimensions, 
+    Image, 
+    Alert, 
+    View, 
+    ScrollView, 
+    Button, 
+    Text, 
+    StyleSheet, 
+    Platform, 
+    TextInput, 
+    TouchableOpacity, 
+    Switch,
+} from 'react-native';
 import { HelperText, HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../../components/CustomHeaderButton';
 import Colors from '../../constants/Colors';
@@ -19,7 +32,6 @@ const EditProfileScreen = props => {
     const name = props.navigation.getParam('name');
     const title = props.navigation.getParam('title');
     const number = props.navigation.getParam('number');
-    const visible = props.navigation.getParam('visible');
     const avatarImage = props.navigation.getParam('avatar');
 
     const [displayName, setDisplayName] = useState(name);
@@ -29,11 +41,9 @@ const EditProfileScreen = props => {
     const [errorName, setErrorName] = useState('');
     const [errorTitle, setErrorTitle] = useState('');
     const [errorNumber, setErrorNumber] = useState('');
-    //const [status, setStatus] = useState('');
 
     const [avatar, setAvatar] = useState(avatarImage);
     const [isVisible, setIsVisible] = useState(false);
-    const [visibility, setVisibility] = useState(visible)
 
     function addInfo() {
         if (errorName || errorTitle || errorNumber) {
@@ -54,16 +64,6 @@ const EditProfileScreen = props => {
                     number: numberType,
                 });
             }
-            if(isVisible){
-                userRef.update({
-                    visibility: 'public',
-                });
-            } else {
-                userRef.update({
-                    visibility: 'private',
-                });
-            }
-
             userRef.update({
                 avatar: avatar,
             });
@@ -139,16 +139,11 @@ const EditProfileScreen = props => {
         setAvatar('')
     }
 
-    const handleVisibility = async (newValue) => {
-        setIsVisible(newValue)
-        
-    }
-
-    var image = !avatar ? require('../../components/img/default-profile-pic.jpg') : { uri: avatar };
+    var image = avatar === '' ? require('../../components/img/default-profile-pic.jpg') : { uri: avatar };
 
     return (
         <View style={styles.constainer}>
-            <ScrollView style={{ flex: 1, height: "100%" }}>
+            <ScrollView>
                 <View style={{ flexDirection: 'row' }}>
                     <View style={[styles.profileImage, { marginLeft: 20 }]}>
                         <Image source={image} style={styles.avatar} resizeMode="cover"></Image>
@@ -166,7 +161,7 @@ const EditProfileScreen = props => {
                     <View style={styles.formControl}>
                         <Text style={styles.label}>Fullname</Text>
                         <View style={{ flexDirection: "row" }}>
-                            <Icon style={{ marginRight: "2%"}} name="user" size={18}></Icon>
+                            <Icon style={{ marginRight: "2%" }} name="user" size={18}></Icon>
                             <TextInput
                                 style={styles.input}
                                 value={displayName}
@@ -200,7 +195,7 @@ const EditProfileScreen = props => {
                     <View style={styles.formControl}>
                         <Text style={styles.label}>Phone Number</Text>
                         <View style={{ flexDirection: "row" }}>
-                            <MaterialIcons style={{ marginRight: "2%"}} name="phone" size={18}></MaterialIcons>
+                            <MaterialIcons style={{ marginRight: "2%" }} name="phone" size={18}></MaterialIcons>
                             <TextInput
                                 style={styles.input}
                                 maxLength={15}
@@ -220,8 +215,8 @@ const EditProfileScreen = props => {
                     </View>
                     <View style={styles.switchStyle}>
                         <Text style={styles.label}> Public / Private</Text>
-                        <Switch style={{ justifyContent: "flex-end" }} value={isVisible} onValueChange={handleVisibility}></Switch>
-                        <Text>{isVisible ?'Switch is ON':'Switch is OFF'}</Text>
+                        <Switch style={{ alignSelf: 'flex-start'}} value={isVisible} onValueChange={newValue => setIsVisible(newValue)}></Switch>
+                        <Text>{isVisible ? 'Switch is ON' : 'Switch is OFF'}</Text>
                     </View>
                     <TouchableOpacity style={styles.buttonStyle2} onPress={() => addInfo()}>
                         <Text style={styles.button}>Submit</Text>
@@ -234,12 +229,12 @@ const EditProfileScreen = props => {
 
 EditProfileScreen.navigationOptions = navData => {
     return {
-        headerTitle: 'Edit Screen',
+        headerTitle: 'Edit Profile',
     }
 }
 
-let screenHeight = Math.round(Dimensions.get('screen').height);
-let screenWidth = Math.round(Dimensions.get('screen').width);
+let screenHeight = Math.round(Dimensions.get('window').height);
+let screenWidth = Math.round(Dimensions.get('window').width);
 
 const styles = StyleSheet.create({
     constainer: {
@@ -248,11 +243,11 @@ const styles = StyleSheet.create({
         width: screenWidth
     },
     form: {
-        margin: "8%",
-        marginTop: "1%",
+        margin: 25,
+        marginTop: "0%"
     },
     formControl: {
-        marginBottom: "5%"
+        marginBottom: "3%"
     },
     ImageStyle: {
         padding: 10,
@@ -290,7 +285,6 @@ const styles = StyleSheet.create({
     switchStyle: {
         flex: 1,
         marginTop: "3%",
-        left: 0,
     },
     buttonImage: {
         borderColor: '#8e44ad',
@@ -321,13 +315,12 @@ const styles = StyleSheet.create({
     },
     switchStyle: {
         flex: 1,
-        justifyContent: "flex-start"
     },
     buttonText: {
         alignItems: 'center',
         backgroundColor: '#c0c0c0',
         padding: "6%",
-        width: "100%%",
+        width: "100%",
         marginTop: "6%",
         right: "5%",
         backgroundColor: Colors.primaryColor
