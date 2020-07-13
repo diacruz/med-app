@@ -23,7 +23,7 @@ const CategoriesScreen = props => {
     <FlatList
       data={categories}
       keyExtractor={item => item.id}
-      numColumns={2}
+      numColumns={1}
       renderItem={itemData =>
         <CategoryGridTile
           title={itemData.item.title}

@@ -100,7 +100,7 @@ const ProfileScreen = props => {
 
     useEffect(() => {
         if(selected === "Turn On"){
-        setButtonColor("#34FFB9");
+        setButtonColor(Colors.primaryColor);
 
         userRef.update({
             status: 'Active',
@@ -222,7 +222,7 @@ let screenWidth = Math.round(Dimensions.get('screen').width);
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fff",
+        backgroundColor: Colors.androidCustomWhite,
     },
     responsiveBox: {
         width: screenWidth,
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
     },
     text: {
         fontFamily: "open-sans",
-        color: "#52575D",
+        color: Colors.primaryColor,
         fontSize: 0.043 * screenWidth
     },
     avatar: {
@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
     },
     subText: {
         fontSize: 0.038 * screenWidth,
-        color: "#AEB5BC",
+        color: Colors.grayedOut,
         textTransform: "uppercase",
         fontWeight: "500",
         marginTop: 5,

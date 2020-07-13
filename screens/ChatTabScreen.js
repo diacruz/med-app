@@ -35,14 +35,14 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 5,
         paddingVertical: 5,
-        backgroundColor: "#eaeaea"
+        backgroundColor: Colors.androidCustomWhite
     },
     buttons: {
         flex: 1,
         height: 2000
     },
     sep: {
-        borderBottomColor: "#eaeaea",
+        borderBottomColor: Colors.androidCustomWhite,
         borderBottomWidth: 15
     }
 });
