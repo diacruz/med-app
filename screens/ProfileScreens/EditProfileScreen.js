@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
     },
     input: {
         paddingHorizontal: 2,
-        borderBottomColor: '#ccc',
+        borderBottomColor: Colors.androidCustomWhite,
         borderBottomWidth: 1,
         fontSize: 0.040 * screenWidth,
         flex: 1
@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         alignItems: 'center',
-        backgroundColor: '#c0c0c0',
+        backgroundColor: Colors.androidCustomWhite,
         padding: "6%",
         width: "100%",
         marginTop: "6%",

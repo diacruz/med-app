@@ -1,4 +1,4 @@
-import React, { Component, useCallback } from 'react';
+import React, { Component, useCallback, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -13,6 +13,8 @@ import {
 import * as firebase from 'firebase';
 import 'firebase/firestore';
 import Firebase from '../backend/firebase'
+import * as Google from 'expo-google-app-auth';
+import Colors from '../constants/Colors';
 
 function displayOKAlert(title, message) {
   Alert.alert(
@@ -22,7 +24,6 @@ function displayOKAlert(title, message) {
 }
 
 const Login = props => {
-
   /**
    * Logs a user in with the specified username and password. This also increments
    * userCount, adds the username to the onlineUsers list, and sends them to the 
@@ -32,59 +33,97 @@ const Login = props => {
    * @param {Object} props 
    */
 
+  const [showLoginScreen, setShowLoginScreen] = useState(false)
+  const [userInfo, setUserInfo] = useState({
+    username: "",
+    password: ""
+  })
+
   function logUserIn(email, password) {
     firebase.auth().signInWithEmailAndPassword(email, password).then(function () {
       Firebase.shared.setUserCount = 1;
       Firebase.shared.addOnlineUser(email);
       props.navigation.navigate({ routeName: 'Categories' });
     }).catch(function (err) {
-      displayOKAlert('No account with that email was found', 'Feel free to create an account first!')
+      displayOKAlert('Wrong credentials','Try again 🧐')
       console.log(err)
     })
   }
 
-  let userInfo = {
-    userValue: "",
-    passwordValue: ""
+  const loginWithGoogle = async function () {
+    try {
+      const result = await Google.logInAsync({
+        iosClientId: "692901117220-9chumnlmcfdbtuu7j94sfk61c5mnliom.apps.googleusercontent.com",
+        scopes: ["profile", "email"]
+      });
+      console.log(result);
+      if (result.type === "success") {
+        const { idToken, accessToken } = result;
+        const credential = firebase.auth.GoogleAuthProvider.credential(idToken, accessToken);
+        firebase
+          .auth()
+          .signInAndRetrieveDataWithCredential(credential)
+          .then(res => {
+            alert(`Welcome ${res.user.displayName}`)
+            props.navigation.navigate({ routeName: 'Categories' });
+          })
+          .catch(error => {
+            console.log("firebase cred err:", error);
+          });
+      } else {
+        return { cancelled: true };
+      }
+    } catch (err) {
+      console.log("err:", err);
+    }
+  };
+
+  const loginScreenHandler = () => {
+    if (showLoginScreen) logUserIn(userInfo.username.text, userInfo.password.text)
+    else setShowLoginScreen(!showLoginScreen)
   }
 
-  const handleEmail = (text) => {
-    userInfo.userValue = text
-  }
 
-  const handlePassword = (text) => {
-    userInfo.passwordValue = text
-  }
 
   return (
-    <KeyboardAvoidingView styles={styles.container} behavior="position" enabled keyboardVerticalOffset="100">
+    <KeyboardAvoidingView /* styles={styles.container} contentContainerStyle={styles.container} */ behavior="position" enabled keyboardVerticalOffset="100">
       <View>
         <Image style={styles.logo} source={require('../data/logo.png')} />
       </View>
       <View styles={styles.view}>
-        <TextInput
-          style={[styles.textField, styles.email]}
-          placeholder='Email'
-          onChangeText={handleEmail}
-          autoCapitalize='none'
-        />
-        <TextInput
-          secureTextEntry
-          style={styles.textField}
-          placeholder='Password'
-          onChangeText={handlePassword}
-        />
-        <TouchableOpacity style={styles.loginButton} onPress={() => {
-          logUserIn(userInfo.userValue, userInfo.passwordValue)
-        }}>
-          <Text style={styles.text}>Log in</Text>
+        {showLoginScreen && 
+        <>
+          <TextInput
+            style={[styles.textField, styles.email]}
+            placeholder='Enter your email'
+            onChangeText={(text) => setUserInfo({ ...userInfo, username: { text } })}
+            autoCapitalize='none'
+          />
+          <TextInput
+            secureTextEntry
+            style={styles.textField}
+            placeholder='Enter your password'
+            onChangeText={(text) => setUserInfo({ ...userInfo, password: { text } })}
+          />
+        </>}
+        <TouchableOpacity style={styles.loginButton} onPress={loginScreenHandler}>
+          <Text style={styles.loginText}>Log in</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.signUpButton} onPress={() => {
+        {showLoginScreen && <TouchableOpacity style={styles.googleButton} onPress={() => loginWithGoogle()}>
+          <Text style={styles.loginText}>Sign in with Google</Text>
+        </TouchableOpacity>}
+        {!showLoginScreen && <TouchableOpacity style={styles.signUpButton} onPress={() => {
           props.navigation.navigate('SignUp')
         }}
         >
-          <Text style={styles.text}>New? Create an account!</Text>
-        </TouchableOpacity>
+          <Text style={styles.text}>Sign Up</Text>
+        </TouchableOpacity>}
+        {showLoginScreen && <TouchableOpacity style={styles.signUpButton} onPress={() => {
+          setShowLoginScreen(false)
+        }}
+        >
+          <Text style={styles.text}>Back</Text>
+        </TouchableOpacity>}
       </View>
     </ KeyboardAvoidingView>
   );
@@ -96,20 +135,21 @@ let screenWidth = Math.round(Dimensions.get('window').width)
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
-
+    // flex: 1,
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    backgroundColor: Colors.primaryColor,
   },
   textField: {
     fontFamily: 'open-sans-bold',
-    height: 60,
-    width: '80%',
+    height: 50,
+    width: '60%',
     textAlign: 'center',
     alignSelf: 'center',
-    borderColor: 'gray',
-    borderWidth: 2,
-    borderRadius: 30,
+    borderBottomColor: 'gray',
+    // borderColor: 'gray',
+    borderBottomWidth: 1,
+    // borderRadius: 25,
   },
   email: {
     marginBottom: 30,
@@ -120,34 +160,47 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     padding: 10,
     width: 250,
-    backgroundColor: '#00ffb8',
-    borderRadius: 30,
+    backgroundColor: Colors.primaryColor,
+    borderRadius: 25,
+  },
+  googleButton: {
+    marginTop: 20,
+    alignSelf: 'center',
+    padding: 10,
+    // width: '50%',
+    backgroundColor: Colors.googleBlue,
+    borderRadius: 25,
+    width: 250
   },
   signUpButton: {
     marginTop: 20,
-    borderColor: '#00e6a4',
-    borderWidth: 2,
+    borderColor: Colors.primaryColor,
+    borderWidth: 1,
     alignSelf: 'center',
     padding: 10,
     width: 250,
-
-    borderRadius: 30,
+    borderRadius: 25,
   },
   text: {
     fontFamily: 'open-sans-bold',
     textAlign: 'center'
   },
+  loginText: {
+    fontFamily: 'open-sans-bold',
+    textAlign: 'center',
+    color: Colors.androidCustomWhite
+  },
   view: {
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   logo: {
     width: 250,
     height: 150,
     resizeMode: 'stretch',
     alignSelf: 'center',
-    marginTop: 20,
+    marginTop: 40,
     marginLeft: 30
   }
 })
