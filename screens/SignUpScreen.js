@@ -74,7 +74,7 @@ const CreateAccount = props => {
               title: 'Job Title',
               status: 'Active',
               certs: '',
-              visibility: 'public'
+              isVisible: false
             }
           })
       }).then(

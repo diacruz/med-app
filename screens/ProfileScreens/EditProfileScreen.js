@@ -19,7 +19,6 @@ const EditProfileScreen = props => {
     const name = props.navigation.getParam('name');
     const title = props.navigation.getParam('title');
     const number = props.navigation.getParam('number');
-    const visible = props.navigation.getParam('visible');
     const avatarImage = props.navigation.getParam('avatar');
 
     const [displayName, setDisplayName] = useState(name);
@@ -29,11 +28,9 @@ const EditProfileScreen = props => {
     const [errorName, setErrorName] = useState('');
     const [errorTitle, setErrorTitle] = useState('');
     const [errorNumber, setErrorNumber] = useState('');
-    //const [status, setStatus] = useState('');
 
     const [avatar, setAvatar] = useState(avatarImage);
     const [isVisible, setIsVisible] = useState(false);
-    const [visibility, setVisibility] = useState(visible)
 
     function addInfo() {
         if (errorName || errorTitle || errorNumber) {
@@ -54,16 +51,6 @@ const EditProfileScreen = props => {
                     number: numberType,
                 });
             }
-            if(isVisible){
-                userRef.update({
-                    visibility: 'public',
-                });
-            } else {
-                userRef.update({
-                    visibility: 'private',
-                });
-            }
-
             userRef.update({
                 avatar: avatar,
             });
@@ -137,11 +124,6 @@ const EditProfileScreen = props => {
 
     const handleDeleteAvatar = async () => {
         setAvatar('')
-    }
-
-    const handleVisibility = async (newValue) => {
-        setIsVisible(newValue)
-        
     }
 
     var image = !avatar ? require('../../components/img/default-profile-pic.jpg') : { uri: avatar };
@@ -220,7 +202,7 @@ const EditProfileScreen = props => {
                     </View>
                     <View style={styles.switchStyle}>
                         <Text style={styles.label}> Public / Private</Text>
-                        <Switch style={{ justifyContent: "flex-end" }} value={isVisible} onValueChange={handleVisibility}></Switch>
+                        <Switch style={{ justifyContent: "flex-end" }} value={isVisible} onValueChange={newValue => setIsVisible(newValue)}></Switch>
                         <Text>{isVisible ?'Switch is ON':'Switch is OFF'}</Text>
                     </View>
                     <TouchableOpacity style={styles.buttonStyle2} onPress={() => addInfo()}>
@@ -238,8 +220,8 @@ EditProfileScreen.navigationOptions = navData => {
     }
 }
 
-let screenHeight = Math.round(Dimensions.get('screen').height);
-let screenWidth = Math.round(Dimensions.get('screen').width);
+let screenHeight = Math.round(Dimensions.get('window').height);
+let screenWidth = Math.round(Dimensions.get('window').width);
 
 const styles = StyleSheet.create({
     constainer: {

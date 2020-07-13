@@ -36,9 +36,7 @@ const ProfileScreen = props => {
     //const [status, setStatus] = useState('');
     const [certs, setCerts] = useState([])
     const [avatar, setAvatar] = useState('');
-    const [visibility, setVisibility] = useState('')
-
-    const [loading, setLoading] = useState(true);
+    //const [isVisible, setIsVisible] = useState(false);
 
     const [buttonColor, setButtonColor] = useState('red');
     const [selected, setSelected] = useState(false);
@@ -49,28 +47,23 @@ const ProfileScreen = props => {
     const userRef = db.ref('users/' + uid + '/profile')
 
     useEffect(() => {
-        setLoading(true);
         userRef.on('value', function (snapshot) {
             // console.log(snapshot.val())
             const { name, email, avatar, visibility, title, certs, number } = snapshot.val();
             setName(name);
             setEmail(email);
-            setAvatar(avatar)
-            setVisibility(visibility)
+            setAvatar(avatar);
             setTitle(title);
             setNumber(number);
-            setCerts(certs)
+            setCerts(certs);
         }, err => {
             console.log(`Encountered error: ${err}`);
         })
-        setLoading(false);
     }, []);
 
 
     const handleSignOut = () => {
-        setLoading(true)
         new SignOut().signOut(props)
-        setLoading(false)
     }
 
     let TouchableCmp = TouchableOpacity;
@@ -118,12 +111,6 @@ const ProfileScreen = props => {
             });
         }
     }, [selected])
-
-    if (loading) {
-        return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <ActivityIndicator size='large' color={Colors.primaryColor} />
-        </View>
-    }
     
     var image = !avatar ? require('../../components/img/default-profile-pic.jpg') : { uri: avatar };
 
@@ -160,20 +147,20 @@ const ProfileScreen = props => {
                                 </ModalDropdown>
                             </View>
                             <View style={styles.status}>
-                                <TouchableOpacity style={{ alignItems: "center" }} onPress={() => props.navigation.navigate({
+                                <TouchableCmp style={{ alignItems: "center" }} onPress={() => props.navigation.navigate({
                                     routeName: 'Edit',
                                     params: { userID: uid, name: name, title: title, number: number, avatar: avatar, visible: visibility }
                                 })}>
                                     <MaterialIcons name="edit" size={20}></MaterialIcons>
                                     <Text style={{ fontSize: 0.04 * screenWidth }}>Edit Profile</Text>
-                                </TouchableOpacity>
+                                </TouchableCmp>
                             </View>
                             <View style={styles.status}>
-                                <TouchableOpacity style={{ alignItems: "center" }}
+                                <TouchableCmp style={{ alignItems: "center" }}
                                     onPress={() => props.navigation.navigate({ routeName: 'Calendar' })}>
                                     <MaterialCommunityIcons name="calendar-heart" size={20}></MaterialCommunityIcons>
                                     <Text style={{ fontSize: 0.04 * screenWidth }}>Calendar</Text>
-                                </TouchableOpacity>
+                                </TouchableCmp>
                             </View>
                         </View>
 
@@ -207,9 +194,9 @@ const ProfileScreen = props => {
                             </View>
                         </View>
                         <View style={styles.buttonStyle}>
-                            <TouchableOpacity onPress={handleSignOut}>
+                            <TouchableCmp onPress={handleSignOut}>
                                 <Text style={styles.button}>LOGOUT</Text>
-                            </TouchableOpacity>
+                            </TouchableCmp>
                         </View>
                     </ScrollView>
                 </View>
@@ -220,8 +207,8 @@ const ProfileScreen = props => {
 
 export default ProfileScreen;
 
-let screenHeight = Math.round(Dimensions.get('screen').height);
-let screenWidth = Math.round(Dimensions.get('screen').width);
+let screenHeight = Math.round(Dimensions.get('window').height);
+let screenWidth = Math.round(Dimensions.get('window').width);
 
 
 const styles = StyleSheet.create({
