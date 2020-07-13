@@ -44,7 +44,7 @@ const ProfileScreen = props => {
     const [avatar, setAvatar] = useState('');
     //const [isVisible, setIsVisible] = useState(false);
 
-    const [buttonColor, setButtonColor] = useState('red');
+    const [buttonColor, setButtonColor] = useState("red");
     const [selected, setSelected] = useState(false);
 
     const uid = firebase.auth().currentUser.uid;
@@ -108,7 +108,7 @@ const ProfileScreen = props => {
         }
     })
 
-    var image = !avatar ? require('../../components/img/default-profile-pic.jpg') : { uri: avatar };
+    var image = avatar === '' ? require('../../components/img/default-profile-pic.jpg') : { uri: avatar };
 
     return (
         <View style={styles.container}>
@@ -322,6 +322,16 @@ ProfileScreen.navigationOptions = navigationdata => {
                     onPress={() => {
                         navigationdata.navigation.toggleDrawer();
                     }}
+                />
+            </HeaderButtons>
+        ),
+        headerRight:
+        () => (
+            <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+                <Item title='Home' iconName={Platform.OS === 'android' ? 'md-home' : 'ios-home'}
+                     onPress={() => {
+                        navigationdata.navigation.navigate('Categories');
+                      }}
                 />
             </HeaderButtons>
         ),

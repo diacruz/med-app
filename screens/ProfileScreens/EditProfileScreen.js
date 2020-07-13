@@ -139,7 +139,7 @@ const EditProfileScreen = props => {
         setAvatar('')
     }
 
-    var image = !avatar ? require('../../components/img/default-profile-pic.jpg') : { uri: avatar };
+    var image = avatar === '' ? require('../../components/img/default-profile-pic.jpg') : { uri: avatar };
 
     return (
         <View style={styles.constainer}>
@@ -229,7 +229,7 @@ const EditProfileScreen = props => {
 
 EditProfileScreen.navigationOptions = navData => {
     return {
-        headerTitle: 'Edit Screen',
+        headerTitle: 'Edit Profile',
     }
 }
 

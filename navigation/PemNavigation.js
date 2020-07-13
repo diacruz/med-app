@@ -15,6 +15,7 @@ import CalendarScreen from '../screens/ProfileScreens/CalendarScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
+import UserProfileScreen from '../screens/UserProfileScreen';
 import CMEScreen from '../screens/CMEScreen';
 import SearchScreen from '../screens/SearchScreen';
 import AdminCategoriesScreen from '../screens/AdminScreens/AdminCategoriesScreen';
@@ -75,6 +76,9 @@ const ChatNavigator = createStackNavigator({
   Chat: ChatTabScreen,
   Chatroom: {
     screen: ChatroomScreen,
+  },
+  UserProfile: {
+    screen: UserProfileScreen
   },
 },
 {
