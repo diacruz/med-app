@@ -12,6 +12,7 @@ import {
 import * as firebase from 'firebase';
 import 'firebase/firestore';
 import Firebase from '../backend/firebase'
+import Colors from '../constants/Colors';
 
 //This will be the list of all CMEs the user has.
 let cmes = []
@@ -190,7 +191,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     padding: 10,
     width: 250,
-    backgroundColor: '#00ffb8',
+    backgroundColor: Colors.primaryColor,
     borderRadius: 30,
   },
   cmeItem: {
