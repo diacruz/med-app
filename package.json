@@ -8,6 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@expo/vector-icons": "^10.2.0",
     "@react-native-community/masked-view": "^0.1.10",
     "@react-native-firebase/firestore": "^7.2.2",
     "@react-navigation/drawer": "^5.8.2",
@@ -15,6 +16,7 @@
     "expo": "~36.0.0",
     "expo-calendar": "^8.2.1",
     "expo-font": "^8.0.0",
+    "expo-google-app-auth": "^8.1.2",
     "expo-image-picker": "~8.0.1",
     "firebase": "^7.15.5",
     "firebase-functions": "^3.7.0",
@@ -59,7 +61,8 @@
     "redux-firestore": "^0.13.0",
     "redux-thunk": "^2.3.0",
     "stream-chat": "^1.11.4",
-    "stream-chat-expo": "^0.12.3"
+    "stream-chat-expo": "^0.12.3",
+    "react-native-svg": "9.13.3"
   },
   "devDependencies": {
     "babel-preset-expo": "~8.0.0",

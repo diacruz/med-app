@@ -12,6 +12,7 @@ import {
     TextInput, 
     TouchableOpacity, 
     Switch,
+    ImageBackground
 } from 'react-native';
 import { HelperText, HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../../components/CustomHeaderButton';
@@ -139,10 +140,12 @@ const EditProfileScreen = props => {
         setAvatar('')
     }
 
-    var image = avatar === '' ? require('../../components/img/default-profile-pic.jpg') : { uri: avatar };
+    var image = !avatar ? require('../../components/img/default-profile-pic.jpg') : { uri: avatar };
 
     return (
         <View style={styles.constainer}>
+            <ImageBackground source={require('../../components/img/colors3.jpeg')}
+                    style={{ width: '100%', height: '100%' }}>
             <ScrollView>
                 <View style={{ flexDirection: 'row' }}>
                     <View style={[styles.profileImage, { marginLeft: 20 }]}>
@@ -223,6 +226,7 @@ const EditProfileScreen = props => {
                     </TouchableOpacity>
                 </View>
             </ScrollView>
+            </ImageBackground>
         </View>
     );
 };
@@ -243,26 +247,21 @@ const styles = StyleSheet.create({
         width: screenWidth
     },
     form: {
-        margin: 25,
-        marginTop: "0%"
+        margin: 32,
+        marginTop: "1%"
     },
     formControl: {
         marginBottom: "3%"
     },
-    ImageStyle: {
-        padding: 10,
-        margin: 5,
-        height: 25,
-        width: 25,
-        resizeMode: 'stretch',
-        alignItems: 'center',
-    },
     profileImage: {
-        width: screenWidth * 0.42,
+        width: screenWidth * 0.36,
         borderRadius: 100,
         overflow: "hidden",
-        marginTop: "2%",
-        aspectRatio: 1
+        marginTop: "4%",
+        aspectRatio: 1,
+        left: "5%",
+        borderColor: "white",
+        borderWidth: 2
     },
     avatar: {
         flex: 1,
@@ -296,6 +295,7 @@ const styles = StyleSheet.create({
         marginTop: screenHeight * 0.035,
         alignContent: "center",
         alignSelf: "center",
+        left: "10%"
     },
     buttonStyle2: {
         marginTop: screenHeight * 0.025,
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
         alignSelf: "center",
     },
     button: {
-        backgroundColor: Colors.primaryColor,
+        backgroundColor: "cornflowerblue",
         borderColor: 'white',
         borderRadius: 20,
         color: 'white',
@@ -323,7 +323,8 @@ const styles = StyleSheet.create({
         width: "100%",
         marginTop: "6%",
         right: "5%",
-        backgroundColor: Colors.primaryColor
+        backgroundColor: "cornflowerblue",
+        borderRadius: 10
     },
     text: {
         fontSize: 0.043 * screenWidth,
