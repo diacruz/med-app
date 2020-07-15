@@ -15,6 +15,7 @@
     "expo": "~36.0.0",
     "expo-calendar": "^8.2.1",
     "expo-font": "^8.0.0",
+    "expo-google-app-auth": "^8.1.2",
     "expo-image-picker": "~8.0.1",
     "firebase": "^7.15.5",
     "firebase-functions": "^3.7.0",

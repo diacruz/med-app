@@ -84,6 +84,7 @@ const ChatNavigator = createStackNavigator({
 {
   navigationOptions: ({ navigation }) => {
     let tabBarVisible;
+    
     if (navigation.state.routes.length > 1) {
       navigation.state.routes.map(route => {
         if (route.routeName === "Chatroom") {
@@ -93,14 +94,18 @@ const ChatNavigator = createStackNavigator({
         }
       });
     }
+   
     return {
       tabBarVisible
     }
   }
+ 
 },
 {
   initialRouteName: 'Chat',
 },
+{
+}
 );
 
 const FavNavigator = createStackNavigator({
@@ -217,12 +222,14 @@ const PemNavigator = createDrawerNavigator({
     screen: FavNavigator,
   }
 },
+
   {
     contentComponent: DrawerComponent,
     contentOptions: {
-      activeTinColor: Colors.primary
+      activeTinColor: Colors.primaryColor
       
-    }
+    },
+    
   },
   {
     
