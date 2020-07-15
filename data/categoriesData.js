@@ -12,8 +12,8 @@ export const CATEGORIES = [
   new Category("c4", "💊 Toxicology", Colors.toxicology),
   new Category("c5", "🤢 Foreign Ingestion", Colors.foreign),
   new Category("c6", "🥵 Emergent Rashes", Colors.emergent),
-  new Category("c7", "[Category 7]", Colors.cat7),
-  new Category("c8", "[Category 8]", Colors.cat8),
+  // new Category("c7", "[Category 7]", Colors.cat7),
+  // new Category("c8", "[Category 8]", Colors.cat8),
 ];
 
 export const CATCONTENT = [
