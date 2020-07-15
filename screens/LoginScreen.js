@@ -39,7 +39,8 @@ const Login = (props) => {
   });
 
   useEffect(() => {
-    setDisabledLoginButton(!userInfo.password || !userInfo.username);
+    if (showLoginScreen)
+      setDisabledLoginButton(!userInfo.password || !userInfo.username);
     console.log("userInfo", userInfo);
   }, [userInfo]);
 

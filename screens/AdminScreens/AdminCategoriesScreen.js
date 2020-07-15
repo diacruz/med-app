@@ -18,6 +18,7 @@ const AdminCategoriesScreen = (props) => {
       params: { categoryId: id, categoryTitle: title },
     });
   };
+  // fix this
   return (
     <>
       <Text style={styles.adminText}>Admin mode active</Text>
