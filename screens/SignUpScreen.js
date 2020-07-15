@@ -73,7 +73,7 @@ const CreateAccount = props => {
               number: '(###) ###-####',
               avatar: '',
               title: 'Job Title',
-              status: '',
+              status: 'Active',
               certs: '',
               isVisible: false
             }
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     marginBottom: 30
   },
   email: {
-    marginBottom: 30
+    marginBottom: "6%"
   },
   button: {
     backgroundColor: Colors.primaryColor,

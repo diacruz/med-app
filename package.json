@@ -17,10 +17,8 @@
     "expo-calendar": "^8.2.1",
     "expo-font": "^8.0.0",
     "expo-google-app-auth": "^8.1.2",
-    "expo-google-sign-in": "~8.0.0",
     "expo-image-picker": "~8.0.1",
     "firebase": "^7.15.5",
-    "firebase-admin": "^8.12.1",
     "firebase-functions": "^3.7.0",
     "link": "^0.1.5",
     "lodash": "^4.17.19",
@@ -33,7 +31,7 @@
     "react-native-calendars": "^1.300.0",
     "react-native-datepicker": "^1.7.2",
     "react-native-dynamic-search-bar": "^1.2.1",
-    "react-native-elements": "^2.0.2",
+    "react-native-elements": "^2.0.4",
     "react-native-gesture-handler": "^1.6.1",
     "react-native-gifted-chat": "^0.13.0",
     "react-native-image-picker": "^0.28.0",
@@ -49,7 +47,8 @@
     "react-native-screens": "^2.8.0",
     "react-native-search-bar": "^3.5.1",
     "react-native-spinkit": "^1.5.0",
-    "react-native-vector-icons": "^6.6.0",
+    "react-native-svg": "9.13.3",
+    "react-native-vector-icons": "^6.7.0",
     "react-native-web": "~0.11.7",
     "react-navigation": "^4.1.1",
     "react-navigation-drawer": "^2.4.13",
@@ -67,8 +66,8 @@
     "stream-chat-expo": "^0.12.3"
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0",
-    "babel-preset-expo": "~8.0.0"
+    "babel-preset-expo": "~8.0.0",
+    "@babel/core": "^7.0.0"
   },
   "private": true
 }

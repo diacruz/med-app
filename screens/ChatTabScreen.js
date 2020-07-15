@@ -50,7 +50,11 @@ const styles = StyleSheet.create({
 
 ChatTabScreen.navigationOptions = navigationData => {
     return {
-        headerTitle: 'Chats',
+
+            headerStyle: {
+                backgroundColor: Platform.OS === 'android' ? Colors.primaryColor : 'white'
+              
+            },
         headerLeft: () => (
             <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
                 <Item title='Menu' iconName={Platform.OS === 'android' ? 'md-menu' : 'ios-menu'}
@@ -58,9 +62,6 @@ ChatTabScreen.navigationOptions = navigationData => {
                         navigationData.navigation.toggleDrawer();
                     }}
                 />
-                <Item title='Refresh'onPress ={() => {
-
-                }}/>
             </HeaderButtons>
         ),
 
