@@ -2,7 +2,7 @@ import React, { useState, Component, useEffect, useCallback } from 'react';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../../components/CustomHeaderButton';
 import { MaterialIcons } from '@expo/vector-icons';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import {
     View,
     SafeAreaView,

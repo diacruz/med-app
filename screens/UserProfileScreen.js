@@ -25,14 +25,12 @@ const UserProfileScreen = props => {
 
     const uid = props.navigation.getParam('ID');
     var data = '';
-
     const db = firebase.database()
 
     const userRef = db.ref('users/' + uid + '/profile');
     userRef.on('value', function (snapshot) {
         data = snapshot.val();
     });
-
 
     let TouchableCmp = TouchableOpacity;
 
