@@ -45,7 +45,7 @@ const Login = props => {
       Firebase.shared.addOnlineUser(email);
       props.navigation.navigate({ routeName: 'Categories' });
     }).catch(function (err) {
-      displayOKAlert('Wrong credentials','Try again 🧐')
+      displayOKAlert('Wrong credentials', 'Try again 🧐')
       console.log(err)
     })
   }
@@ -82,30 +82,27 @@ const Login = props => {
     if (showLoginScreen) logUserIn(userInfo.username.text, userInfo.password.text)
     else setShowLoginScreen(!showLoginScreen)
   }
-
-
-
   return (
     <KeyboardAvoidingView /* styles={styles.container} contentContainerStyle={styles.container} */ behavior="position" enabled keyboardVerticalOffset="100">
       <View>
         <Image style={styles.logo} source={require('../data/logo.png')} />
       </View>
       <View styles={styles.view}>
-        {showLoginScreen && 
-        <>
-          <TextInput
-            style={[styles.textField, styles.email]}
-            placeholder='Enter your email'
-            onChangeText={(text) => setUserInfo({ ...userInfo, username: { text } })}
-            autoCapitalize='none'
-          />
-          <TextInput
-            secureTextEntry
-            style={styles.textField}
-            placeholder='Enter your password'
-            onChangeText={(text) => setUserInfo({ ...userInfo, password: { text } })}
-          />
-        </>}
+        {showLoginScreen &&
+          <>
+            <TextInput
+              style={[styles.textField, styles.email]}
+              placeholder='Enter your email'
+              onChangeText={(text) => setUserInfo({ ...userInfo, username: { text } })}
+              autoCapitalize='none'
+            />
+            <TextInput
+              secureTextEntry
+              style={styles.textField}
+              placeholder='Enter your password'
+              onChangeText={(text) => setUserInfo({ ...userInfo, password: { text } })}
+            />
+          </>}
         <TouchableOpacity style={styles.loginButton} onPress={loginScreenHandler}>
           <Text style={styles.loginText}>Log in</Text>
         </TouchableOpacity>
@@ -153,7 +150,7 @@ const styles = StyleSheet.create({
   },
   email: {
     marginBottom: 30,
-    marginTop: screenHeight * 0.18
+    marginTop: screenHeight * 0.1
   },
   loginButton: {
     marginTop: 20,

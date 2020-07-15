@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     marginBottom: 30
   },
   email: {
-    marginBottom: 30
+    marginBottom: "6%"
   },
   button: {
     backgroundColor: Colors.primaryColor,

@@ -13,6 +13,7 @@ import {
     TouchableOpacity,
     TouchableNativeFeedback,
     Dimensions,
+    ImageBackground
 } from 'react-native';
 import * as firebase from 'firebase'
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -20,10 +21,8 @@ import Colors from '../constants/Colors';
 
 const UserProfileScreen = props => {
 
-
     const uid = props.navigation.getParam('ID');
     var data = '';
-
     const db = firebase.database()
     const userRef = db.ref('users/' + uid + '/profile');
     userRef.on('value', function (snapshot) {
@@ -47,10 +46,12 @@ const UserProfileScreen = props => {
         }
     });
 
-    var image = data.avatar === '' ? require('../components/img/default-profile-pic.jpg') : { uri: data.avatar };
+    var image = data.avatar !== '' ? { uri: data.avatar } : require('../components/img/default-profile-pic.jpg');
 
     return (
         <View style={styles.container}>
+            <ImageBackground source={require('../components/img/colors3.jpeg')}
+                    style={styles.background}>
             <SafeAreaView>
                 <View style={styles.responsiveBox}>
                     <ScrollView showsVerticalScrollIndicator={false}>
@@ -99,10 +100,10 @@ const UserProfileScreen = props => {
                     </ScrollView>
                 </View>
             </SafeAreaView>
+            </ImageBackground>
         </View>
     );
 }
-
 
 let screenHeight = Math.round(Dimensions.get('window').height);
 let screenWidth = Math.round(Dimensions.get('window').width);
@@ -117,6 +118,11 @@ const styles = StyleSheet.create({
         width: screenWidth,
         height: screenHeight
     },
+    background: {
+        width: '100%', 
+        height: '100%',
+      
+    },
     text: {
         fontFamily: "open-sans",
         color: "black",
@@ -129,12 +135,14 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
     },
     profileImage: {
-        width: screenWidth * 0.30,
-        height: screenHeight * 0.226,
+        width: screenWidth * 0.40,
+        height: screenHeight * 0.23,
         borderRadius: 100,
         overflow: "hidden",
-        marginTop: "2%",
-        aspectRatio: 1
+        marginTop: "4%",
+        aspectRatio: 1,
+        borderWidth: 2,
+        borderColor: "white",
     },
     active: {
         position: "absolute",
@@ -156,14 +164,21 @@ const styles = StyleSheet.create({
     detailContainer: {
         flexDirection: "row",
         alignItems: "center",
-        height: screenHeight * 0.12,
+        height: screenHeight * 0.101,
         alignSelf: "center",
         marginTop: "4%",
         marginHorizontal: 25,
-        borderTopWidth: 1,
-        borderTopColor: "gray",
-        borderBottomWidth: 1,
-        borderBottomColor: "gray",  
+        backgroundColor: "whitesmoke",
+        shadowColor: "gray",
+        shadowOffset: {
+            width: 0,
+            height: 5,
+        },
+        shadowOpacity: 0.34,
+        shadowRadius: 6.27,
+        elevation: 10,
+        borderRadius: 12,
+        opacity: 0.8
     },
     iconBox: {
         flex: 0.3,
@@ -190,7 +205,7 @@ const styles = StyleSheet.create({
     },
     button: {
         backgroundColor: "steelblue",
-        borderColor: 'white',
+        borderColor: "cornflowerblue",
         borderWidth: 1,
         borderRadius: 10,
         color: 'white',
@@ -207,16 +222,6 @@ const styles = StyleSheet.create({
 UserProfileScreen.navigationOptions = navigationdata => {
     return {
         headerTitle: 'User Profile',
-        headerRight:
-            () => (
-                <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-                    <Item title='Home' iconName={Platform.OS === 'android' ? 'md-home' : 'ios-home'}
-                        onPress={() => {
-                            navigationdata.navigation.replace('Categories');
-                        }}
-                    />
-                </HeaderButtons>
-            ),
     }
 };
 

@@ -139,26 +139,23 @@ class Chatroom extends Component {
 
   useData(user){
     var data = '';
-    async() => {
-    
     const db = firebase.database()
     const userRef = db.ref('users/' + user + '/profile');
 
     userRef.on('value', function (snapshot) {
       data = snapshot.val();
     });
-  }
+
     return {
       avatar_uri: data.avatar
     }
-  
   }
 
 
   get user() {
     var _id = Firebase.shared.uid;
     var name = this.props.navigation.state.params.name;
-    var avatar_uri = this.useData(_id).avatar_uri
+    var avatar_uri = this.useData(_id).avatar_uri;
     // Return name, UID and avatar image for GiftedChat to parse
     return {
       _id,
@@ -184,7 +181,7 @@ class Chatroom extends Component {
         user={{
           _id: this.user._id,
           name: this.user.name,
-          avatar: this.user.avatar_uri === undefined ? '' : this.user.avatar_uri,
+          avatar: this.user.avatar_uri,
         }}
         //showUserAvatar
         alwaysShowSend
