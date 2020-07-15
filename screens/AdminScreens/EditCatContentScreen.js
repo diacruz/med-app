@@ -166,7 +166,7 @@ const EditCatContentScreen = props => {
                 <View style={styles.imageContainer}>
                     <View style={styles.buttonAttach}>
                         <Button
-                            color= {'#30475e'}
+                            color= {Colors.EditBlueColor}
                             title='Attach Image'
                             onPress={pickImage}
                         />
