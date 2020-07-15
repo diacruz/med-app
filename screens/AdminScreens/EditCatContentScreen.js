@@ -80,6 +80,10 @@ const EditCatContentScreen = props => {
         }
     };
 
+    const removeImage = () => {
+        setImage(null);
+    }
+
     return (
         <ScrollView>
             <View syle={styles.form}>
@@ -160,11 +164,19 @@ const EditCatContentScreen = props => {
                     />
                 </View>
                 <View style={styles.imageContainer}>
-                    <View style={styles.button}>
+                    <View style={styles.buttonAttach}>
                         <Button
-                            color={Colors.primaryColor}
+                            color= {Colors.EditBlueColor}
                             title='Attach Image'
                             onPress={pickImage}
+                        />
+                       
+                    </View>
+                    <View style={styles.buttonRemove}>
+                         <Button
+                            color={Colors.primaryColor}
+                            title='Remove Image'
+                            onPress={removeImage}
                         />
                     </View>
                     <View style={styles.imageContainer}>
@@ -211,13 +223,19 @@ const styles = StyleSheet.create({
         width: '100%',
         paddingVertical: 10,
         paddingHorizontal: 15,
+       
     },
     ImageSize: {
         width: '100%',
         height: 200
     },
-    button: {
-        width: '60%'
+    buttonAttach: {
+        width: '55%',
+        paddingBottom: 10
+    },
+    buttonRemove: {
+        width: '55%',
+
     },
     font: {
         fontFamily: 'open-sans-bold',
@@ -226,7 +244,8 @@ const styles = StyleSheet.create({
     input: {
         paddingHorizontal: 2,
         paddingVertical: 5,
-        borderColor: Colors.androidCustomWhite,
+        borderColor: Colors.primaryColor,
+        backgroundColor: Colors.androidCustomWhite,
         borderWidth: 1
     }
 });

@@ -54,7 +54,7 @@ const DrawerComponent = (props) => {
     //backgroundColor: Colors.primaryColor
     return (
         <View style={styles.container} >
-            <SafeAreaView>
+            <SafeAreaView style ={styles.padd}>
                 <ScrollView>
                     <View style={{ height: "46%" }}>
                         <ImageBackground source={require('../components/img/colors0.jpeg')}
@@ -115,6 +115,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
+        paddingTop: "10%"
     },
     profileImage: {
         height: 90, 
@@ -132,7 +133,6 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         right: "10%"
     },
-
 });
 
 export default DrawerComponent;

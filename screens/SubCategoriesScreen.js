@@ -65,7 +65,7 @@ SubCategoriesScreen.navigationOptions = navigationdata => {
   return {
     headerTitle: catTitle,
     headerStyle: {
-      backgroundColor: 'white',
+      backgroundColor: Platform.OS === 'android' ? Colors.primaryColor : 'white'
     },
   }
 }
