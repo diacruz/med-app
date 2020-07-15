@@ -66,7 +66,7 @@ CatContentScreen.navigationOptions = navigationdata => {
   return {
     headerTitle: subcategoryTitle,
     headerStyle: {
-      backgroundColor: Colors.androidCustomWhite,
+      backgroundColor: Platform.OS === 'android' ? Colors.primaryColor : 'white'
     }
   }
 }

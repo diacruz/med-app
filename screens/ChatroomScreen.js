@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Dimensions, Button, Alert } from 'react-native';
+import { View, StyleSheet, Dimensions, Button, Alert, ActivityIndicator, AsyncStorage } from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat';
 import * as firebase from 'firebase';
 import 'firebase/firestore';
-import Firebase from '../backend/firebase'
+import Firebase from '../backend/firebase';
+import UserProfileScreen from '../screens/UserProfileScreen';
 
 /**
  * The chatroom component is what takes care of showing the actual messages sent between users of the app.
@@ -28,7 +29,7 @@ class Chatroom extends Component {
 
   state = {
     messages: [],
-    onlineUsers: ''
+    onlineUsers: '',
   };
 
   /**
@@ -134,19 +135,39 @@ class Chatroom extends Component {
     Firebase.shared.send
 
   }
-  get user() {
-    // Return our name and our UID for GiftedChat to parse
+
+
+  useData(user){
+    var data = '';
+    const db = firebase.database()
+    const userRef = db.ref('users/' + user + '/profile');
+
+    userRef.on('value', function (snapshot) {
+      data = snapshot.val();
+    });
+
     return {
-      name: this.props.navigation.state.params.name,
-      _id: Firebase.shared.uid,
+      avatar_uri: data.avatar
+    }
+  }
+
+
+  get user() {
+    var _id = Firebase.shared.uid;
+    var name = this.props.navigation.state.params.name;
+    var avatar_uri = this.useData(_id).avatar_uri;
+    // Return name, UID and avatar image for GiftedChat to parse
+    return {
+      _id,
+      name,
+      avatar_uri
     };
   }
 
-  // The method onPress is supposed to show a user's profile when their avatar is pressed in the chat. 
-  // Right now it does not happen because I was not able to successfully link it to the profile part of the program.
-  onPress() {
-    console.log("Avatar Pressed")
-    //this.props.navigation.navigate('Chatroom', { name: firebase.auth().currentUser.email })
+  userInfo = (user) => {
+    this.props.navigation.navigate({ 
+      routeName: 'UserProfile', params: { ID: user._id } 
+    });
   }
 
   render() {
@@ -157,9 +178,16 @@ class Chatroom extends Component {
       <GiftedChat
         messages={this.state.messages}
         onSend={Firebase.shared.send}
-        user={this.user}
+        user={{
+          _id: this.user._id,
+          name: this.user.name,
+          avatar: this.user.avatar_uri,
+        }}
+        //showUserAvatar
         alwaysShowSend
-        onPressAvatar={this.onPress}
+        onPressAvatar={this.userInfo}
+        scrollToBottom
+        isAnimated
       />
     );
   }

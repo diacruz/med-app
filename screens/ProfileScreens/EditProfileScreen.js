@@ -1,5 +1,19 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Dimensions, Image, Alert, View, ScrollView, Button, Text, StyleSheet, Platform, TextInput, TouchableOpacity, Switch } from 'react-native';
+import { 
+    Dimensions, 
+    Image, 
+    Alert, 
+    View, 
+    ScrollView, 
+    Button, 
+    Text, 
+    StyleSheet, 
+    Platform, 
+    TextInput, 
+    TouchableOpacity, 
+    Switch,
+    ImageBackground
+} from 'react-native';
 import { HelperText, HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../../components/CustomHeaderButton';
 import Colors from '../../constants/Colors';
@@ -28,7 +42,6 @@ const EditProfileScreen = props => {
     const [errorName, setErrorName] = useState('');
     const [errorTitle, setErrorTitle] = useState('');
     const [errorNumber, setErrorNumber] = useState('');
-    //const [status, setStatus] = useState('');
 
     const [avatar, setAvatar] = useState(avatarImage);
     const [isVisible, setIsVisible] = useState(false);
@@ -127,11 +140,13 @@ const EditProfileScreen = props => {
         setAvatar('')
     }
 
-    var image = avatar ? { uri: avatar } : require('../../components/img/default-profile-pic.jpg');
+    var image = !avatar ? require('../../components/img/default-profile-pic.jpg') : { uri: avatar };
 
     return (
         <View style={styles.constainer}>
-            <ScrollView style={{ flex: 1, height: "100%" }}>
+            <ImageBackground source={require('../../components/img/colors3.jpeg')}
+                    style={{ width: '100%', height: '100%' }}>
+            <ScrollView>
                 <View style={{ flexDirection: 'row' }}>
                     <View style={[styles.profileImage, { marginLeft: 20 }]}>
                         <Image source={image} style={styles.avatar} resizeMode="cover"></Image>
@@ -149,7 +164,7 @@ const EditProfileScreen = props => {
                     <View style={styles.formControl}>
                         <Text style={styles.label}>Fullname</Text>
                         <View style={{ flexDirection: "row" }}>
-                            <Icon style={{ marginRight: "2%"}} name="user" size={18}></Icon>
+                            <Icon style={{ marginRight: "2%" }} name="user" size={18}></Icon>
                             <TextInput
                                 style={styles.input}
                                 value={displayName}
@@ -183,7 +198,7 @@ const EditProfileScreen = props => {
                     <View style={styles.formControl}>
                         <Text style={styles.label}>Phone Number</Text>
                         <View style={{ flexDirection: "row" }}>
-                            <MaterialIcons style={{ marginRight: "2%"}} name="phone" size={18}></MaterialIcons>
+                            <MaterialIcons style={{ marginRight: "2%" }} name="phone" size={18}></MaterialIcons>
                             <TextInput
                                 style={styles.input}
                                 maxLength={15}
@@ -203,25 +218,27 @@ const EditProfileScreen = props => {
                     </View>
                     <View style={styles.switchStyle}>
                         <Text style={styles.label}> Public / Private</Text>
-                        <Switch style={{ justifyContent: "flex-end" }} value={isVisible} onValueChange={newValue => setIsVisible(newValue)}></Switch>
+                        <Switch style={{ alignSelf: 'flex-start'}} value={isVisible} onValueChange={newValue => setIsVisible(newValue)}></Switch>
+                        <Text>{isVisible ? 'Switch is ON' : 'Switch is OFF'}</Text>
                     </View>
                     <TouchableOpacity style={styles.buttonStyle2} onPress={() => addInfo()}>
                         <Text style={styles.button}>Submit</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
+            </ImageBackground>
         </View>
     );
 };
 
 EditProfileScreen.navigationOptions = navData => {
     return {
-        headerTitle: 'Edit Screen',
+        headerTitle: 'Edit Profile',
     }
 }
 
-let screenHeight = Math.round(Dimensions.get('screen').height);
-let screenWidth = Math.round(Dimensions.get('screen').width);
+let screenHeight = Math.round(Dimensions.get('window').height);
+let screenWidth = Math.round(Dimensions.get('window').width);
 
 const styles = StyleSheet.create({
     constainer: {
@@ -230,26 +247,21 @@ const styles = StyleSheet.create({
         width: screenWidth
     },
     form: {
-        margin: "8%",
-        marginTop: "1%",
+        margin: 32,
+        marginTop: "1%"
     },
     formControl: {
-        marginBottom: "5%"
-    },
-    ImageStyle: {
-        padding: 10,
-        margin: 5,
-        height: 25,
-        width: 25,
-        resizeMode: 'stretch',
-        alignItems: 'center',
+        marginBottom: "3%"
     },
     profileImage: {
-        width: screenWidth * 0.42,
+        width: screenWidth * 0.36,
         borderRadius: 100,
         overflow: "hidden",
-        marginTop: "2%",
-        aspectRatio: 1
+        marginTop: "4%",
+        aspectRatio: 1,
+        left: "5%",
+        borderColor: "white",
+        borderWidth: 2
     },
     avatar: {
         flex: 1,
@@ -272,7 +284,6 @@ const styles = StyleSheet.create({
     switchStyle: {
         flex: 1,
         marginTop: "3%",
-        left: 0,
     },
     buttonImage: {
         borderColor: '#8e44ad',
@@ -284,6 +295,7 @@ const styles = StyleSheet.create({
         marginTop: screenHeight * 0.035,
         alignContent: "center",
         alignSelf: "center",
+        left: "10%"
     },
     buttonStyle2: {
         marginTop: screenHeight * 0.025,
@@ -291,7 +303,7 @@ const styles = StyleSheet.create({
         alignSelf: "center",
     },
     button: {
-        backgroundColor: Colors.primaryColor,
+        backgroundColor: "cornflowerblue",
         borderColor: 'white',
         borderRadius: 20,
         color: 'white',
@@ -303,16 +315,16 @@ const styles = StyleSheet.create({
     },
     switchStyle: {
         flex: 1,
-        justifyContent: "flex-start"
     },
     buttonText: {
         alignItems: 'center',
         backgroundColor: Colors.androidCustomWhite,
         padding: "6%",
-        width: "100%%",
+        width: "100%",
         marginTop: "6%",
         right: "5%",
-        backgroundColor: Colors.primaryColor
+        backgroundColor: "cornflowerblue",
+        borderRadius: 10
     },
     text: {
         fontSize: 0.043 * screenWidth,

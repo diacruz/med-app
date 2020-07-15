@@ -1,29 +1,30 @@
-import React from "react";
-import { Platform } from "react-native";
-import { createAppContainer, createSwitchNavigator } from "react-navigation";
-import { createStackNavigator } from "react-navigation-stack";
-import { createDrawerNavigator } from "react-navigation-drawer";
-import { createBottomTabNavigator } from "react-navigation-tabs";
-import { Ionicons } from "@expo/vector-icons";
-import CategoriesScreen from "../screens/CategoriesScreen";
-import ChatTabScreen from "../screens/ChatTabScreen";
-import SubCategoriesScreen from "../screens/SubCategoriesScreen";
-import CatContentScreen from "../screens/CatContentScreen";
-import ChatroomScreen from "../screens/ChatroomScreen";
-import ProfileScreen from "../screens/ProfileScreens/ProfileScreen";
-import CalendarScreen from "../screens/ProfileScreens/CalendarScreen";
-import LoginScreen from "../screens/LoginScreen";
-import SignUpScreen from "../screens/SignUpScreen";
-import FavoritesScreen from "../screens/FavoritesScreen";
-import CMEScreen from "../screens/CMEScreen";
-import SearchScreen from "../screens/SearchScreen";
-import AdminCategoriesScreen from "../screens/AdminScreens/AdminCategoriesScreen";
-import EditCatContentScreen from "../screens/AdminScreens/EditCatContentScreen";
-import AdminSubCategoriesScreen from "../screens/AdminScreens/AdminSubCategoriesScreen";
-import Colors from "../constants/Colors";
-import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
-import Icon from "react-native-vector-icons/FontAwesome5";
-import EditProfileScreen from "../screens/ProfileScreens/EditProfileScreen";
+import React from 'react';
+import { Platform } from 'react-native';
+import { createAppContainer, createSwitchNavigator } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
+import { createDrawerNavigator } from 'react-navigation-drawer';
+import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { Ionicons } from '@expo/vector-icons';
+import CategoriesScreen from '../screens/CategoriesScreen';
+import ChatTabScreen from '../screens/ChatTabScreen';
+import SubCategoriesScreen from '../screens/SubCategoriesScreen';
+import CatContentScreen from '../screens/CatContentScreen';
+import ChatroomScreen from '../screens/ChatroomScreen';
+import ProfileScreen from '../screens/ProfileScreens/ProfileScreen';
+import CalendarScreen from '../screens/ProfileScreens/CalendarScreen';
+import LoginScreen from '../screens/LoginScreen';
+import SignUpScreen from '../screens/SignUpScreen';
+import FavoritesScreen from '../screens/FavoritesScreen';
+import UserProfileScreen from '../screens/UserProfileScreen';
+import CMEScreen from '../screens/CMEScreen';
+import SearchScreen from '../screens/SearchScreen';
+import AdminCategoriesScreen from '../screens/AdminScreens/AdminCategoriesScreen';
+import EditCatContentScreen from '../screens/AdminScreens/EditCatContentScreen';
+import AdminSubCategoriesScreen from '../screens/AdminScreens/AdminSubCategoriesScreen';
+import Colors from '../constants/Colors';
+import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import EditProfileScreen from '../screens/ProfileScreens/EditProfileScreen';
 import DrawerComponent from "../components/DrawerComponent";
 //import AppContainer from '../screens/ChatTabScreen'
 //import SignOut from '../screens/SignOut'
@@ -76,12 +77,16 @@ const ChatNavigator = createStackNavigator(
     Chatroom: {
       screen: ChatroomScreen,
     },
+    UserProfile: {
+      screen: UserProfileScreen
+    },
   },
   {
     navigationOptions: ({ navigation }) => {
       let tabBarVisible;
+
       if (navigation.state.routes.length > 1) {
-        navigation.state.routes.map((route) => {
+        navigation.state.routes.map(route => {
           if (route.routeName === "Chatroom") {
             tabBarVisible = false;
           } else {
@@ -89,13 +94,17 @@ const ChatNavigator = createStackNavigator(
           }
         });
       }
+
       return {
-        tabBarVisible,
-      };
-    },
+        tabBarVisible
+      }
+    }
+
   },
   {
-    initialRouteName: "Chat",
+    initialRouteName: 'Chat',
+  },
+  {
   }
 );
 
@@ -107,8 +116,8 @@ const FavNavigator = createStackNavigator(
     navigationOptions: {
       drawerIcon: (drawerConfig) => (
         <Ionicons
-          name={Platform.OS === "android" ? "md-heart" : "ios-heart"}
-          size={24}
+          name={Platform.OS === 'android' ? 'md-heart' : 'ios-heart'}
+          size={27}
           color={drawerConfig.tintColor}
         />
       ),
@@ -126,9 +135,12 @@ const ProfileNavigator = createStackNavigator(
 
   {
     navigationOptions: {
-      drawerIcon: (drawerConfig) => (
-        <Icon name="user-circle" size={24} color={drawerConfig.tintColor} />
-      ),
+      drawerIcon: drawerConfig => (
+        <Icon name="user-circle"
+          size={26}
+          color={drawerConfig.tintColor}
+        />
+      )
     },
     defaultNavigationOptions: defaultStackNavOptions,
   }
@@ -143,10 +155,10 @@ const AdminNavigator = createStackNavigator(
   },
   {
     navigationOptions: {
-      drawerIcon: (drawerConfig) => (
+      drawerIcon: drawerConfig => (
         <Ionicons
-          name={Platform.OS === "android" ? "md-create" : "ios-create"}
-          size={23}
+          name={Platform.OS === 'android' ? 'md-create' : 'ios-create'}
+          size={26}
           color={drawerConfig.tintColor}
         />
       ),
@@ -173,9 +185,8 @@ const tabScreenConfig = {
     navigationOptions: {
       tabBarIcon: ({ tintColor }) => (
         <Ionicons
-          name={Platform.OS === "android" ? "md-chatboxes" : "ios-chatboxes"}
-          color={tintColor}
-          size={24}
+          name={Platform.OS === 'android' ? 'md-star' : 'ios-star'}
+          size={26}
         />
       ),
     },
@@ -185,23 +196,23 @@ const tabScreenConfig = {
 const MenuTabNavigator =
   Platform.OS === "android"
     ? createMaterialBottomTabNavigator(tabScreenConfig, {
-        activeTinColor: "white",
-        //shifting: true,
-        barStyle: {
-          backgroundColor: Colors.primaryColor,
-        },
-      })
+      activeTinColor: "white",
+      //shifting: true,
+      barStyle: {
+        backgroundColor: Colors.primaryColor,
+      },
+    })
     : createBottomTabNavigator(
-        tabScreenConfig,
-        {
-          tabOptions: {
-            activeTinColor: Colors.accentColor,
-          },
+      tabScreenConfig,
+      {
+        tabOptions: {
+          activeTinColor: Colors.accentColor,
         },
-        {
-          initialRouteName: "Home",
-        }
-      );
+      },
+      {
+        initialRouteName: "Home",
+      }
+    );
 
 const PemNavigator = createDrawerNavigator(
   {

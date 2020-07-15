@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
   },
   email: {
     marginBottom: 30,
-    marginTop: screenHeight * 0.18,
+    marginTop: screenHeight * 0.1
   },
   loginButton: {
     marginTop: 20,

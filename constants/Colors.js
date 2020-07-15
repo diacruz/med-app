@@ -14,6 +14,7 @@ export default {
         cat7: '#BDB2FF',
         cat8: '#FFC6FF',
         //----------OTHERS----------
-        googleBlue:'#4285F4'
+        googleBlue:'#4285F4',
+        EditBlueColor: '#30475e'
  
 }; 
