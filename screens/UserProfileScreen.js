@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../components/CustomHeaderButton';
+import { MaterialIcons } from '@expo/vector-icons';
 import {
     View,
     SafeAreaView,
@@ -16,7 +17,6 @@ import {
     ActivityIndicator
 } from 'react-native';
 import * as firebase from 'firebase'
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../constants/Colors';
 
 const UserProfileScreen = props => {
