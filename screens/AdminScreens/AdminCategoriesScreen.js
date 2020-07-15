@@ -58,7 +58,7 @@ AdminCategoriesScreen.navigationOptions = (navigationdata) => {
 
 const styles = {
   adminText: {
-    color: Colors.primaryColor,
+    color: "white",
     backgroundColor: Colors.secondaryColor,
     fontWeight: "bold",
     textAlign: "center",
