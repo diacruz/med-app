@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../components/CustomHeaderButton';
-import { Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import {
     View,
     SafeAreaView,
@@ -13,21 +12,27 @@ import {
     TouchableOpacity,
     TouchableNativeFeedback,
     Dimensions,
-    ImageBackground
+    ImageBackground,
+    ActivityIndicator
 } from 'react-native';
 import * as firebase from 'firebase'
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../constants/Colors';
 
 const UserProfileScreen = props => {
 
+    const [loading, setLoading] = useState(true);
+
     const uid = props.navigation.getParam('ID');
     var data = '';
+
     const db = firebase.database()
+
     const userRef = db.ref('users/' + uid + '/profile');
     userRef.on('value', function (snapshot) {
         data = snapshot.val();
     });
+
 
     let TouchableCmp = TouchableOpacity;
 
@@ -48,58 +53,62 @@ const UserProfileScreen = props => {
 
     var image = data.avatar !== '' ? { uri: data.avatar } : require('../components/img/default-profile-pic.jpg');
 
+    if (loading) {
+        <ActivityIndicator size="large"></ActivityIndicator>
+    }
+
     return (
         <View style={styles.container}>
             <ImageBackground source={require('../components/img/colors3.jpeg')}
-                    style={styles.background}>
-            <SafeAreaView>
-                <View style={styles.responsiveBox}>
-                    <ScrollView showsVerticalScrollIndicator={false}>
-                        <View style={{ alignSelf: "center" }}>
-                            <View style={styles.profileImage}>
-                                <Image source={image} style={styles.avatar} resizeMode="cover"></Image>
+                style={styles.background}>
+                <SafeAreaView>
+                    <View style={styles.responsiveBox}>
+                        <ScrollView showsVerticalScrollIndicator={false}>
+                            <View style={{ alignSelf: "center" }}>
+                                <View style={styles.profileImage}>
+                                    <Image source={image} style={styles.avatar} resizeMode="cover"></Image>
+                                </View>
+                                <TouchableCmp>
+                                    <View style={styles.active} backgroundColor={buttonColor}></View>
+                                </TouchableCmp>
                             </View>
-                            <TouchableCmp>
-                                <View style={styles.active} backgroundColor={buttonColor}></View>
-                            </TouchableCmp>
-                        </View>
-                        <View style={styles.infoContainer}>
-                            <View style={styles.infoText}>
-                                <Text style={[styles.text, { fontWeight: "200", fontSize: 20, fontWeight: "bold" }]}>{data.name}</Text>
+                            <View style={styles.infoContainer}>
+                                <View style={styles.infoText}>
+                                    <Text style={[styles.text, { fontWeight: "200", fontSize: 20, fontWeight: "bold" }]}>{data.name}</Text>
+                                </View>
+                                <View style={styles.infoText}>
+                                    <Text style={[styles.text, { fontSize: 16 }]}>{data.title}</Text>
+                                </View>
+                                <View style={styles.infoText}>
+                                    <Text style={[styles.text, { fontSize: 16 }]}>Status: {data.status}</Text>
+                                </View>
                             </View>
-                            <View style={styles.infoText}>
-                                <Text style={[styles.text, { fontSize: 16 }]}>{data.title}</Text>
+                            <View style={[styles.detailContainer]}>
+                                <View style={styles.iconBox}>
+                                    <MaterialIcons name="email" size={20}></MaterialIcons>
+                                </View>
+                                <View style={styles.detailBox}>
+                                    <Text style={styles.text}>Email Address: </Text>
+                                    <Text style={[styles.text, styles.subText]}>{data.email}</Text>
+                                </View>
                             </View>
-                            <View style={styles.infoText}>
-                                <Text style={[styles.text, { fontSize: 16 }]}>Status: {data.status}</Text>
+                            <View style={[styles.detailContainer]}>
+                                <View style={styles.iconBox}>
+                                    <MaterialIcons name="local-phone" size={20}></MaterialIcons>
+                                </View>
+                                <View style={styles.detailBox}>
+                                    <Text style={styles.text}>Phone Number: </Text>
+                                    <Text style={[styles.text, styles.subText]}>{data.number}</Text>
+                                </View>
                             </View>
-                        </View>
-                        <View style={[styles.detailContainer]}>
-                            <View style={styles.iconBox}>
-                                <MaterialIcons name="email" size={20}></MaterialIcons>
+                            <View style={styles.buttonStyle}>
+                                <TouchableOpacity >
+                                    <Text style={styles.button}>Send Message</Text>
+                                </TouchableOpacity>
                             </View>
-                            <View style={styles.detailBox}>
-                                <Text style={styles.text}>Email Address: </Text>
-                                <Text style={[styles.text, styles.subText]}>{data.email}</Text>
-                            </View>
-                        </View>
-                        <View style={[styles.detailContainer]}>
-                            <View style={styles.iconBox}>
-                                <MaterialIcons name="local-phone" size={20}></MaterialIcons>
-                            </View>
-                            <View style={styles.detailBox}>
-                                <Text style={styles.text}>Phone Number: </Text>
-                                <Text style={[styles.text, styles.subText]}>{data.number}</Text>
-                            </View>
-                        </View>
-                        <View style={styles.buttonStyle}>
-                            <TouchableOpacity >
-                                <Text style={styles.button}>Send Message</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </ScrollView>
-                </View>
-            </SafeAreaView>
+                        </ScrollView>
+                    </View>
+                </SafeAreaView>
             </ImageBackground>
         </View>
     );
@@ -119,9 +128,9 @@ const styles = StyleSheet.create({
         height: screenHeight
     },
     background: {
-        width: '100%', 
+        width: '100%',
         height: '100%',
-      
+
     },
     text: {
         fontFamily: "open-sans",
