@@ -1,8 +1,8 @@
 import React, { useState, Component, useEffect, useCallback } from 'react';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../../components/CustomHeaderButton';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialIcons } from '@expo/vector-icons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
     View,
     SafeAreaView,
@@ -30,7 +30,6 @@ const ProfileScreen = props => {
     if (Platform.OS === 'android' && Platform.Version >= 21) {
         TouchableCmp = TouchableNativeFeedback;
     }
-
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [title, setTitle] = useState('');
@@ -38,7 +37,7 @@ const ProfileScreen = props => {
     const [status, setStatus] = useState('');
     const [certs, setCerts] = useState([])
     const [avatar, setAvatar] = useState('');
-    //const [isVisible, setIsVisible] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const [buttonColor, setButtonColor] = useState("red");
     const [selected, setSelected] = useState(false);
@@ -49,6 +48,7 @@ const ProfileScreen = props => {
     const userRef = db.ref('users/' + uid + '/profile');
 
     useEffect(() => {
+        setLoading(true)
         userRef.on('value', function (snapshot) {
             // console.log(snapshot.val())
             const { name, email, avatar, title, number, certs } = snapshot.val();
@@ -60,10 +60,12 @@ const ProfileScreen = props => {
             setCerts(certs);
         }, err => {
             console.log(`Encountered error: ${err}`);
+            setLoading(false)
         })
     }, []);
 
     const handleSignOut = () => {
+        setLoading(false)
         new SignOut().signOut(props)
     }
 
@@ -104,6 +106,11 @@ const ProfileScreen = props => {
         }
     })
 
+    if (loading) {
+        <ActivityIndicator size="large"></ActivityIndicator>
+    }
+
+
     var image = !avatar ? require('../../components/img/default-profile-pic.jpg') : { uri: avatar };
 
     return (
@@ -135,7 +142,7 @@ const ProfileScreen = props => {
                                         defaultValue=''
                                         onSelect={(index, value) => { setSelected(value) }}>
                                         <View style={{ alignItems: "center" }}>
-                                            <MaterialCommunityIcons name="emoticon-happy-outline" size={20}></MaterialCommunityIcons>
+                                            <Icon name="emoticon-happy-outline" size={20}></Icon>
                                             <Text style={{ fontSize: 0.04 * screenWidth }}>Active Status</Text>
                                         </View>
                                     </ModalDropdown>
@@ -152,7 +159,7 @@ const ProfileScreen = props => {
                                 <View style={styles.status}>
                                     <TouchableOpacity style={{ alignItems: "center" }}
                                         onPress={() => props.navigation.navigate({ routeName: 'Calendar' })}>
-                                        <MaterialCommunityIcons name="calendar-heart" size={20}></MaterialCommunityIcons>
+                                        <Icon name="calendar-heart" size={20}></Icon>
                                         <Text style={{ fontSize: 0.04 * screenWidth }}>Calendar</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -178,7 +185,7 @@ const ProfileScreen = props => {
                         </View>
                         <View style={[styles.detailContainer]}>
                             <View style={styles.iconBox}>
-                                <MaterialCommunityIcons name="certificate" size={20}></MaterialCommunityIcons>
+                                <Icon name="certificate" size={20}></Icon>
                             </View>
                             <View style={styles.detailBox}>
                                 <Text style={styles.text}>Certifications:</Text>
