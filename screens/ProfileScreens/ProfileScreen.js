@@ -1,8 +1,7 @@
 import React, { useState, Component, useEffect, useCallback } from 'react';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../../components/CustomHeaderButton';
-import { MaterialIcons } from '@expo/vector-icons';
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import {
     View,
     SafeAreaView,
@@ -142,7 +141,7 @@ const ProfileScreen = props => {
                                         defaultValue=''
                                         onSelect={(index, value) => { setSelected(value) }}>
                                         <View style={{ alignItems: "center" }}>
-                                            <Icon name="emoticon-happy-outline" size={20}></Icon>
+                                            <MaterialCommunityIcons name="emoticon-happy-outline" size={20}></MaterialCommunityIcons>
                                             <Text style={{ fontSize: 0.04 * screenWidth }}>Active Status</Text>
                                         </View>
                                     </ModalDropdown>
@@ -159,7 +158,7 @@ const ProfileScreen = props => {
                                 <View style={styles.status}>
                                     <TouchableOpacity style={{ alignItems: "center" }}
                                         onPress={() => props.navigation.navigate({ routeName: 'Calendar' })}>
-                                        <Icon name="calendar-heart" size={20}></Icon>
+                                        <MaterialCommunityIcons name="calendar-heart" size={20}></MaterialCommunityIcons>
                                         <Text style={{ fontSize: 0.04 * screenWidth }}>Calendar</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -185,7 +184,7 @@ const ProfileScreen = props => {
                         </View>
                         <View style={[styles.detailContainer]}>
                             <View style={styles.iconBox}>
-                                <Icon name="certificate" size={20}></Icon>
+                                <MaterialCommunityIcons name="certificate" size={20}></MaterialCommunityIcons>
                             </View>
                             <View style={styles.detailBox}>
                                 <Text style={styles.text}>Certifications:</Text>
