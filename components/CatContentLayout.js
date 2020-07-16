@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
         paddingTop: 5,
         paddingHorizontal: 15,
         width: '80%',
-        // backgroundColor: 'white'
+        //backgroundColor: 'white'
 
     },
     textBackgroundContainer: {

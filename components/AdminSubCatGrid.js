@@ -19,14 +19,14 @@ const AdminSubCatGrid = props => {
                             <View style={styles.buttonContainer}>
                                 <View style={styles.button}>
                                     <Button
-                                        color={Colors.EditBlueColor}
+                                        color={Colors.primaryColor}
                                         title="Edit"
                                         onPress={props.edit}
                                     />
                                 </View>
                                 <View style={styles.button}>
                                     <Button
-                                        color={Colors.primaryColor}
+                                        color={Colors.DeleteColor}
                                         title="Delete"
                                         onPress={props.delete}
                                     />
