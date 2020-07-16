@@ -84,6 +84,7 @@ export const createCatContent = (title, color, subId, evaluation, signs, managem
 };
 
 export const updateCatContent = (id, title, evaluation, signs, management, medications, references, image) => {
+    console.log('id' + id)
     return async dispatch =>{
         await fetch(`https://med-app-519aa.firebaseio.com/categories/${id}.json`,
         {

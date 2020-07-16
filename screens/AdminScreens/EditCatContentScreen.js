@@ -81,7 +81,8 @@ const EditCatContentScreen = props => {
     };
 
     const removeImage = () => {
-        setImage(null);
+       
+        setImage( Platform.OS === 'android' ? null : " ");
     }
 
     return (

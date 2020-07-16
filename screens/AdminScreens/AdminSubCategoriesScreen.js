@@ -1,15 +1,17 @@
-import React, { useEffect, useCallback } from 'react';
-import { FlatList, Platform, Button, Alert } from 'react-native';
+import React, { useEffect, useCallback, useState } from 'react';
+import { FlatList, Platform, Button, Alert,ActivityIndicator, View } from 'react-native';
 import CustomHeaderButton from '../../components/CustomHeaderButton';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import AdminSubCatGrid from '../../components/AdminSubCatGrid';
 import * as CatContentActions from '../../store/actions/catContent';
-
+import Colors from '../../constants/Colors';
 //react-redux
 import { useSelector, useDispatch } from 'react-redux';
 
 
 const AdminSubCategoriesScreen = props => {
+
+  const [loading, setLoading] = useState(false);
 
   const categoryId = props.navigation.getParam('categoryId');
   const selectedSubCategories = useSelector(state =>
@@ -43,7 +45,23 @@ const AdminSubCategoriesScreen = props => {
     props.navigation.setParams({ create: createHandler });
   }, [createHandler]);
 
+  useEffect(() =>{
+    const loadingCatContent = async () =>{
+      setLoading(true);
+      await dispatch(CatContentActions.fetchCatContent());
+      setLoading(false);
+    };
+    loadingCatContent();
+    
+  },[dispatch, setLoading]);
+
+  if(loading){
+    return <View style ={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <ActivityIndicator size = 'large' color ={Colors.primaryColor}/>
+    </View>
+  }
   return (
+    
     <FlatList
       data={selectedSubCategories}
       keyExtractor={item => item.id}
