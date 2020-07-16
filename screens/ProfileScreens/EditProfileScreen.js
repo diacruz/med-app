@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { 
-    Dimensions, 
-    Image, 
-    Alert, 
-    View, 
-    ScrollView, 
-    Button, 
-    Text, 
-    StyleSheet, 
-    Platform, 
-    TextInput, 
-    TouchableOpacity, 
+import {
+    Dimensions,
+    Image,
+    Alert,
+    View,
+    ScrollView,
+    Button,
+    Text,
+    StyleSheet,
+    Platform,
+    TextInput,
+    TouchableOpacity,
     Switch,
     ImageBackground
 } from 'react-native';
@@ -50,24 +50,13 @@ const EditProfileScreen = props => {
         if (errorName || errorTitle || errorNumber) {
             alert("Invalid input")
         } else {
-            if (displayName != "") {
-                userRef.update({
-                    name: displayName,
-                });
-            }
-            if (jobTitle != "") {
-                userRef.update({
-                    title: jobTitle,
-                });
-            }
-            if (numberType != "") {
-                userRef.update({
-                    number: numberType,
-                });
-            }
-            userRef.update({
+            var postData = {
+                name: displayName,
+                title: jobTitle,
+                number: numberType,
                 avatar: avatar,
-            });
+            };
+            userRef.update(postData)
             props.navigation.goBack();
         }
     };
@@ -145,87 +134,87 @@ const EditProfileScreen = props => {
     return (
         <View style={styles.constainer}>
             <ImageBackground source={require('../../components/img/colors3.jpeg')}
-                    style={{ width: '100%', height: '100%' }}>
-            <ScrollView>
-                <View style={{ flexDirection: 'row' }}>
-                    <View style={[styles.profileImage, { marginLeft: 20 }]}>
-                        <Image source={image} style={styles.avatar} resizeMode="cover"></Image>
+                style={{ width: '100%', height: '100%' }}>
+                <ScrollView>
+                    <View style={{ flexDirection: 'row' }}>
+                        <View style={[styles.profileImage, { marginLeft: 20 }]}>
+                            <Image source={image} style={styles.avatar} resizeMode="cover"></Image>
+                        </View>
+                        <View style={[styles.buttonStyle, { flexDirection: 'column', marginLeft: "5%" }]}>
+                            <TouchableOpacity style={styles.buttonText} onPress={pickImage}>
+                                <Text style={styles.text}>Upload Image</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.buttonText} onPress={handleDeleteAvatar}>
+                                <Text style={styles.text}>Delete Image</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                    <View style={[styles.buttonStyle, { flexDirection: 'column', marginLeft: "5%" }]}>
-                        <TouchableOpacity style={styles.buttonText} onPress={pickImage}>
-                            <Text style={styles.text}>Upload Image</Text>
+                    <View style={styles.form}>
+                        <View style={styles.formControl}>
+                            <Text style={styles.label}>Fullname</Text>
+                            <View style={{ flexDirection: "row" }}>
+                                <Icon style={{ marginRight: "2%" }} name="user" size={18}></Icon>
+                                <TextInput
+                                    style={styles.input}
+                                    value={displayName}
+                                    placeholder="Please enter your name"
+                                    onChangeText={text => handleNameChange(text)}>
+                                </TextInput>
+                            </View>
+                            {!!errorName && (
+                                <Text style={{ color: 'red' }}>
+                                    {errorName}
+                                </Text>
+                            )}
+                        </View>
+                        <View style={styles.formControl}>
+                            <Text style={styles.label}>Job Title</Text>
+                            <View style={{ flexDirection: "row" }}>
+                                <MaterialIcons style={{ marginRight: "2%" }} name="work" size={18}></MaterialIcons>
+                                <TextInput
+                                    style={styles.input}
+                                    value={jobTitle}
+                                    placeholder="Please enter your title"
+                                    onChangeText={text => handleTitleChange(text)}>
+                                </TextInput>
+                            </View>
+                            {!!errorTitle && (
+                                <Text style={{ color: 'red' }}>
+                                    {errorTitle}
+                                </Text>
+                            )}
+                        </View>
+                        <View style={styles.formControl}>
+                            <Text style={styles.label}>Phone Number</Text>
+                            <View style={{ flexDirection: "row" }}>
+                                <MaterialIcons style={{ marginRight: "2%" }} name="phone" size={18}></MaterialIcons>
+                                <TextInput
+                                    style={styles.input}
+                                    maxLength={15}
+                                    keyboardType={'phone-pad'}
+                                    textContentType='telephoneNumber'
+                                    dataDetectorTypes='phoneNumber'
+                                    value={numberType}
+                                    placeholder="Please enter your phone number"
+                                    onChangeText={text => handleNumberChange(text)}>
+                                </TextInput>
+                            </View>
+                            {!!errorNumber && (
+                                <Text style={{ color: 'red' }}>
+                                    {errorNumber}
+                                </Text>
+                            )}
+                        </View>
+                        <View style={styles.switchStyle}>
+                            <Text style={styles.label}> Public / Private</Text>
+                            <Switch style={{ alignSelf: 'flex-start' }} value={isVisible} onValueChange={newValue => setIsVisible(newValue)}></Switch>
+                            <Text>{isVisible ? 'Switch is ON' : 'Switch is OFF'}</Text>
+                        </View>
+                        <TouchableOpacity style={styles.buttonStyle2} onPress={() => addInfo()}>
+                            <Text style={styles.button}>Submit</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.buttonText} onPress={handleDeleteAvatar}>
-                            <Text style={styles.text}>Delete Image</Text>
-                        </TouchableOpacity>
                     </View>
-                </View>
-                <View style={styles.form}>
-                    <View style={styles.formControl}>
-                        <Text style={styles.label}>Fullname</Text>
-                        <View style={{ flexDirection: "row" }}>
-                            <Icon style={{ marginRight: "2%" }} name="user" size={18}></Icon>
-                            <TextInput
-                                style={styles.input}
-                                value={displayName}
-                                placeholder="Please enter your name"
-                                onChangeText={text => handleNameChange(text)}>
-                            </TextInput>
-                        </View>
-                        {!!errorName && (
-                            <Text style={{ color: 'red' }}>
-                                {errorName}
-                            </Text>
-                        )}
-                    </View>
-                    <View style={styles.formControl}>
-                        <Text style={styles.label}>Job Title</Text>
-                        <View style={{ flexDirection: "row" }}>
-                            <MaterialIcons style={{ marginRight: "2%" }} name="work" size={18}></MaterialIcons>
-                            <TextInput
-                                style={styles.input}
-                                value={jobTitle}
-                                placeholder="Please enter your title"
-                                onChangeText={text => handleTitleChange(text)}>
-                            </TextInput>
-                        </View>
-                        {!!errorTitle && (
-                            <Text style={{ color: 'red' }}>
-                                {errorTitle}
-                            </Text>
-                        )}
-                    </View>
-                    <View style={styles.formControl}>
-                        <Text style={styles.label}>Phone Number</Text>
-                        <View style={{ flexDirection: "row" }}>
-                            <MaterialIcons style={{ marginRight: "2%" }} name="phone" size={18}></MaterialIcons>
-                            <TextInput
-                                style={styles.input}
-                                maxLength={15}
-                                keyboardType={'phone-pad'}
-                                textContentType='telephoneNumber'
-                                dataDetectorTypes='phoneNumber'
-                                value={numberType}
-                                placeholder="Please enter your phone number"
-                                onChangeText={text => handleNumberChange(text)}>
-                            </TextInput>
-                        </View>
-                        {!!errorNumber && (
-                            <Text style={{ color: 'red' }}>
-                                {errorNumber}
-                            </Text>
-                        )}
-                    </View>
-                    <View style={styles.switchStyle}>
-                        <Text style={styles.label}> Public / Private</Text>
-                        <Switch style={{ alignSelf: 'flex-start'}} value={isVisible} onValueChange={newValue => setIsVisible(newValue)}></Switch>
-                        <Text>{isVisible ? 'Switch is ON' : 'Switch is OFF'}</Text>
-                    </View>
-                    <TouchableOpacity style={styles.buttonStyle2} onPress={() => addInfo()}>
-                        <Text style={styles.button}>Submit</Text>
-                    </TouchableOpacity>
-                </View>
-            </ScrollView>
+                </ScrollView>
             </ImageBackground>
         </View>
     );

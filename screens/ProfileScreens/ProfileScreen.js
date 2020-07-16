@@ -1,7 +1,7 @@
 import React, { useState, Component, useEffect, useCallback } from 'react';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../../components/CustomHeaderButton';
-import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialIcons, FontAwesome, Entypo } from '@expo/vector-icons';
 import {
     View,
     SafeAreaView,
@@ -29,6 +29,7 @@ const ProfileScreen = props => {
     if (Platform.OS === 'android' && Platform.Version >= 21) {
         TouchableCmp = TouchableNativeFeedback;
     }
+
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [title, setTitle] = useState('');
@@ -49,7 +50,7 @@ const ProfileScreen = props => {
     useEffect(() => {
         setLoading(true)
         userRef.on('value', function (snapshot) {
-            // console.log(snapshot.val())
+            console.log(snapshot.val())
             const { name, email, avatar, title, number, certs } = snapshot.val();
             setName(name);
             setEmail(email);
@@ -115,22 +116,22 @@ const ProfileScreen = props => {
     return (
         <View style={styles.container}>
             <SafeAreaView>
-            <ImageBackground source={require('../../components/img/colors3.jpeg')}
+                <ImageBackground source={require('../../components/img/colors3.jpeg')}
                     style={styles.background}>
-                <View style={styles.responsiveBox}>
-                    <ScrollView showsVerticalScrollIndicator={false}>
-                        <View style={{ alignSelf: "center" }}>
-                            <View style={styles.profileImage}>
-                                <Image source={image} style={styles.avatar} resizeMode="cover"></Image>
+                    <View style={styles.responsiveBox}>
+                        <ScrollView showsVerticalScrollIndicator={false}>
+                            <View style={{ alignSelf: "center" }}>
+                                <View style={styles.profileImage}>
+                                    <Image source={image} style={styles.avatar} resizeMode="cover"></Image>
+                                </View>
+                                <TouchableCmp>
+                                    <View style={styles.active} backgroundColor={buttonColor}></View>
+                                </TouchableCmp>
                             </View>
-                            <TouchableCmp>
-                                <View style={styles.active} backgroundColor={buttonColor}></View>
-                            </TouchableCmp>
-                        </View>
-                        <View style={styles.infoContainer}>
-                            <Text style={[styles.text, { fontWeight: "200", fontSize: 20, fontWeight: "bold" }]}>{name}</Text>
-                            <Text style={[styles.text, { fontSize: 16 }]}>{title}</Text>
-                        </View>
+                            <View style={styles.infoContainer}>
+                                <Text style={[styles.text, { fontWeight: "200", fontSize: 20, fontWeight: "bold" }]}>{name}</Text>
+                                <Text style={[styles.text, { fontSize: 16 }]}>{title}</Text>
+                            </View>
                             <View style={styles.statusContainer}>
                                 <View style={styles.status}>
                                     <ModalDropdown
@@ -141,7 +142,7 @@ const ProfileScreen = props => {
                                         defaultValue=''
                                         onSelect={(index, value) => { setSelected(value) }}>
                                         <View style={{ alignItems: "center" }}>
-                                            <MaterialCommunityIcons name="emoticon-happy-outline" size={20}></MaterialCommunityIcons>
+                                            <FontAwesome name="smile-o" size={20} color="black" />
                                             <Text style={{ fontSize: 0.04 * screenWidth }}>Active Status</Text>
                                         </View>
                                     </ModalDropdown>
@@ -158,47 +159,47 @@ const ProfileScreen = props => {
                                 <View style={styles.status}>
                                     <TouchableOpacity style={{ alignItems: "center" }}
                                         onPress={() => props.navigation.navigate({ routeName: 'Calendar' })}>
-                                        <MaterialCommunityIcons name="calendar-heart" size={20}></MaterialCommunityIcons>
+                                        <FontAwesome name="calendar" size={20} color="black" />
                                         <Text style={{ fontSize: 0.04 * screenWidth }}>Calendar</Text>
                                     </TouchableOpacity>
                                 </View>
+                            </View>
+
+                            <View style={[styles.detailContainer]}>
+                                <View style={styles.iconBox}>
+                                    <MaterialIcons name="email" size={20}></MaterialIcons>
                                 </View>
-                        
-                        <View style={[styles.detailContainer]}>
-                            <View style={styles.iconBox}>
-                                <MaterialIcons name="email" size={20}></MaterialIcons>
+                                <View style={styles.detailBox}>
+                                    <Text style={styles.text}>Email Address: </Text>
+                                    <Text style={[styles.text, styles.subText]}>{email}</Text>
+                                </View>
                             </View>
-                            <View style={styles.detailBox}>
-                                <Text style={styles.text}>Email Address: </Text>
-                                <Text style={[styles.text, styles.subText]}>{email}</Text>
+                            <View style={[styles.detailContainer]}>
+                                <View style={styles.iconBox}>
+                                    <MaterialIcons name="local-phone" size={20}></MaterialIcons>
+                                </View>
+                                <View style={styles.detailBox}>
+                                    <Text style={styles.text}>Phone Number: </Text>
+                                    <Text style={[styles.text, styles.subText]}>{number}</Text>
+                                </View>
                             </View>
-                        </View>
-                        <View style={[styles.detailContainer]}>
-                            <View style={styles.iconBox}>
-                                <MaterialIcons name="local-phone" size={20}></MaterialIcons>
+                            <View style={[styles.detailContainer]}>
+                                <View style={styles.iconBox}>
+                                    <Entypo name="medal" size={20} color="black" />
+                                </View>
+                                <View style={styles.detailBox}>
+                                    <Text style={styles.text}>Certifications:</Text>
+                                    <Text style={[styles.text, styles.subText]}
+                                        onPress={handleCerts}> Show All {'>'} </Text>
+                                </View>
                             </View>
-                            <View style={styles.detailBox}>
-                                <Text style={styles.text}>Phone Number: </Text>
-                                <Text style={[styles.text, styles.subText]}>{number}</Text>
+                            <View style={styles.buttonStyle}>
+                                <TouchableOpacity onPress={handleSignOut}>
+                                    <Text style={styles.button}>LOGOUT</Text>
+                                </TouchableOpacity>
                             </View>
-                        </View>
-                        <View style={[styles.detailContainer]}>
-                            <View style={styles.iconBox}>
-                                <MaterialCommunityIcons name="certificate" size={20}></MaterialCommunityIcons>
-                            </View>
-                            <View style={styles.detailBox}>
-                                <Text style={styles.text}>Certifications:</Text>
-                                <Text style={[styles.text, styles.subText]}
-                                    onPress={handleCerts}> Show All {'>'} </Text>
-                            </View>
-                        </View>
-                        <View style={styles.buttonStyle}>
-                            <TouchableOpacity onPress={handleSignOut}>
-                                <Text style={styles.button}>LOGOUT</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </ScrollView>
-                </View>
+                        </ScrollView>
+                    </View>
                 </ImageBackground>
             </SafeAreaView>
 
@@ -219,9 +220,9 @@ const styles = StyleSheet.create({
         borderRadius: 20
     },
     background: {
-        width: '100%', 
-        height: '100%',
-      
+        width: screenWidth,
+        height: screenHeight,
+
     },
     responsiveBox: {
         width: screenWidth,
