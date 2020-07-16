@@ -292,7 +292,7 @@ const styles = StyleSheet.create({
         alignSelf: "center",
     },
     button: {
-        backgroundColor: "cornflowerblue",
+        backgroundColor: Colors.primaryColor,
         borderColor: 'white',
         borderRadius: 20,
         color: 'white',
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
         width: "100%",
         marginTop: "6%",
         right: "5%",
-        backgroundColor: "cornflowerblue",
+        backgroundColor: Colors.primaryColor,
         borderRadius: 10
     },
     text: {

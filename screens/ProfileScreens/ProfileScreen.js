@@ -320,8 +320,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   button: {
-    backgroundColor: "cornflowerblue",
-    borderColor: "cornflowerblue",
+    backgroundColor: Colors.primaryColor,
+    borderColor: Colors.primaryColor,
     borderWidth: 1,
     borderRadius: 20,
     color: "white",

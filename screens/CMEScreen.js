@@ -1,7 +1,7 @@
 import React, { Component, useEffect } from "react";
 import DatePicker from "react-native-datepicker";
 import * as ImagePicker from 'expo-image-picker';
-
+import Colors from "../constants/Colors";
 import {
   View,
   StyleSheet,
@@ -155,17 +155,13 @@ export default class CME extends Component {
     }
   }
 
-  
+
 
   render() {
     return (
       <View>
-        <View style={{ flexDirection: "row" }}>
-          <Text style={styles.header}>CME</Text>
-        </View>
-
         <FlatList
-          style={{ height: "40%", flexGrow: 0 }}
+          style={{ marginTop: "5%", flexGrow: 0, marginBottom: "2%" }}
           data={this.state.cmes}
           renderItem={(itemData) => (
             <View style={{ flexDirection: "row" }}>
@@ -188,11 +184,8 @@ export default class CME extends Component {
           />
         </View>
 
-        <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: "column", justifyContent: "center" }}>
           <Text style={styles.header}>Renewal Date</Text>
-        </View>
-
-        <View style={{ flexDirection: "row" }}>
           <DatePicker
             style={{
               flex: 1,
@@ -201,6 +194,8 @@ export default class CME extends Component {
               textAlign: "center",
               alignSelf: "center",
               width: "80%",
+              marginRight: "9%",
+              marginTop: "2%"
             }}
             date={this.state.date} //initial date from state
             mode="date"
@@ -224,23 +219,18 @@ export default class CME extends Component {
           />
         </View>
 
-        <View style={{ flexDirection: "row" }}>
-          <Text style={styles.header}>Upload Certification Copy</Text>
-
-
-          <View style={[styles.addCmeButton, { flexDirection: 'column', marginLeft: "5%" }]}>
-                        <TouchableOpacity style={styles.buttonText} onPress={pickImage}>
-                            <Text style={styles.text}>Upload Image</Text>
-                        </TouchableOpacity>
-                    </View>
-
-
-        </View>
-
-        <TouchableOpacity style={styles.addCmeButton} onPress={this.addCme}>
+        <View style={{ flexDirection: "column", marginTop: "15%" }}>
+          <View style={[styles.addCmeButton, { flexDirection: 'column', backgroundColor: Colors.primaryColor}]}>
+            <TouchableOpacity style={styles.buttonText} onPress={pickImage}>
+              <Text style={styles.text}>Upload Image</Text>
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity style={styles.addCmeButton} onPress={this.addCme}>
           <Text style={styles.text}>Add CME</Text>
         </TouchableOpacity>
       </View>
+
+        </View>
     );
   }
 }
@@ -248,12 +238,12 @@ export default class CME extends Component {
 
 const pickImage = async () => {
   let selectedImage = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      quality: 1,
+    mediaTypes: ImagePicker.MediaTypeOptions.All,
+    allowsEditing: true,
+    quality: 1,
   });
   if (!selectedImage.cancelled) {
-      setAvatar(selectedImage.uri);
+    setAvatar(selectedImage.uri);
   }
 };
 
@@ -281,13 +271,14 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: "open-sans",
     textAlign: "center",
+    color: "white"
   },
   addCmeButton: {
     marginTop: 10,
     alignSelf: "center",
     padding: 10,
     width: 250,
-    backgroundColor: "#A3A3A3",
+    backgroundColor: Colors.primaryColor,
     borderRadius: 30,
   },
   cmeItem: {
