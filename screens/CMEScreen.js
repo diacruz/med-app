@@ -1,5 +1,6 @@
-import React, { Component } from "react";
+import React, { Component, useEffect } from "react";
 import DatePicker from "react-native-datepicker";
+import * as ImagePicker from 'expo-image-picker';
 
 import {
   View,
@@ -24,7 +25,9 @@ let cmes = [];
 let newCme = {
   newCmeCert: "",
   newCmeExp: "",
+  newCmePic: "",
 };
+
 
 function displayOKAlert(title, message) {
   Alert.alert(title, message);
@@ -54,6 +57,7 @@ export default class CME extends Component {
     console.log("BEGINNING STATE IS", this.state.cmes);
     this.handleCmeCert = this.handleCmeCert.bind(this);
     this.handleCmeExp = this.handleCmeExp.bind(this);
+    this.handleCmePic = this.handleCmePic.bind(this);
     this.addCme = this.addCme.bind(this);
   }
   static navigationOptions = {
@@ -66,6 +70,10 @@ export default class CME extends Component {
 
   handleCmeExp(text) {
     newCme.newCmeExp = text;
+  }
+
+  handleCmePic(text) {
+    newPic.newCmePic = text;
   }
 
   /**
@@ -123,6 +131,7 @@ export default class CME extends Component {
       cmes.push({
         cert: newCme.newCmeCert,
         exp: newCme.newCmeExp,
+
       });
 
       this.setState({
@@ -146,6 +155,8 @@ export default class CME extends Component {
     }
   }
 
+  
+
   render() {
     return (
       <View>
@@ -166,14 +177,14 @@ export default class CME extends Component {
         />
 
         <View style={{ flexDirection: "row" }}>
-          <Text style={styles.header}>Certification </Text>
+          <Text style={styles.header}>Add New Certification Here</Text>
         </View>
 
         <View style={{ flexDirection: "row" }}>
           <TextInput
             style={styles.textField}
             onChangeText={this.handleCmeCert}
-            placeholder="Certification here"
+            placeholder="Certification Name"
           />
         </View>
 
@@ -213,6 +224,19 @@ export default class CME extends Component {
           />
         </View>
 
+        <View style={{ flexDirection: "row" }}>
+          <Text style={styles.header}>Upload Certification Copy</Text>
+
+
+          <View style={[styles.addCmeButton, { flexDirection: 'column', marginLeft: "5%" }]}>
+                        <TouchableOpacity style={styles.buttonText} onPress={pickImage}>
+                            <Text style={styles.text}>Upload Image</Text>
+                        </TouchableOpacity>
+                    </View>
+
+
+        </View>
+
         <TouchableOpacity style={styles.addCmeButton} onPress={this.addCme}>
           <Text style={styles.text}>Add CME</Text>
         </TouchableOpacity>
@@ -220,6 +244,18 @@ export default class CME extends Component {
     );
   }
 }
+
+
+const pickImage = async () => {
+  let selectedImage = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      quality: 1,
+  });
+  if (!selectedImage.cancelled) {
+      setAvatar(selectedImage.uri);
+  }
+};
 
 const styles = StyleSheet.create({
   textField: {
