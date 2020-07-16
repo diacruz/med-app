@@ -81,7 +81,6 @@ const Login = (props) => {
           .then((userInfo) => {
             firebase.database()
               .ref(`/users/${userInfo.user.uid}`)
-              .orderByChild("email")
               .equalTo(userInfo.user.email)
               .once("value")                          
               .then(snapshot => {
