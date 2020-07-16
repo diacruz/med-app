@@ -20,7 +20,7 @@ import Colors from '../../constants/Colors';
 import * as firebase from 'firebase';
 import * as ImagePicker from 'expo-image-picker';
 import UserPermission from '../../utilities/UserPermission';
-import { Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/FontAwesome';
 //import PhoneInput from "react-native-phone-input";
 
