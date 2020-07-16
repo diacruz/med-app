@@ -78,8 +78,31 @@ const Login = (props) => {
         firebase
           .auth()
           .signInAndRetrieveDataWithCredential(credential)
-          .then((res) => {
-            alert(`Welcome ${res.user.displayName}`);
+          .then((userInfo) => {
+            firebase.database()
+              .ref(`/users/${userInfo.user.uid}`)
+              .orderByChild("email")
+              .equalTo(userInfo.user.email)
+              .once("value")                          
+              .then(snapshot => {
+                if (!snapshot.val()) {
+                  const userRef = firebase.database().ref(`/users/${userInfo.user.uid}`)
+                  userRef.update({
+                    profile: {
+                      name: userInfo.user.displayName,
+                      email: userInfo.user.email,
+                      number: '(###) ###-####',
+                      avatar: '',
+                      title: 'Job Title',
+                      status: 'Active',
+                      certs: '',
+                      isVisible: false
+                    }
+                  })
+                  console.log("Profile has been created")
+                }
+              })
+            alert(`Welcome ${userInfo.user.displayName}`);
             props.navigation.navigate({ routeName: "Categories" });
           })
           .catch((error) => {
