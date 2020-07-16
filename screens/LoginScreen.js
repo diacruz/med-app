@@ -79,28 +79,31 @@ const Login = (props) => {
           .auth()
           .signInAndRetrieveDataWithCredential(credential)
           .then((userInfo) => {
-            firebase.database()
+            firebase
+              .database()
               .ref(`/users/${userInfo.user.uid}`)
               .equalTo(userInfo.user.email)
-              .once("value")                          
-              .then(snapshot => {
+              .once("value")
+              .then((snapshot) => {
                 if (!snapshot.val()) {
-                  const userRef = firebase.database().ref(`/users/${userInfo.user.uid}`)
+                  const userRef = firebase
+                    .database()
+                    .ref(`/users/${userInfo.user.uid}`);
                   userRef.update({
                     profile: {
                       name: userInfo.user.displayName,
                       email: userInfo.user.email,
-                      number: '(###) ###-####',
-                      avatar: '',
-                      title: 'Job Title',
-                      status: 'Active',
-                      certs: '',
-                      isVisible: false
-                    }
-                  })
-                  console.log("Profile has been created")
+                      number: "(###) ###-####",
+                      avatar: "",
+                      title: "Job Title",
+                      status: "Active",
+                      certs: "",
+                      isVisible: false,
+                    },
+                  });
+                  console.log("Profile has been created");
                 }
-              })
+              });
             alert(`Welcome ${userInfo.user.displayName}`);
             props.navigation.navigate({ routeName: "Categories" });
           })
@@ -244,7 +247,7 @@ const styles = StyleSheet.create({
   },
   email: {
     marginBottom: 30,
-    marginTop: screenHeight * 0.1
+    marginTop: screenHeight * 0.1,
   },
   loginButton: {
     marginTop: 20,
@@ -274,6 +277,7 @@ const styles = StyleSheet.create({
   signUpButton: {
     marginTop: 20,
     borderColor: Colors.primaryColor,
+    color: Colors.primaryColor,
     borderWidth: 1,
     alignSelf: "center",
     padding: 10,
@@ -283,6 +287,7 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: "open-sans-bold",
     textAlign: "center",
+    color: Colors.primaryColor,
   },
   loginText: {
     fontFamily: "open-sans-bold",
