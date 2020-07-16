@@ -1,4 +1,5 @@
 import * as firebase from 'firebase'
+import config from '../firebaseConfig'
 
 class Firebase {
   constructor() {
@@ -15,21 +16,10 @@ class Firebase {
    */
   init = () => {
     if (!firebase.apps.length) {
-      const firebaseConfig = {
-        apiKey: "AIzaSyB9-PR4nCk8T6nNtqvnMhYFLyxr7ZLXJV8",
-        authDomain: "med-app-519aa.firebaseapp.com",
-        databaseURL: "https://med-app-519aa.firebaseio.com",
-        projectId: "med-app-519aa",
-        storageBucket: "med-app-519aa.appspot.com",
-      };
-      
-      /**apiKey: "",
-        authDomain: "",
-        databaseURL: "",
-        projectId: "",
-        storageBucket: "", */
-        
-      firebase.initializeApp(firebaseConfig);
+      firebase.initializeApp(config);
+      /*
+      firestore = firebase.firestore();
+      firestore.settings({ timestampsInSnapshots: true})*/
       this.counter()
       this.whosOnline()
     } else {
@@ -82,7 +72,7 @@ class Firebase {
    * getting the count.
    */
   get getUserCount() {
-    let count = -9999; //Using this large number to detect if it never changes
+    let count = -9999; // Using this large number to detect if it never changes
     firebase.database().ref('userCount').on('value', function (snapshot) {
       count = snapshot.val().count;
     })

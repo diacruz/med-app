@@ -10,6 +10,7 @@ import {
     Button,
     StyleSheet,
     ActivityIndicator,
+    ImageBackground
 } from 'react-native';
 import { DrawerItems } from "react-navigation-drawer";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -49,25 +50,30 @@ const DrawerComponent = (props) => {
 
     let TouchableCmp = TouchableOpacity;
 
-    var image = avatar === '' ? require('../components/img/default-profile-pic.jpg') : { uri: avatar };
+    var image = !avatar ? require('../components/img/default-profile-pic.jpg') : { uri: avatar };
     //backgroundColor: Colors.primaryColor
     return (
         <View style={styles.container} >
             <SafeAreaView style ={styles.padd}>
                 <ScrollView>
-                    <View style={{ borderBottomColor: 'silver', borderBottomWidth: 0.5, height: 145 }}>
-                        <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 5 }}>
-                            <Image source={image} style={{ height: 90, width: 90, aspectRatio: 1, overflow: "hidden", borderRadius: 100 }} />
-                            <TouchableCmp>
-                                <View style={styles.active} backgroundColor={buttonColor}></View>
-                            </TouchableCmp>
-                            <Text style={[styles.signText, { marginTop: "2%" }]}>{name}</Text>
-                            <Text style={{ color: 'black', fontFamily: 'open-sans', fontWeight: '200', fontSize: 13 }}>{user.email}</Text>
-                        </View>
+                    <View style={{ height: "46%" }}>
+                        <ImageBackground source={require('../components/img/colors0.jpeg')}
+                            style={{ width: '100%', height: '100%' }}>
+                            <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: "5%" }}>
+                                <Image source={image} style={styles.profileImage} />
+                                <TouchableCmp>
+                                    <View style={styles.active} backgroundColor={buttonColor}></View>
+                                </TouchableCmp>
+                                <Text style={[styles.signText, { marginTop: "2%" }]}>{name}</Text>
+                                <Text style={{ color: 'black', fontFamily: 'open-sans', fontWeight: '200', fontSize: 14 }}>{user.email}</Text>
+                            </View>
+                        </ImageBackground>
                     </View>
+
                     <View style={{ marginTop: '2%' }}>
                         <DrawerItems {...props} />
                     </View>
+
                 </ScrollView>
             </SafeAreaView>
             <TouchableOpacity style={styles.touchable}
@@ -99,7 +105,7 @@ const DrawerComponent = (props) => {
 const styles = StyleSheet.create({
     signText: {
         fontWeight: "bold",
-        fontSize: 15,
+        fontSize: 16,
         color: 'black'
     },
     touchable: {
@@ -111,17 +117,20 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: "10%"
     },
-    sideMenuProfileIcon: {
-        resizeMode: 'contain',
-        width: 150,
-        height: 130,
-        marginTop: 10,
+    profileImage: {
+        height: 90, 
+        width: 90, 
+        aspectRatio: 1, 
+        overflow: "hidden", 
+        borderRadius: 100,
+        borderWidth: 2,
+        borderColor: "white",
     },
     active: {
         position: "absolute",
         bottom: 12,
-        padding: "3%",
-        borderRadius: 15,
+        padding: 9,
+        borderRadius: 25,
         right: "10%"
     },
 });

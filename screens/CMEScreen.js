@@ -29,10 +29,6 @@ let newCme = {
 };
 
 
-
-
-
-
 function displayOKAlert(title, message) {
   Alert.alert(title, message);
 }

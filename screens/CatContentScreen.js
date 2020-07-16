@@ -5,6 +5,7 @@ import 'firebase/firestore';
 import CategoriesScreen from './CategoriesScreen';
 import { useSelector, useDispatch } from 'react-redux';
 import CatContentLayout from '../components/CatContentLayout';
+import Colors from '../constants/Colors';
 
 const CatContentScreen = props => {
   const categoryId = props.navigation.getParam('subcategoryId');
@@ -64,9 +65,8 @@ CatContentScreen.navigationOptions = navigationdata => {
   const subcategoryTitle = navigationdata.navigation.getParam('subcategoryTitle');
   return {
     headerTitle: subcategoryTitle,
-    headerTintColor: '#CD5C5C',
     headerStyle: {
-      backgroundColor: 'white',
+      backgroundColor: Platform.OS === 'android' ? Colors.primaryColor : 'white'
     }
   }
 }

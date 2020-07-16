@@ -1,6 +1,20 @@
 export default {
-        primaryColor: '#CD5C5C',
-        color: '#000000'
-        //accentColor: '#00008B'
-        
+        //----------THEME----------
+        androidCustomWhite: '#fffffc',
+        grayedOut:'#A3A3A3',
+        primaryColor: '#404040',
+        secondaryColor: '#FF5C5C',
+        //----------CATEGORIES----------
+        emergent: '#A0C4FF',
+        foreign: '#9BF6FF',
+        medical: '#FFADAD',
+        surgical: '#FFD6A5',
+        toxicology: '#CAFFBF',
+        trauma: '#FDFFB6',
+        cat7: '#BDB2FF',
+        cat8: '#FFC6FF',
+        //----------OTHERS----------
+        googleBlue:'#4285F4',
+        EditBlueColor: '#30475e'
+ 
 }; 

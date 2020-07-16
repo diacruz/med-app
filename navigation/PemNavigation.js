@@ -15,6 +15,7 @@ import CalendarScreen from '../screens/ProfileScreens/CalendarScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
+import UserProfileScreen from '../screens/UserProfileScreen';
 import CMEScreen from '../screens/CMEScreen';
 import SearchScreen from '../screens/SearchScreen';
 import AdminCategoriesScreen from '../screens/AdminScreens/AdminCategoriesScreen';
@@ -30,97 +31,107 @@ import DrawerComponent from "../components/DrawerComponent";
 
 const defaultStackNavOptions = {
   headerStyle: {
-    backgroundColor: Platform.OS === 'android' ? Colors.primaryColor : ''
+    backgroundColor: Platform.OS === "android" ? Colors.primaryColor : "",
   },
-  headerTintColor:
-    Platform.OS === 'android' ? 'white' : Colors.primaryColor
+  headerTintColor: Platform.OS === "android" ? "white" : Colors.primaryColor,
+};
 
-}
-
-const LoginNavigator = createStackNavigator({
-  Login: {
-    screen: LoginScreen,
+const LoginNavigator = createStackNavigator(
+  {
+    Login: {
+      screen: LoginScreen,
+    },
+    SignUp: {
+      screen: SignUpScreen,
+    },
   },
-  SignUp: {
-    screen: SignUpScreen
-  },
-
-},
-{
-  initialRouteName: "Login"
-}
+  {
+    initialRouteName: "Login",
+  }
 );
 
-const CatNavigator = createStackNavigator({
-  Categories: CategoriesScreen,
-  Search: {
-    screen: SearchScreen,
-    navigationOptions: {
-      headerShown: false
-    }
+const CatNavigator = createStackNavigator(
+  {
+    Categories: CategoriesScreen,
+    Search: {
+      screen: SearchScreen,
+      navigationOptions: {
+        headerShown: false,
+      },
+    },
+    SubCategories: {
+      screen: SubCategoriesScreen,
+    },
+    CatContent: {
+      screen: CatContentScreen,
+    },
   },
-  SubCategories: {
-    screen: SubCategoriesScreen,
-  },
-  CatContent: {
-    screen: CatContentScreen
-  },
-},
   {
     defaultNavigationOptions: defaultStackNavOptions,
-  },
-);
-
-const ChatNavigator = createStackNavigator({
-  Chat: ChatTabScreen,
-  Chatroom: {
-    screen: ChatroomScreen,
-  },
-},
-{
-  navigationOptions: ({ navigation }) => {
-    let tabBarVisible;
-    if (navigation.state.routes.length > 1) {
-      navigation.state.routes.map(route => {
-        if (route.routeName === "Chatroom") {
-          tabBarVisible = false;
-        } else {
-          tabBarVisible = true;
-        }
-      });
-    }
-    return {
-      tabBarVisible
-    }
   }
-},
-{
-  initialRouteName: 'Chat',
-},
 );
 
-const FavNavigator = createStackNavigator({
-  Favorites: FavoritesScreen,
-},
+const ChatNavigator = createStackNavigator(
+  {
+    Chat: ChatTabScreen,
+    Chatroom: {
+      screen: ChatroomScreen,
+    },
+    UserProfile: {
+      screen: UserProfileScreen
+    },
+  },
+  {
+    navigationOptions: ({ navigation }) => {
+      let tabBarVisible;
+
+      if (navigation.state.routes.length > 1) {
+        navigation.state.routes.map(route => {
+          if (route.routeName === "Chatroom") {
+            tabBarVisible = false;
+          } else {
+            tabBarVisible = true;
+          }
+        });
+      }
+
+      return {
+        tabBarVisible
+      }
+    }
+
+  },
+  {
+    initialRouteName: 'Chat',
+  },
+  {
+  }
+);
+
+const FavNavigator = createStackNavigator(
+  {
+    Favorites: FavoritesScreen,
+  },
   {
     navigationOptions: {
-      drawerIcon: drawerConfig => (
+      drawerIcon: (drawerConfig) => (
         <Ionicons
           name={Platform.OS === 'android' ? 'md-heart' : 'ios-heart'}
           size={27}
           color={drawerConfig.tintColor}
         />
-      )
+      ),
     },
-    defaultNavigationOptions: defaultStackNavOptions
+    defaultNavigationOptions: defaultStackNavOptions,
   }
 );
-const ProfileNavigator = createStackNavigator({
-  Profile: ProfileScreen,
-  Edit: EditProfileScreen,
-  CME: CMEScreen,
-  Calendar: CalendarScreen
-},
+const ProfileNavigator = createStackNavigator(
+  {
+    Profile: ProfileScreen,
+    Edit: EditProfileScreen,
+    CME: CMEScreen,
+    Calendar: CalendarScreen,
+  },
 
   {
     navigationOptions: {
@@ -131,18 +142,17 @@ const ProfileNavigator = createStackNavigator({
         />
       )
     },
-    defaultNavigationOptions: defaultStackNavOptions
+    defaultNavigationOptions: defaultStackNavOptions,
   }
 );
 
-
-const AdminNavigator = createStackNavigator({
-
-  AdminCategories: AdminCategoriesScreen,
-  AdminSubCategories: AdminSubCategoriesScreen,
-  EditCatContent: EditCatContentScreen,
-  CatContent: CatContentScreen
-},
+const AdminNavigator = createStackNavigator(
+  {
+    AdminCategories: AdminCategoriesScreen,
+    AdminSubCategories: AdminSubCategoriesScreen,
+    EditCatContent: EditCatContentScreen,
+    CatContent: CatContentScreen,
+  },
   {
     navigationOptions: {
       drawerIcon: drawerConfig => (
@@ -151,89 +161,99 @@ const AdminNavigator = createStackNavigator({
           size={26}
           color={drawerConfig.tintColor}
         />
-      )
-
+      ),
     },
-    defaultNavigationOptions: defaultStackNavOptions
+    defaultNavigationOptions: defaultStackNavOptions,
   }
 );
 
-const tabScreenConfig = ({
+const tabScreenConfig = {
   Home: {
     screen: CatNavigator,
     navigationOptions: {
-      tabBarIcon: ({ tintColor }) => <Ionicons name={Platform.OS === 'android' ? 'md-home' : 'ios-home'} color={tintColor} size={24} />
+      tabBarIcon: ({ tintColor }) => (
+        <Ionicons
+          name={Platform.OS === "android" ? "md-home" : "ios-home"}
+          color={tintColor}
+          size={24}
+        />
+      ),
     },
-
   },
   Chat: {
     screen: ChatNavigator,
     navigationOptions: {
-      tabBarIcon: ({ tintColor }) => <Ionicons name={Platform.OS === 'android' ? 'md-chatboxes' : 'ios-chatboxes'} color={tintColor} size={24} />
-    },
-  }
-});
-
-const MenuTabNavigator = Platform.OS === 'android'
-  ? createMaterialBottomTabNavigator(tabScreenConfig, {
-    activeTinColor: 'white',
-    //shifting: true,
-    barStyle: {
-      backgroundColor: Colors.primaryColor
-    }
-  })
-  : createBottomTabNavigator(tabScreenConfig, {
-    tabOptions: {
-      activeTinColor: Colors.accentColor
-    }
-  },
-  {
-    initialRouteName: "Home"
-  }
-  );
-
-const PemNavigator = createDrawerNavigator({
-  Categories: {
-    screen: MenuTabNavigator,
-    navigationOptions: {
-      drawerIcon: drawerConfig => (
+      tabBarIcon: ({ tintColor }) => (
         <Ionicons
           name={Platform.OS === 'android' ? 'md-star' : 'ios-star'}
           size={26}
-          color={drawerConfig.tintColor}
         />
-      )
-    }
+      ),
+    },
   },
-  Admin: AdminNavigator,
-  Profile: {
-    screen: ProfileNavigator
+};
+
+const MenuTabNavigator =
+  Platform.OS === "android"
+    ? createMaterialBottomTabNavigator(tabScreenConfig, {
+      activeTinColor: "white",
+      //shifting: true,
+      barStyle: {
+        backgroundColor: Colors.primaryColor,
+      },
+    })
+    : createBottomTabNavigator(
+      tabScreenConfig,
+      {
+        tabOptions: {
+          activeTinColor: Colors.accentColor,
+        },
+      },
+      {
+        initialRouteName: "Home",
+      }
+    );
+
+const PemNavigator = createDrawerNavigator(
+  {
+    Categories: {
+      screen: MenuTabNavigator,
+      navigationOptions: {
+        drawerIcon: (drawerConfig) => (
+          <Ionicons
+            name={Platform.OS === "android" ? "md-star" : "ios-star"}
+            size={24}
+            color={drawerConfig.tintColor}
+          />
+        ),
+      },
+    },
+    Admin: AdminNavigator,
+    Profile: {
+      screen: ProfileNavigator,
+    },
+    Favorites: {
+      screen: FavNavigator,
+    },
   },
-  Favorites: {
-    screen: FavNavigator,
-  }
-},
   {
     contentComponent: DrawerComponent,
     contentOptions: {
-      activeTinColor: Colors.primary
-      
-    }
+      activeTinColor: Colors.primary,
+    },
   },
-  {
-    
-  }
+  {}
 );
 
-
-const SwitchNavigator = createSwitchNavigator({
- Login: LoginNavigator,
-  Main: PemNavigator,
-  TabMain: MenuTabNavigator,
-},
+const SwitchNavigator = createSwitchNavigator(
   {
-    initialRouteName: "Login"
+    Login: LoginNavigator,
+    Main: PemNavigator,
+    TabMain: MenuTabNavigator,
   },
+  {
+    initialRouteName: "Login",
+  }
 );
 
 export default createAppContainer(SwitchNavigator);

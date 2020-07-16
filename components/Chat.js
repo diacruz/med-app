@@ -4,8 +4,17 @@ import 'firebase/firestore';
 import * as firebase from 'firebase';
 import Firebase from '../backend/firebase';
 import { testMatrix } from '../node_modules/firebase-functions/lib/providers/testLab';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
+/*
+This is the component used to show an existing chat, it (ideally) takes the information from firebase as part of its props
+so that it can display information dynamically. Right now, it only takes information from the global chat, so the first thing 
+to do would be to make it accept a prop that determines which chat to use.
 
+Here are some features that I thought would be nice to have, but that I have not been able to implement yet.
+    - The ability to see the last message sent per chat
+    - Be able to start a new chat between two or more users.
+*/
 const Chat = props => {
     let TouchableCmp = TouchableOpacity;
     if (Platform.OS === 'android' && Platform.Version >= 21) {
@@ -21,10 +30,8 @@ const Chat = props => {
             }}>
                 <View>
                     <View style={styles.chatTile}>
-                        <Image style={styles.logo}
-                            source={require('./img/globe.jpg')}
-                        />
-                        <Text style={styles.textStyle}>   Global Chat</Text>
+                        <Icon name="globe" size={35}></Icon>
+                        <Text style={styles.textStyle}>  Global Chat</Text>
                         
                     </View>
                 </View>

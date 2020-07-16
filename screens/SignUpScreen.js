@@ -6,6 +6,7 @@ import * as firebase from 'firebase';
 import 'firebase/firestore';
 import * as ImagePicker from 'expo-image-picker';
 import { firebrick } from 'color-name';
+import Colors from '../constants/Colors';
 
 /**
  * Displays an alert box with the specified title
@@ -74,7 +75,7 @@ const CreateAccount = props => {
               title: 'Job Title',
               status: 'Active',
               certs: '',
-              visibility: 'public'
+              isVisible: false
             }
           })
       }).then(
@@ -190,13 +191,13 @@ const CreateAccount = props => {
     <View style={styles.container}>
       <TextInput
         style={[styles.textField, styles.fullName]}
-        placeholder='Fullname'
+        placeholder='Enter your name'
         onChangeText={text => setDisplayName(text)}
         value={displayName}
       />
       <TextInput
         style={[styles.textField, styles.email]}
-        placeholder="email@gmail.com"
+        placeholder="Enter your email"
         onChangeText={text => setEmail(text)}
         value={email}
         autoCapitalize='none'
@@ -212,6 +213,11 @@ const CreateAccount = props => {
         createUserAccount(email, password, displayName);
       }}>
         <Text style={styles.text}>Confirm</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.cancelButton} onPress={() => {
+        props.navigation.navigate('Login')
+      }}>
+        <Text style={styles.cancelText}>Cancel</Text>
       </TouchableOpacity>
     </View>
   );
@@ -232,31 +238,56 @@ const styles = StyleSheet.create({
     width: 160,
   },
 
+  // textField: {
+  //   fontFamily: 'open-sans-bold',
+  //   height: 60,
+  //   width: '80%',
+  //   textAlign: 'center',
+  //   borderColor: 'gray',
+  //   borderWidth: 2,
+  //   borderRadius: 30
+  // },
   textField: {
     fontFamily: 'open-sans-bold',
-    height: 60,
-    width: '80%',
+    height: 50,
+    width: '60%',
     textAlign: 'center',
-    borderColor: 'gray',
-    borderWidth: 2,
-    borderRadius: 30
+    alignSelf: 'center',
+    borderBottomColor:'gray',
+    // borderColor: 'gray',
+    borderBottomWidth: 1,
+    // borderRadius: 25,
   },
   fullName: {
     marginBottom: 30
   },
   email: {
-    marginBottom: 30
+    marginBottom: "6%"
   },
   button: {
-    marginTop: 20,
+    backgroundColor: Colors.primaryColor,
     borderRadius: 30,
-    backgroundColor: '#00ffb8',
+    marginTop: 20,
+    padding: 10,
+    width: 250
+  },
+  cancelButton: {
+    borderColor: Colors.primaryColor,
+    borderRadius: 30,
+    borderWidth: 1,
+    marginTop: 20,
     padding: 10,
     width: 250
   },
   text: {
     fontFamily: 'open-sans-bold',
-    textAlign: 'center'
+    textAlign: 'center',
+    color: Colors.androidCustomWhite
+  },
+  cancelText: {
+    fontFamily: 'open-sans-bold',
+    textAlign: 'center',
+    color: Colors.primaryColor
   }
 });
 
