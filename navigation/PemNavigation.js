@@ -23,7 +23,7 @@ import EditCatContentScreen from '../screens/AdminScreens/EditCatContentScreen';
 import AdminSubCategoriesScreen from '../screens/AdminScreens/AdminSubCategoriesScreen';
 import Colors from '../constants/Colors';
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import { FontAwesome } from '@expo/vector-icons';
 import EditProfileScreen from '../screens/ProfileScreens/EditProfileScreen';
 import DrawerComponent from "../components/DrawerComponent";
 //import AppContainer from '../screens/ChatTabScreen'
@@ -136,7 +136,7 @@ const ProfileNavigator = createStackNavigator(
   {
     navigationOptions: {
       drawerIcon: drawerConfig => (
-        <Icon name="user-circle"
+        <FontAwesome name="user-md"
           size={26}
           color={drawerConfig.tintColor}
         />

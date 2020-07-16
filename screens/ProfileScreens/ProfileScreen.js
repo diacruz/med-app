@@ -1,7 +1,7 @@
-import React, { useState, Component, useEffect, useCallback } from "react";
-import { HeaderButtons, Item } from "react-navigation-header-buttons";
-import CustomHeaderButton from "../../components/CustomHeaderButton";
-import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
+import React, { useState, Component, useEffect, useCallback } from 'react';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+import CustomHeaderButton from '../../components/CustomHeaderButton';
+import { MaterialIcons, FontAwesome, Entypo } from '@expo/vector-icons';
 import {
   View,
   SafeAreaView,
@@ -119,107 +119,51 @@ const ProfileScreen = (props) => {
   return (
     <View style={styles.container}>
       <SafeAreaView>
-        <ImageBackground
-          source={require("../../components/img/colors3.jpeg")}
-          style={styles.background}
-        >
+        <ImageBackground source={require('../../components/img/colors3.jpeg')}
+          style={styles.background}>
           <View style={styles.responsiveBox}>
             <ScrollView showsVerticalScrollIndicator={false}>
               <View style={{ alignSelf: "center" }}>
                 <View style={styles.profileImage}>
-                  <Image
-                    source={image}
-                    style={styles.avatar}
-                    resizeMode="cover"
-                  ></Image>
+                  <Image source={image} style={styles.avatar} resizeMode="cover"></Image>
                 </View>
                 <TouchableCmp>
-                  <View
-                    style={styles.active}
-                    backgroundColor={buttonColor}
-                  ></View>
+                  <View style={styles.active} backgroundColor={buttonColor}></View>
                 </TouchableCmp>
               </View>
               <View style={styles.infoContainer}>
-                <Text
-                  style={[
-                    styles.text,
-                    { fontWeight: "200", fontSize: 20, fontWeight: "bold" },
-                  ]}
-                >
-                  {name}
-                </Text>
+                <Text style={[styles.text, { fontWeight: "200", fontSize: 20, fontWeight: "bold" }]}>{name}</Text>
                 <Text style={[styles.text, { fontSize: 16 }]}>{title}</Text>
               </View>
               <View style={styles.statusContainer}>
                 <View style={styles.status}>
                   <ModalDropdown
                     options={menuArray}
-                    dropdownStyle={{
-                      height: 40 * menuArray.length,
-                      alignItems: "center",
-                    }}
-                    dropdownTextStyle={{
-                      fontSize: 0.04 * screenWidth,
-                      color: "black",
-                    }}
-                    textStyle={{
-                      fontSize: 0.04 * screenWidth,
-                      color: "black",
-                      alignSelf: "center",
-                    }}
-                    defaultValue=""
-                    onSelect={(index, value) => {
-                      setSelected(value);
-                    }}
-                  >
+                    dropdownStyle={{ height: 40 * menuArray.length, alignItems: 'center' }}
+                    dropdownTextStyle={{ fontSize: 0.04 * screenWidth, color: 'black' }}
+                    textStyle={{ fontSize: 0.04 * screenWidth, color: 'black', alignSelf: "center" }}
+                    defaultValue=''
+                    onSelect={(index, value) => { setSelected(value) }}>
                     <View style={{ alignItems: "center" }}>
-                      <MaterialCommunityIcons
-                        name="emoticon-happy-outline"
-                        size={20}
-                      ></MaterialCommunityIcons>
-                      <Text style={{ fontSize: 0.04 * screenWidth }}>
-                        Active Status
-                      </Text>
+                      <FontAwesome name="smile-o" size={20} color="black" />
+                      <Text style={{ fontSize: 0.04 * screenWidth }}>Active Status</Text>
                     </View>
                   </ModalDropdown>
                 </View>
                 <View style={styles.status}>
-                  <TouchableOpacity
-                    style={{ alignItems: "center" }}
-                    onPress={() =>
-                      props.navigation.navigate({
-                        routeName: "Edit",
-                        params: {
-                          userID: uid,
-                          name: name,
-                          title: title,
-                          number: number,
-                          avatar: avatar,
-                        },
-                      })
-                    }
-                  >
+                  <TouchableOpacity style={{ alignItems: "center" }} onPress={() => props.navigation.navigate({
+                    routeName: 'Edit',
+                    params: { userID: uid, name: name, title: title, number: number, avatar: avatar }
+                  })}>
                     <MaterialIcons name="edit" size={20}></MaterialIcons>
-                    <Text style={{ fontSize: 0.04 * screenWidth }}>
-                      Edit Profile
-                    </Text>
+                    <Text style={{ fontSize: 0.04 * screenWidth }}>Edit Profile</Text>
                   </TouchableOpacity>
                 </View>
                 <View style={styles.status}>
-                  <TouchableOpacity
-                    style={{ alignItems: "center" }}
-                    onPress={() =>
-                      props.navigation.navigate({ routeName: "Calendar" })
-                    }
-                  >
-                    <MaterialCommunityIcons
-                      name="calendar-heart"
-                      size={20}
-                    ></MaterialCommunityIcons>
-                    <Text style={{ fontSize: 0.04 * screenWidth }}>
-                      Calendar
-                    </Text>
+                  <TouchableOpacity style={{ alignItems: "center" }}
+                    onPress={() => props.navigation.navigate({ routeName: 'Calendar' })}>
+                    <FontAwesome name="calendar" size={20} color="black" />
+                    <Text style={{ fontSize: 0.04 * screenWidth }}>Calendar</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -244,20 +188,12 @@ const ProfileScreen = (props) => {
               </View>
               <View style={[styles.detailContainer]}>
                 <View style={styles.iconBox}>
-                  <MaterialCommunityIcons
-                    name="certificate"
-                    size={20}
-                  ></MaterialCommunityIcons>
+                  <Entypo name="medal" size={20} color="black" />
                 </View>
                 <View style={styles.detailBox}>
                   <Text style={styles.text}>Certifications:</Text>
-                  <Text
-                    style={[styles.text, styles.subText]}
-                    onPress={handleCerts}
-                  >
-                    {" "}
-                    Show All {">"}{" "}
-                  </Text>
+                  <Text style={[styles.text, styles.subText]}
+                    onPress={handleCerts}> Show All {'>'} </Text>
                 </View>
               </View>
               <View style={styles.buttonStyle}>
@@ -282,15 +218,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    borderRadius: 20,
+    borderRadius: 20
   },
   background: {
-    width: "100%",
-    height: "100%",
+    width: screenWidth,
+    height: screenHeight,
+
   },
   responsiveBox: {
     width: screenWidth,
-    height: screenHeight,
+    height: screenHeight
   },
   text: {
     fontFamily: "open-sans",
@@ -301,11 +238,11 @@ const styles = StyleSheet.create({
     flex: 1,
     width: null,
     height: null,
-    resizeMode: "contain",
+    resizeMode: 'contain',
   },
   profileImage: {
-    width: screenWidth * 0.3,
-    height: screenHeight * 0.2,
+    width: screenWidth * 0.30,
+    height: screenHeight * 0.20,
     borderRadius: 100,
     overflow: "hidden",
     marginTop: "4%",
@@ -320,13 +257,13 @@ const styles = StyleSheet.create({
     padding: 4,
     height: 25,
     width: 25,
-    borderRadius: 15,
+    borderRadius: 15
   },
   infoContainer: {
     alignSelf: "center",
     alignItems: "center",
     marginTop: "2%",
-    marginBottom: "3%",
+    marginBottom: "3%"
   },
   detailContainer: {
     flexDirection: "row",
@@ -345,8 +282,9 @@ const styles = StyleSheet.create({
     shadowRadius: 6.27,
     elevation: 10,
     borderRadius: 12,
-    opacity: 0.8,
+    opacity: 0.8
   },
+  
   status: {
     flex: 1,
     alignItems: "center",
