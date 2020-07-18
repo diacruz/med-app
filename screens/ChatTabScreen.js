@@ -50,7 +50,6 @@ const styles = StyleSheet.create({
 
 ChatTabScreen.navigationOptions = navigationData => {
     return {
-
             headerStyle: {
                 backgroundColor: Platform.OS === 'android' ? Colors.primaryColor : 'white'
               

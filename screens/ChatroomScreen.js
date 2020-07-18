@@ -4,7 +4,7 @@ import { GiftedChat } from 'react-native-gifted-chat';
 import * as firebase from 'firebase';
 import 'firebase/firestore';
 import Firebase from '../backend/firebase';
-import UserProfileScreen from '../screens/UserProfileScreen';
+import UserProfileScreen from './ProfileScreens/UserProfileScreen';
 
 /**
  * The chatroom component is what takes care of showing the actual messages sent between users of the app.

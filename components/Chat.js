@@ -4,7 +4,6 @@ import 'firebase/firestore';
 import * as firebase from 'firebase';
 import Firebase from '../backend/firebase';
 import { testMatrix } from '../node_modules/firebase-functions/lib/providers/testLab';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 
 /*
 This is the component used to show an existing chat, it (ideally) takes the information from firebase as part of its props
@@ -30,9 +29,7 @@ const Chat = props => {
             }}>
                 <View>
                     <View style={styles.chatTile}>
-                        <Icon name="globe" size={35}></Icon>
-                        <Text style={styles.textStyle}>  Global Chat</Text>
-                        
+                        <Text style={styles.textStyle}>Go to Global Chat</Text>
                     </View>
                 </View>
             </TouchableCmp>

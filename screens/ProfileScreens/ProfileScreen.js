@@ -37,7 +37,7 @@ const ProfileScreen = (props) => {
   const [avatar, setAvatar] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const [buttonColor, setButtonColor] = useState("red");
+  const [buttonColor, setButtonColor] = useState("#34FFB9");
   const [selected, setSelected] = useState(false);
 
   const uid = firebase.auth().currentUser.uid;
