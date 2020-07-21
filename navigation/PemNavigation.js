@@ -15,7 +15,7 @@ import CalendarScreen from '../screens/ProfileScreens/CalendarScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
-import UserProfileScreen from '../screens/UserProfileScreen';
+import UserProfileScreen from '../screens/ProfileScreens/UserProfileScreen';
 import CMEScreen from '../screens/CMEScreen';
 import SearchScreen from '../screens/SearchScreen';
 import AdminCategoriesScreen from '../screens/AdminScreens/AdminCategoriesScreen';
@@ -185,8 +185,9 @@ const tabScreenConfig = {
     navigationOptions: {
       tabBarIcon: ({ tintColor }) => (
         <Ionicons
-          name={Platform.OS === 'android' ? 'md-star' : 'ios-star'}
-          size={26}
+          name={Platform.OS === 'android' ? 'md-chatboxes' : 'ios-chatboxes'}
+          color={tintColor}
+          size={24}
         />
       ),
     },

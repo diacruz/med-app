@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
-import CustomHeaderButton from '../components/CustomHeaderButton';
+import CustomHeaderButton from '../../components/CustomHeaderButton';
 import { MaterialIcons } from '@expo/vector-icons';
 import {
     View,
@@ -17,20 +17,12 @@ import {
     ActivityIndicator
 } from 'react-native';
 import * as firebase from 'firebase'
-import Colors from '../constants/Colors';
+import Colors from '../../constants/Colors';
 
 const UserProfileScreen = props => {
-
-    const [loading, setLoading] = useState(true);
-
     const uid = props.navigation.getParam('ID');
     var data = '';
     const db = firebase.database()
-
-    const userRef = db.ref('users/' + uid + '/profile');
-    userRef.on('value', function (snapshot) {
-        data = snapshot.val();
-    });
 
     let TouchableCmp = TouchableOpacity;
 
@@ -38,26 +30,50 @@ const UserProfileScreen = props => {
         TouchableCmp = TouchableNativeFeedback;
     }
 
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [title, setTitle] = useState("");
+    const [number, setNumber] = useState("");
+    const [status, setStatus] = useState("");
+    const [avatar, setAvatar] = useState("");
+
+    const userRef = db.ref('users/' + uid + '/profile');
+
+    useEffect(() => {
+        userRef.on(
+          "value",
+          function (snapshot) {
+            // console.log(snapshot.val())
+            const { name, email, avatar, title, number, status } = snapshot.val();
+            setName(name);
+            setEmail(email);
+            setAvatar(avatar);
+            setTitle(title);
+            setNumber(number);
+            setStatus(status)
+          },
+          (err) => {
+            console.log(`Encountered error: ${err}`);
+          }
+        );
+      }, []);
+
     const [buttonColor, setButtonColor] = useState('');
 
     useEffect(() => {
-        if (data.status === "Active") {
+        if (status === "Active") {
             setButtonColor("#34FFB9");
         }
-        else if (data.status === "Busy") {
+        else if (status === "Busy") {
             setButtonColor("red");
         }
     });
 
-    var image = data.avatar !== '' ? { uri: data.avatar } : require('../components/img/default-profile-pic.jpg');
-
-    if (loading) {
-        <ActivityIndicator size="large"></ActivityIndicator>
-    }
+    var image = avatar !== '' ? { uri: avatar } : require('../../components/img/default-profile-pic.jpg');
 
     return (
         <View style={styles.container}>
-            <ImageBackground source={require('../components/img/colors3.jpeg')}
+            <ImageBackground source={require('../../components/img/colors3.jpeg')}
                 style={styles.background}>
                 <SafeAreaView>
                     <View style={styles.responsiveBox}>
@@ -72,13 +88,13 @@ const UserProfileScreen = props => {
                             </View>
                             <View style={styles.infoContainer}>
                                 <View style={styles.infoText}>
-                                    <Text style={[styles.text, { fontWeight: "200", fontSize: 20, fontWeight: "bold" }]}>{data.name}</Text>
+                                    <Text style={[styles.text, { fontWeight: "200", fontSize: 20, fontWeight: "bold" }]}>{name}</Text>
                                 </View>
                                 <View style={styles.infoText}>
-                                    <Text style={[styles.text, { fontSize: 16 }]}>{data.title}</Text>
+                                    <Text style={[styles.text, { fontSize: 16 }]}>{title}</Text>
                                 </View>
                                 <View style={styles.infoText}>
-                                    <Text style={[styles.text, { fontSize: 16 }]}>Status: {data.status}</Text>
+                                    <Text style={[styles.text, { fontSize: 16 }]}>Status: {status}</Text>
                                 </View>
                             </View>
                             <View style={[styles.detailContainer]}>
@@ -87,7 +103,7 @@ const UserProfileScreen = props => {
                                 </View>
                                 <View style={styles.detailBox}>
                                     <Text style={styles.text}>Email Address: </Text>
-                                    <Text style={[styles.text, styles.subText]}>{data.email}</Text>
+                                    <Text style={[styles.text, styles.subText]}>{email}</Text>
                                 </View>
                             </View>
                             <View style={[styles.detailContainer]}>
@@ -96,7 +112,7 @@ const UserProfileScreen = props => {
                                 </View>
                                 <View style={styles.detailBox}>
                                     <Text style={styles.text}>Phone Number: </Text>
-                                    <Text style={[styles.text, styles.subText]}>{data.number}</Text>
+                                    <Text style={[styles.text, styles.subText]}>{number}</Text>
                                 </View>
                             </View>
                             <View style={styles.buttonStyle}>

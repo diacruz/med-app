@@ -1,123 +1,250 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, TouchableOpacity, Alert, Button, Text, StyleSheet, Platform, NativeModules, processColor } from 'react-native';
-import { HeaderButtons, Item } from 'react-navigation-header-buttons';
-import CustomHeaderButton from '../../components/CustomHeaderButton';
-import { CalendarList, Agenda } from 'react-native-calendars';
-import CalendarPicker from 'react-native-calendar-picker';
-//import * as AddCalendarEvent from 'react-native-add-calendar-event';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Button, Platform, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native';
+import * as Calendar from 'expo-calendar';
+import * as Permissions from "expo-permissions"
 import moment from 'moment';
-import { FAB } from 'react-native-paper';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import Colors from '../../constants/Colors';
+import { MaterialIcons } from '@expo/vector-icons';
 
-const CalendarScreen = props => {
-    const [eventTitle, setEventTitle] = useState('Default event');
-    const [selectedStartDate, setSelectedStartDate] = useState(null)
+const utcDateToString = momentInUTC => {
+    let s = moment.utc(momentInUTC).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+    return s;
+};
 
-    const [date, setDate] = useState(moment().format("MMMM YYYY"));
-    const [dateToRefresh, setDateToRefresh] = useState(moment().format("YYYY-MM-DD"));
-    //const startDate = selectedStartDate ? selectedStartDate.toString() : '';
+const CalendarScreen = () => {
+    //var today = new Date();
+    const [eventTitle, setEventTitle] = useState('');
+    const [notes, setNotes] = useState('');
+    const [textBoxWidth, SetTextBoxWidth] = useState('99%');
 
-    const [items, setItems] = useState({});
-    const [text, setText] = useState('')
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+    const [isEndPickerVisible, setEndPickerVisibility] = useState(false);
 
+    const [date, setDate] = useState('');
+    const [endDate, setEndDate] = useState('');
 
-    const loadItems = (day) => {
-        setSelectedStartDate(day)
-        const time = day.timestamp //+ i * 24 * 60 * 60 * 1000;
-        const strTime = timeToString(time);
-        if (!items[strTime]) {
-            items[strTime] = [];
-        }
-        //items[strTime] = []
-    }
+    useEffect(() => {
+        (async () => {
+            const { status } = await Calendar.requestCalendarPermissionsAsync();
+            if (status != "granted") {
+                alert("We need permission to use your calendar");
+            }
+        })();
+    }, []);
 
-    const addEvents = () => {
+    useEffect(() => {
         setTimeout(() => {
-            const time = selectedStartDate.timestamp //+ i * 24 * 60 * 60 * 1000;
-            const strTime = timeToString(time);
-            items[strTime] = [];
-            items[strTime].push({
-                name: 'New event created',
-            });
-            const newItems = {};
-            Object.keys(items).forEach(key => { newItems[key] = items[key]; });
-            setItems(newItems)
-        })
+            SetTextBoxWidth(prev => '100%');
+        }, 100);
+    }, [textBoxWidth]);
+
+    const details = {
+        title: eventTitle,
+        startDate: utcDateToString(date),
+        endDate: utcDateToString(endDate),
+        notes: notes,
+    };
+
+    const clearFields = () => {
+        setEventTitle('');
+        setNotes('');
+        setDate('');
+        setEndDate('')
     }
 
-    const renderItem = (item) => {
-        return (
-            <View style={[styles.item, { height: item.height }]}><Text>{item.name}</Text></View>
-        );
+    async function createCalendar() {
+        const defaultCalendarSource = { isLocalAccount: true, name: 'Expo Calendar' };
+        const newCalendarID = await Calendar.createCalendarAsync({
+          title: 'Expo Calendar',
+          color: 'blue',
+          entityType: Calendar.EntityTypes.EVENT,
+          sourceId: defaultCalendarSource.id,
+          source: defaultCalendarSource,
+          name: 'internalCalendarName',
+          ownerAccount: 'personal',
+          accessLevel: Calendar.CalendarAccessLevel.OWNER,
+        });
+        console.log(`Your new calendar ID is: ${newCalendarID}`);
+      }
+
+
+    async function createEventInCalendar() {
+
+        const calendars = await Calendar.getCalendarsAsync()
+
+        if (Platform.OS == "ios") {
+            const calendar = await Calendar.getDefaultCalendarAsync();
+            Calendar.createEventAsync(calendar.id, details)
+            alert("Event has been saved")
+            clearFields()
+        } else {
+            console.log({calendars})
+        }
     }
 
-    const renderEmptyDate = () => {
-        return (
-            <View style={styles.emptyDate}>
-                    <Text>No event</Text>
-            </View>
-
-
-        );
+    const saveEventAlert = () => {
+        if (eventTitle && date && endDate) {
+            Alert.alert(
+                'Saving Event',
+                'Are you sure you want to save event?' + JSON.stringify(details, null, 1),
+                [
+                    { text: 'Cancel', onPress: () => { return null } },
+                    {
+                        text: 'Confirm', onPress: createEventInCalendar
+                    },
+                ],
+                { cancelable: false }
+            )
+        } else {
+            alert("Event title and/or Date fields cannot be empty")
+        }
     }
 
-    const rowHasChanged = (r1, r2) => {
-        return r1.name !== r2.name;
-    }
+    const showStartDatepicker = () => {
+        setDatePickerVisibility(true);
+    };
 
-    const timeToString = (time) => {
-        const date = new Date(time);
-        return date.toISOString().split('T')[0];
-    }
+    const showEndDatepicker = () => {
+        setEndPickerVisibility(true);
+    };
+
+    const hideStartDatePicker = () => {
+        setDatePickerVisibility(false);
+    };
+
+    const hideEndDatePicker = () => {
+        setEndPickerVisibility(false);
+    };
+
+    const handleStartConfirm = (dateTime) => {
+        setDate(dateTime);
+        hideStartDatePicker();
+    };
+
+    const handleEndConfirm = (dateTime) => {
+        if (dateTime < date) {
+            alert("End date cannot be less than start date")
+        } else {
+            setEndDate(dateTime);
+            hideEndDatePicker();
+        }
+    };
+
 
     return (
-        <View style={{ height: '100%', width: '100%' }}>
-            <Agenda
-                items={items}
-                loadItemsForMonth={loadItems}
-                selected={selectedStartDate}
-                renderItem={renderItem}
-                renderEmptyDate={renderEmptyDate}
-                rowHasChanged={rowHasChanged}>
-            </Agenda>
-            <FAB
-                style={styles.fab}
-                small
-                icon="plus"
-                onPress={addEvents}
-            />
+        <View style={styles.container}>
+            <Text style={styles.title}>
+                Add New Event to Calendar
+          </Text>
+            <View style={styles.inputContainer}>
+                <TextInput
+                    placeholder="Please enter event title"
+                    style={styles.input}
+                    value={eventTitle}
+                    onChangeText={text => setEventTitle(text)}
+                    selectTextOnFocus={true}
+                />
+                <TextInput
+                    style={[styles.input, { width: textBoxWidth }]}
+                    value={notes}
+                    placeholder="Please enter event notes"
+                    multiline={true}
+                    onChangeText={text => setNotes(text)}
+                    selectTextOnFocus={true}
+                />
+                <View style={{ marginTop: "5%" }}>
+                    <TouchableOpacity onPress={showStartDatepicker} style={{ marginBottom: "4%", alignSelf: "center", flexDirection: 'row' }}>
+                        <Text style={styles.text}>Select Start Time of Event: </Text>
+                    </TouchableOpacity>
+                    {date ?
+                        <Text style={{ alignSelf: "center" }}>
+                            {moment
+                                .utc(date)
+                                .local()
+                                .format('lll')}</Text>
+                        : <Text></Text>
+                    }
+                    <DateTimePickerModal
+                        isVisible={isDatePickerVisible}
+                        value={date}
+                        mode='datetime'
+                        onConfirm={handleStartConfirm}
+                        onCancel={hideStartDatePicker}
+                    />
+                </View>
+                <View style={{ marginTop: "5%" }}>
+                    <TouchableOpacity onPress={showEndDatepicker} style={{ marginBottom: "4%", alignSelf: "center", flexDirection: 'row' }}>
+                        <Text style={styles.text}>Select End Time of Event: </Text>
+                    </TouchableOpacity>
+                    {endDate ?
+                        <Text style={{ alignSelf: "center" }}>
+                            {moment
+                                .utc(endDate)
+                                .local()
+                                .format('lll')}</Text>
+                        : <Text></Text>
+                    }
+                    <DateTimePickerModal
+                        isVisible={isEndPickerVisible}
+                        value={endDate}
+                        mode='datetime'
+                        onConfirm={handleEndConfirm}
+                        onCancel={hideEndDatePicker}
+                    />
+                </View>
+            </View>
+            <TouchableOpacity style={styles.button} onPress={saveEventAlert}>
+                <Text style={[styles.text, { color: 'white' }]}>Save Event</Text>
+            </TouchableOpacity>
         </View>
-
     );
+
 }
 
 const styles = StyleSheet.create({
-    item: {
-        backgroundColor: 'white',
+    container: {
         flex: 1,
-        borderRadius: 5,
+        width: '100%',
+        height: '100%',
+        alignItems: 'center',
+        //backgroundColor: 'white',
+        paddingTop: "15%"
+    },
+    title: {
+        fontSize: 20,
+        textAlign: 'center',
+        color: Colors.primaryColor,
+        fontWeight: "bold"
+    },
+    inputContainer: {
+        width: '66%',
+        marginVertical: 10
+    },
+    text: {
+        fontSize: 16,
+        color: Colors.primaryColor,
+        marginVertical: 5,
+        alignSelf: 'center'
+    },
+    input: {
+        paddingHorizontal: 20,
+        paddingVertical: 5,
+        fontSize: 14,
+        marginVertical: "10%",
+        borderBottomColor: Colors.primaryColor,
+        borderBottomWidth: 1,
+        textAlign: 'center'
+    },
+    button: {
+        alignItems: 'center',
+        backgroundColor: Colors.primaryColor,
         padding: 10,
-        marginRight: 10,
-        marginTop: 17
-    },
-    emptyDate: {
-        height: 15,
-        flex: 1,
-        paddingTop: 30
-    },
-    fab: {
-        position: 'absolute',
-        margin: 16,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'lightskyblue'
-    },
-
+        marginTop: 30,
+        borderRadius: 20
+    }
 });
 
-CalendarScreen.navigationOptions = navigationdata => {
-    return {
-        headerTitle: 'Profile',
-    }
-};
-
 export default CalendarScreen;
+

@@ -68,8 +68,8 @@ export default class CME extends Component {
     newCme.newCmeCert = text;
   }
 
-  handleCmeExp(text) {
-    newCme.newCmeExp = text;
+  handleCmeExp(date) {
+    newCme.newCmeExp = date;
   }
 
   handleCmePic(text) {
@@ -155,18 +155,17 @@ export default class CME extends Component {
     }
   }
 
-
-
   render() {
     return (
       <View>
         <FlatList
           style={{ marginTop: "5%", flexGrow: 0, marginBottom: "2%" }}
           data={this.state.cmes}
+          keyExtractor={item => item.id}
           renderItem={(itemData) => (
             <View style={{ flexDirection: "row" }}>
-              <Text style={styles.cmeItem}>{itemData.item.cert}</Text>
-              <Text style={styles.cmeItem}>{itemData.item.exp}</Text>
+              <Text style={styles.cmeItem}>{(itemData.item.id, itemData.item.cert)}</Text>
+              <Text style={styles.cmeItem}>{(itemData.item.id + 1, itemData.item.exp)}</Text>
             </View>
           )}
           numColumns={1}
@@ -189,9 +188,6 @@ export default class CME extends Component {
           <DatePicker
             style={{
               flex: 1,
-              fontSize: 14,
-              fontFamily: "open-sans",
-              textAlign: "center",
               alignSelf: "center",
               width: "80%",
               marginRight: "9%",
@@ -203,8 +199,7 @@ export default class CME extends Component {
             format="MM/DD/YYYY"
             confirmBtnText="Confirm"
             cancelBtnText="Cancel"
-            //onDateChange={(date) => {this.setState({date: date})}}
-            onDateChange={this.handleCmeExp}
+            onDateChange={(date) => { this.setState({ date: date }, this.handleCmeExp(date)) }}
             customStyles={{
               dateIcon: {
                 position: "absolute",
@@ -220,17 +215,16 @@ export default class CME extends Component {
         </View>
 
         <View style={{ flexDirection: "column", marginTop: "15%" }}>
-          <View style={[styles.addCmeButton, { flexDirection: 'column', backgroundColor: Colors.primaryColor}]}>
+          <View style={[styles.addCmeButton, { flexDirection: 'column', backgroundColor: Colors.primaryColor }]}>
             <TouchableOpacity style={styles.buttonText} onPress={pickImage}>
               <Text style={styles.text}>Upload Image</Text>
             </TouchableOpacity>
           </View>
           <TouchableOpacity style={styles.addCmeButton} onPress={this.addCme}>
-          <Text style={styles.text}>Add CME</Text>
-        </TouchableOpacity>
-      </View>
-
+            <Text style={styles.text}>Add CME</Text>
+          </TouchableOpacity>
         </View>
+      </View>
     );
   }
 }
@@ -243,7 +237,7 @@ const pickImage = async () => {
     quality: 1,
   });
   if (!selectedImage.cancelled) {
-    setAvatar(selectedImage.uri);
+    //setAvatar(selectedImage.uri);
   }
 };
 
